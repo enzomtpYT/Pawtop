@@ -14,7 +14,9 @@ let NotificationSettingsStore: any;
 let MessageRequestStore: any;
 
 export function setBadge() {
-    if (Settings.store.appBadge === false) return;
+    if (Settings.store.appBadge === false) {
+        return VesktopNative.app.setBadgeCount(0);
+    }
 
     try {
         const mentionCount = GuildReadStateStore.getTotalMentionCount();
