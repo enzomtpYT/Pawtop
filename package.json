@@ -1,6 +1,6 @@
 {
     "name": "equibop",
-    "version": "2.1.0-rc2",
+    "version": "2.1.0",
     "private": true,
     "description": "A fork of Vesktop pre-packaged with Equicord",
     "keywords": [],
