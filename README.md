@@ -19,6 +19,7 @@ You can join our [discord server](https://discord.gg/5Xh2W87egW) for commits, ch
 -   Custom Splash animations from [this PR](https://github.com/Vencord/Vesktop/pull/355)
 -   Tray Customization & Voice detection and Badge from [this PR](https://github.com/Vencord/Vesktop/pull/517)
 -   Global Keybind to Toggle voice status from [this PR](https://github.com/Vencord/Vesktop/pull/609)
+-   Custom Arguments from [this PR](https://github.com/Equicord/Equibop/pull/46)
 -   Remove (#) title prefix when Notification Badge option is toggled from [this PR](https://github.com/Vencord/Vesktop/pull/686)
 
 **Linux Note**:

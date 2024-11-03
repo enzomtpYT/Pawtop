@@ -39,7 +39,7 @@ if (IS_DEV) {
 process.env.EQUICORD_USER_DATA_DIR = DATA_DIR;
 
 function init() {
-    const { disableSmoothScroll, hardwareAcceleration, splashAnimationPath } = Settings.store;
+    const { disableSmoothScroll, hardwareAcceleration, splashAnimationPath, arguments: args } = Settings.store;
 
     const enabledFeatures = app.commandLine.getSwitchValue("enable-features").split(",");
     const disabledFeatures = app.commandLine.getSwitchValue("disable-features").split(",");
@@ -63,7 +63,10 @@ function init() {
     if (process.platform === "win32") {
         disabledFeatures.push("CalculateNativeWinOcclusion");
     }
-
+    if (args) {
+        app.commandLine.appendArgument(args);
+        console.log("Running with additional arguments:", args);
+    }
     // work around chrome 66 disabling autoplay by default
     app.commandLine.appendSwitch("autoplay-policy", "no-user-gesture-required");
     // WinRetrieveSuggestionsOnlyOnDemand: Work around electron 13 bug w/ async spellchecking on Windows.
