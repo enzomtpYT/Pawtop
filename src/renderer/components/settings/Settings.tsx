@@ -113,7 +113,7 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
         }
     ],
     Notifications: [NotificationBadgeToggle],
-    Miscelleanous: [
+    Miscellaneous: [
         {
             key: "middleClickAutoscroll",
             title: "Middle Click Autoscroll",
