@@ -15,7 +15,7 @@ import { isLinux } from "renderer/utils";
 
 import { SettingsComponent } from "./Settings";
 
-const ColorPicker = findByCodeLazy(".Messages.USER_SETTINGS_PROFILE_COLOR_SELECT_COLOR", ".BACKGROUND_PRIMARY)");
+const ColorPicker = findByCodeLazy("#{intl::USER_SETTINGS_PROFILE_COLOR_SELECT_COLOR}", ".BACKGROUND_PRIMARY)");
 const { PencilIcon } = findByPropsLazy("PencilIcon");
 
 const presets = [
