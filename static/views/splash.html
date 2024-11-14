@@ -3,6 +3,7 @@
 
     <style>
         body {
+            background: none;
             -webkit-app-region: drag;
             user-select: none;
         }
@@ -16,6 +17,7 @@
             justify-content: center;
             border-radius: 8px;
             border: 1px solid var(--fg-semi-trans);
+            background: var(--bg);
         }
 
         #progress-section {
@@ -69,8 +71,13 @@
 <body>
     <div class="wrapper">
         <!-- the data url is here to ensure there isn't an empty frame before the image is loaded -->
-        <img id="animation" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-            draggable="false" alt="animation" role="presentation" />
+        <img
+            id="animation"
+            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+            draggable="false"
+            alt="animation"
+            role="presentation"
+        />
 
         <p>Loading Equibop...</p>
 
