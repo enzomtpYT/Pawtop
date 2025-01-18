@@ -4,13 +4,13 @@
  * Copyright (c) 2023 Vendicated and Vencord contributors
  */
 
-import { execFile } from "child_process";
 import { app, NativeImage, nativeImage } from "electron";
 import { join } from "path";
 import { IpcEvents } from "shared/IpcEvents";
 import { BADGE_DIR } from "shared/paths";
 
 import { mainWin } from "./mainWindow";
+import { dbus, getSessionBus } from "./utils/dbus";
 
 const imgCache = new Map<number, NativeImage>();
 function loadBadge(index: number) {
@@ -35,16 +35,24 @@ export function setBadgeCount(count: number) {
                 throw new Error("count must be a number");
             }
 
-            execFile("gdbus", [
-                "emit",
-                "--session",
-                "--object-path",
-                "/",
-                "--signal",
-                "com.canonical.Unity.LauncherEntry.Update",
-                "application://vesktop.desktop",
-                `{'count': <int64 ${count === -1 ? 0 : count}>, 'count-visible': <${count !== 0}>}`
-            ]);
+            const sessionBus = getSessionBus();
+            sessionBus.connection.message({
+                type: dbus.messageType.signal,
+                serial: 1,
+                path: "/",
+                interface: "com.canonical.Unity.LauncherEntry",
+                member: "Update",
+                signature: "sa{sv}",
+                body: [
+                    process.env.container === "1"
+                        ? "application://io.github.equicord.Equibop.desktop" // flatpak handling
+                        : "application://equibop.desktop",
+                    [
+                        ["count", ["x", count === -1 ? 0 : count]],
+                        ["count-visible", ["b", count !== 0]]
+                    ]
+                ]
+            });
             break;
         case "darwin":
             if (count === 0) {
