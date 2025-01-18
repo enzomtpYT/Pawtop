@@ -26,7 +26,7 @@ You can join our [discord server](https://discord.gg/5Xh2W87egW) for commits, ch
 -   You can use the `--toggle-mic` & `--toggle-deafen` flags to toggle your microphone and deafen status from the terminal.
 
 **Not fully Supported**:
-<!-- not supported on windows yet lol-->
+<!-- not supported on windows yet lol -->
 -   Global Keybinds
 
 ## Installing

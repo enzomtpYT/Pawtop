@@ -47,8 +47,8 @@ export function registerScreenShareHandler() {
         if (isWayland) {
             const video = data[0];
             if (video) {
-                const stream = await request.frame
-                    .executeJavaScript(
+                const stream = request
+                    .frame!.executeJavaScript(
                         `Equibop.Components.ScreenShare.openScreenSharePicker(${JSON.stringify([video])},true)`
                     )
                     .catch(() => null);
@@ -59,8 +59,8 @@ export function registerScreenShareHandler() {
             return;
         }
 
-        const choice = await request.frame
-            .executeJavaScript(`Equibop.Components.ScreenShare.openScreenSharePicker(${JSON.stringify(data)})`)
+        const choice = await request
+            .frame!.executeJavaScript(`Equibop.Components.ScreenShare.openScreenSharePicker(${JSON.stringify(data)})`)
             .then(e => e as StreamPick)
             .catch(e => {
                 console.error("Error during screenshare picker", e);
