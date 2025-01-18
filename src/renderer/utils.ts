@@ -13,8 +13,32 @@ export const isFirstRun = (() => {
     return true;
 })();
 
-const { platform } = navigator;
+export type NavigatorUAData = {
+    platform: string;
+    brands: Array<{ brand: string; version: string }>;
+    mobile: boolean;
+};
 
-export const isWindows = platform.startsWith("Win");
-export const isMac = platform.startsWith("Mac");
-export const isLinux = platform.startsWith("Linux");
+export interface NavigatorExtended extends Navigator {
+    userAgentData?: NavigatorUAData;
+}
+
+const getPlatform = (): string => {
+    const navigatorExtended = navigator as NavigatorExtended;
+
+    if (navigatorExtended.userAgentData) {
+        return navigatorExtended.userAgentData.platform;
+    }
+
+    return navigator.userAgent; // Fallback for older browsers
+};
+
+const platform = getPlatform().toLowerCase();
+
+export const isWindows = platform.includes("win");
+export const isMac = platform.includes("mac");
+export const isLinux = platform.includes("linux");
+
+// console.log("Is Windows?", isWindows);
+// console.log("Is Mac?", isMac);
+// console.log("Is Linux?", isLinux);

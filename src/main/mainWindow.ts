@@ -25,6 +25,7 @@ import { isTruthy } from "shared/utils/guards";
 import { once } from "shared/utils/once";
 import type { SettingsStore } from "shared/utils/SettingsStore";
 
+import { sleep } from "../shared/utils/sleep";
 import { createAboutWindow } from "./about";
 import { initArRPC } from "./arrpc";
 import {
@@ -482,7 +483,17 @@ function createMainWindow() {
             : "";
 
     addSplashLog();
-    win.loadURL(`https://${subdomain}discord.com/app`);
+    const loadDiscord = async (iteration: number = 0) => {
+        try {
+            await win.loadURL(`https://${subdomain}discord.com/app`);
+        } catch (error) {
+            console.error((error as Error).message);
+            await sleep(2000 * iteration); // Slow down if connection fails multiple times
+            await loadDiscord(iteration++);
+        }
+    };
+
+    loadDiscord();
 
     return win;
 }
