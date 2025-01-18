@@ -47,7 +47,7 @@ export function registerScreenShareHandler() {
         if (isWayland) {
             const video = data[0];
             if (video) {
-                const stream = request
+                const stream = await request
                     .frame!.executeJavaScript(
                         `Equibop.Components.ScreenShare.openScreenSharePicker(${JSON.stringify([video])},true)`
                     )
