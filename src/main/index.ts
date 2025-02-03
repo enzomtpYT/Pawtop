@@ -47,7 +47,12 @@ function init() {
     if (hardwareAcceleration === false) {
         app.disableHardwareAcceleration();
     } else {
-        enabledFeatures.push("VaapiVideoDecodeLinuxGL", "VaapiVideoEncoder", "VaapiVideoDecoder");
+        enabledFeatures.push(
+            "AcceleratedVideoDecodeLinuxGL",
+            "AcceleratedVideoEncoder",
+            "AcceleratedVideoDecoder",
+            "AcceleratedVideoDecodeLinuxZeroCopyGL"
+        );
     }
 
     if (disableSmoothScroll) {

@@ -39,6 +39,25 @@ export const isWindows = platform.includes("win");
 export const isMac = platform.includes("mac");
 export const isLinux = platform.includes("linux");
 
-// console.log("Is Windows?", isWindows);
-// console.log("Is Mac?", isMac);
-// console.log("Is Linux?", isLinux);
+type ClassNameFactoryArg = string | string[] | Record<string, unknown> | false | null | undefined | 0 | "";
+/**
+ * @param prefix The prefix to add to each class, defaults to `""`
+ * @returns A classname generator function
+ * @example
+ * const cl = classNameFactory("plugin-");
+ *
+ * cl("base", ["item", "editable"], { selected: null, disabled: true })
+ * // => "plugin-base plugin-item plugin-editable plugin-disabled"
+ */
+export const classNameFactory =
+    (prefix: string = "") =>
+    (...args: ClassNameFactoryArg[]) => {
+        const classNames = new Set<string>();
+        for (const arg of args) {
+            if (arg && typeof arg === "string") classNames.add(arg);
+            else if (Array.isArray(arg)) arg.forEach(name => classNames.add(name));
+            else if (arg && typeof arg === "object")
+                Object.entries(arg).forEach(([name, value]) => value && classNames.add(name));
+        }
+        return Array.from(classNames, name => prefix + name).join(" ");
+    };

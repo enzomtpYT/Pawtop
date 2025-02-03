@@ -151,6 +151,15 @@ handle(IpcEvents.CLIPBOARD_COPY_IMAGE, async (_, buf: ArrayBuffer, src: string) 
     });
 });
 
+function openDebugPage(page: string) {
+    const win = new BrowserWindow({
+        autoHideMenuBar: true
+    });
+    win.loadURL(page);
+}
+handle(IpcEvents.DEBUG_LAUNCH_GPU, () => openDebugPage("chrome://gpu"));
+handle(IpcEvents.DEBUG_LAUNCH_WEBRTC_INTERNALS, () => openDebugPage("chrome://webrtc-internals"));
+
 function readCss() {
     return readFile(VENCORD_QUICKCSS_FILE, "utf-8").catch(() => "");
 }

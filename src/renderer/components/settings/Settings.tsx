@@ -14,6 +14,7 @@ import { isLinux, isMac, isWindows } from "renderer/utils";
 import { Arguments } from "./Arguments";
 import { AutoStartToggle } from "./AutoStartToggle";
 import { CustomSplashAnimation } from "./CustomSplashAnimation";
+import { DeveloperOptionsButton } from "./DeveloperOptions";
 import { DiscordBranchPicker } from "./DiscordBranchPicker";
 import { NotificationBadgeToggle } from "./NotificationBadgeToggle";
 import {
@@ -23,9 +24,7 @@ import {
     TrayIconPicker,
     TraySwitch
 } from "./TraySettings";
-import { VencordLocationPicker } from "./VencordLocationPicker";
 import { WindowsTransparencyControls } from "./WindowsTransparencyControls";
-
 interface BooleanSetting {
     key: keyof typeof Settings.store;
     title: string;
@@ -143,7 +142,7 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
         }
     ],
     "Custom Splash Animation": [CustomSplashAnimation],
-    "Equicord Location": [VencordLocationPicker]
+    "Developer Options": [DeveloperOptionsButton]
 };
 
 function SettingsSections() {

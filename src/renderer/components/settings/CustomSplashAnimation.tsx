@@ -27,7 +27,7 @@ export const CustomSplashAnimation: SettingsComponent = ({ settings }) => {
                     "the default location"
                 )}
             </Forms.FormText>
-            <div className="vcd-location-btns" style={{ marginBottom: 20 }}>
+            <div className="vcd-settings-button-grid" style={{ marginBottom: 20 }}>
                 <Button
                     size={Button.Sizes.SMALL}
                     onClick={async () => {
