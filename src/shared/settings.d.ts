@@ -32,6 +32,7 @@ export interface Settings {
     customTitleBar?: boolean;
     arguments?: string;
 
+    enableSplashScreen?: boolean;
     splashTheming?: boolean;
     splashColor?: string;
     splashAnimationPath?: string;
@@ -59,7 +60,7 @@ export interface State {
     maximized?: boolean;
     minimized?: boolean;
     windowBounds?: Rectangle;
-    displayid: int;
+    displayId: int;
 
     firstLaunch?: boolean;
 

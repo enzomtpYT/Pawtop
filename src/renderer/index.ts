@@ -4,12 +4,12 @@
  * Copyright (c) 2023 Vendicated and Vencord contributors
  */
 
-import "./fixes";
+import "./themedSplash";
+import "./ipcCommands";
 import "./appBadge";
 import "./patches";
-import "./themedSplash";
-
-console.log("read if cute :3");
+import "./fixes";
+import "./arrpc";
 
 export * as Components from "./components";
 import { findByPropsLazy, onceReady } from "@vencord/types/webpack";
@@ -18,8 +18,6 @@ import { Alerts } from "@vencord/types/webpack/common";
 import SettingsUi from "./components/settings/Settings";
 import { Settings } from "./settings";
 export { Settings };
-
-const InviteActions = findByPropsLazy("resolveInvite");
 
 const customSettingsSections = (
     Vencord.Plugins.plugins.Settings as any as { customSections: ((ID: Record<string, unknown>) => any)[] }

@@ -34,6 +34,7 @@ export function createFirstLaunchTour() {
     }
     const win = new BrowserWindow({
         ...SplashProps,
+        transparent: false,
         frame: true,
         autoHideMenuBar: true,
         height: 470,

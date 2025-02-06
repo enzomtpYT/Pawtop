@@ -39,9 +39,9 @@ function openDeveloperOptionsModal(settings: Settings) {
                         Debugging
                     </Forms.FormTitle>
                     <div className="vcd-settings-button-grid">
-                        <Button onClick={() => VesktopNative.debug.launchGpu()}>chrome://gpu</Button>
+                        <Button onClick={() => VesktopNative.debug.launchGpu()}>Open chrome://gpu</Button>
                         <Button onClick={() => VesktopNative.debug.launchWebrtcInternals()}>
-                            chrome://webrtc-internals
+                            Open chrome://webrtc-internals
                         </Button>
                     </div>
                 </div>

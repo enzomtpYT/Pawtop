@@ -28,7 +28,7 @@ export function createSplashWindow(startMinimized = false) {
 
     splash.loadFile(join(VIEW_DIR, "splash.html"));
 
-    if (splashTheming) {
+    if (splashTheming !== false) {
         if (splashColor) {
             const semiTransparentSplashColor = splashColor.replace("rgb(", "rgba(").replace(")", ", 0.2)");
 

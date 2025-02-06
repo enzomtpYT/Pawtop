@@ -13,3 +13,5 @@ import "./screenShareFixes";
 import "./spellCheck";
 import "./windowsTitleBar";
 import "./tray";
+import "./streamerMode";
+import "./nativeFocus";

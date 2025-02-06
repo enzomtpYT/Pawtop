@@ -155,8 +155,10 @@ function openDebugPage(page: string) {
     const win = new BrowserWindow({
         autoHideMenuBar: true
     });
+
     win.loadURL(page);
 }
+
 handle(IpcEvents.DEBUG_LAUNCH_GPU, () => openDebugPage("chrome://gpu"));
 handle(IpcEvents.DEBUG_LAUNCH_WEBRTC_INTERNALS, () => openDebugPage("chrome://webrtc-internals"));
 
