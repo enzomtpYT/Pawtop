@@ -42,7 +42,7 @@ import { darwinURL } from "./index";
 import { sendRendererCommand } from "./ipcCommands";
 import { initKeybinds } from "./keybinds";
 import { Settings, State, VencordSettings } from "./settings";
-import { addSplashLog, createSplashWindow, splash } from "./splash";
+import { addSplashLog, splash } from "./splash";
 import { setTrayIcon } from "./tray";
 import { makeLinksOpenExternally } from "./utils/makeLinksOpenExternally";
 import { applyDeckKeyboardFix, askToApplySteamLayout, isDeckGameMode } from "./utils/steamOS";
@@ -414,7 +414,8 @@ function createMainWindow() {
 
     addSplashLog();
 
-    const { staticTitle, transparencyOption, enableMenu, customTitleBar, splashTheming, splashBackground } =Settings.store;
+    const { staticTitle, transparencyOption, enableMenu, customTitleBar, splashTheming, splashBackground } =
+        Settings.store;
 
     const { frameless, transparent } = VencordSettings.store;
 
@@ -525,10 +526,7 @@ export function loadUrl(uri: string | undefined) {
 export async function createWindows() {
     const startMinimized = process.argv.includes("--start-minimized");
 
-    let splash: BrowserWindow | undefined;
     if (Settings.store.enableSplashScreen !== false) {
-        splash = createSplashWindow(startMinimized);
-
         // SteamOS letterboxes and scales it terribly, so just full screen it
         if (isDeckGameMode) splash.setFullScreen(true);
         addSplashLog();
@@ -568,7 +566,6 @@ export async function createWindows() {
             }, 100);
         }
     });
-            
 
     mainWin.webContents.on("did-navigate", (_, url: string, responseCode: number) => {
         // check url to ensure app doesn't loop
@@ -577,7 +574,6 @@ export async function createWindows() {
             console.warn(`'did-navigate': Caught bad page response: ${responseCode}, redirecting to main app`);
         }
     });
-    
 
     initArRPC();
     initKeybinds();
