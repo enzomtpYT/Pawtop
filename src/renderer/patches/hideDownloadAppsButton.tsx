@@ -9,12 +9,10 @@ import { addPatch } from "./shared";
 addPatch({
     patches: [
         {
-            find: '"NotificationSettingsStore',
+            find: '"app-download-button"',
             replacement: {
-                // FIXME: fix eslint rule
-                // eslint-disable-next-line no-useless-escape
-                match: /\.isPlatformEmbedded(?=\?\i\.\i\.ALL)/g,
-                replace: "$&||true"
+                match: /return(?=.{0,50}id:"app-download-button")/,
+                replace: "return null;return"
             }
         }
     ]

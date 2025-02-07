@@ -1,14 +1,14 @@
 /*
- * SPDX-License-Identifier: GPL-3.0
  * Vesktop, a desktop app aiming to give you a snappier Discord Experience
  * Copyright (c) 2023 Vendicated and Vencord contributors
- */
+ * SPDX-License-Identifier: GPL-3.0 or later
+*/
 
 //@ts-check
 
 import stylistic from "@stylistic/eslint-plugin";
 import pathAlias from "eslint-plugin-path-alias";
-import header from "eslint-plugin-simple-header";
+import simpleHeader from "eslint-plugin-simple-header";
 import importSort from "eslint-plugin-simple-import-sort";
 import unusedImports from "eslint-plugin-unused-imports";
 import tseslint from "typescript-eslint";
@@ -20,7 +20,7 @@ export default tseslint.config(
     {
         files: ["src/**/*.{tsx,ts,mts,mjs,js,jsx}"],
         plugins: {
-            header,
+            simpleHeader,
             stylistic,
             importSort,
             unusedImports,
@@ -42,12 +42,9 @@ export default tseslint.config(
             }
         },
         rules: {
-            "header/header": ["error", {
-                text: [
-                    "SPDX-License-Identifier: GPL-3.0",
-                    "Vesktop, a desktop app aiming to give you a snappier Discord Experience",
-                    "Copyright (c) 2023 Vendicated and Vencord contributors"
-                ]
+            "simpleHeader/header": ["error", {
+                files: ["scripts/header.txt"],
+                templates: { author: [".*", "Vendicated and Vesktop contributors"] }
             }],
 
             // ESLint Rules

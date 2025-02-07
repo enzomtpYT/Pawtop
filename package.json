@@ -5,7 +5,7 @@
     "description": "A fork of Vesktop pre-packaged with Equicord",
     "keywords": [],
     "homepage": "https://github.com/Equicord/Equibop",
-    "license": "GPL-3.0",
+    "license": "GPL-3.0 or later",
     "author": "Equicord",
     "main": "dist/js/main.js",
     "scripts": {
