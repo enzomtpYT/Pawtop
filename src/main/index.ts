@@ -21,10 +21,9 @@ import { addSplashLog, createSplashWindow } from "./splash";
 import { isDeckGameMode } from "./utils/steamOS";
 
 if (process.platform === "linux") {
-    const hasToggleMic = process.argv.includes("--toggle-mic");
-    const hasToggleDeafen = process.argv.includes("--toggle-deafen");
-    if (hasToggleMic || hasToggleDeafen) {
-        const command = hasToggleMic ? "VCD_TOGGLE_SELF_MUTE\n" : "VCD_TOGGLE_SELF_DEAF\n";
+    const toggleType = process.argv.find(arg => arg === "--toggle-mic" || arg === "--toggle-deafen");
+    if (toggleType && !app.requestSingleInstanceLock({ IS_DEV })) {
+        const command = toggleType === "--toggle-mic" ? "VCD_TOGGLE_SELF_MUTE\n" : "VCD_TOGGLE_SELF_DEAF\n";
         writeFileSync(socketFile, command);
         process.exit(0);
     }
