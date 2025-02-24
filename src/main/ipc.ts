@@ -180,7 +180,7 @@ open(VENCORD_QUICKCSS_FILE, "a+").then(fd => {
 mkdirSync(VENCORD_THEMES_DIR, { recursive: true });
 watch(
     VENCORD_THEMES_DIR,
-    { 
+    {
         persistent: false,
         recursive: true
     },
