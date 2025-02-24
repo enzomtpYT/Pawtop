@@ -180,7 +180,10 @@ open(VENCORD_QUICKCSS_FILE, "a+").then(fd => {
 mkdirSync(VENCORD_THEMES_DIR, { recursive: true });
 watch(
     VENCORD_THEMES_DIR,
-    { persistent: false },
+    { 
+        persistent: false,
+        recursive: true
+    },
     debounce(() => {
         mainWin?.webContents.postMessage("VencordThemeUpdate", void 0);
     })
