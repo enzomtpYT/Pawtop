@@ -22,6 +22,7 @@ You can join our [discord server](https://discord.gg/5Xh2W87egW) for commits, ch
 -   Custom Arguments from [this PR](https://github.com/Equicord/Equibop/pull/46)
 -   Remove (#) title prefix when Notification Badge option is toggled from [this PR](https://github.com/Vencord/Vesktop/pull/686)
 -   Add Error Handling to Splash Screen from [this PR](https://github.com/Vencord/Vesktop/pull/1093)
+-   Allow patching video & audio devices into screen share from [this PR](https://github.com/Vencord/Vesktop/pull/195)
 
 **Linux Note**:
 -   You can use the `--toggle-mic` & `--toggle-deafen` flags to toggle your microphone and deafen status from the terminal.
