@@ -59,6 +59,14 @@
             outline: 1px solid var(--fg-semi-trans);
         }
 
+        .message {
+            top: 70%;
+            word-break: break-word;
+            padding: 0 16px;
+            position: absolute;
+            font-size: 14px
+        }
+
         p {
             text-align: center;
         }
@@ -69,13 +77,14 @@
     </style>
 </head>
 
-<body>
+<body  style="overflow: hidden;">
     <div class="wrapper">
         <!-- the data url is here to ensure there isn't an empty frame before the image is loaded -->
         <img id="animation" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
             draggable="false" alt="animation" role="presentation" />
 
         <p>Loading Equibop...</p>
+        <p class="message"></p>
 
         <div id="progress-section">
             <div class="progressbar">
@@ -85,3 +94,12 @@
         </div>
     </div>
 </body>
+
+<script>
+    window.onload = () => {
+        const messageElement = document.querySelector('.message');
+        window.electronAPI.onUpdateMessage((message) => {
+            messageElement.textContent = message;
+        })
+    };
+</script>

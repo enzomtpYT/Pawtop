@@ -23,7 +23,8 @@ export function createSplashWindow(startMinimized = false) {
         ...SplashProps,
         icon: ICON_PATH,
         show: !startMinimized,
-        width: 300
+        width: 300,
+        webPreferences: { preload: join(__dirname, "splash_preload.js") }
     });
 
     splash.loadFile(join(VIEW_DIR, "splash.html"));
@@ -84,4 +85,8 @@ export function addSplashLog() {
  */
 export function getSplash() {
     return splash;
+}
+
+export function updateSplashMessage(message: string) {
+    if (splash && !splash.isDestroyed()) splash.webContents.send("update-splash-message", message);
 }

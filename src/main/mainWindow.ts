@@ -25,7 +25,6 @@ import { isTruthy } from "shared/utils/guards";
 import { once } from "shared/utils/once";
 import type { SettingsStore } from "shared/utils/SettingsStore";
 
-import { sleep } from "../shared/utils/sleep";
 import { createAboutWindow } from "./about";
 import { initArRPC } from "./arrpc";
 import {
@@ -42,7 +41,7 @@ import { darwinURL } from "./index";
 import { sendRendererCommand } from "./ipcCommands";
 import { initKeybinds } from "./keybinds";
 import { Settings, State, VencordSettings } from "./settings";
-import { addSplashLog, splash } from "./splash";
+import { addSplashLog, splash, updateSplashMessage } from "./splash";
 import { setTrayIcon } from "./tray";
 import { makeLinksOpenExternally } from "./utils/makeLinksOpenExternally";
 import { applyDeckKeyboardFix, askToApplySteamLayout, isDeckGameMode } from "./utils/steamOS";
@@ -498,29 +497,33 @@ function createMainWindow() {
     win.webContents.setUserAgent(BrowserUserAgent);
     addSplashLog();
 
-    const loadDiscord = async (iteration: number = 0) => {
-        try {
-            await loadUrl(darwinURL || process.argv.find(arg => arg.startsWith("discord://")));
-        } catch (error) {
-            console.error((error as Error).message);
-            await sleep(2000 * iteration); // Slow down if connection fails multiple times
-            await loadDiscord(iteration++);
-        }
-    };
-
+    loadUrl(darwinURL || process.argv.find(arg => arg.startsWith("discord://")));
     addSplashLog();
-
-    loadDiscord();
 
     return win;
 }
 
 const runVencordMain = once(() => require(VENCORD_DIR));
 
+import { EventEmitter } from "events";
+const eventCar = new EventEmitter();
+
 export function loadUrl(uri: string | undefined) {
     const branch = Settings.store.discordBranch;
     const subdomain = branch === "canary" || branch === "ptb" ? `${branch}.` : "";
-    mainWin.loadURL(`https://${subdomain}discord.com/${uri ? new URL(uri).pathname.slice(1) || "app" : "app"}`);
+    mainWin
+        .loadURL(`https://${subdomain}discord.com/${uri ? new URL(uri).pathname.slice(1) || "app" : "app"}`)
+        .then(() => eventCar.emit("app-loaded"))
+        .catch(error => retryUrl(error.url, error.code));
+}
+
+const retryDelay = 1000;
+function retryUrl(url: string, description: string) {
+    console.log(`retrying in ${retryDelay}ms`);
+    updateSplashMessage(description);
+    setTimeout(() => {
+        loadUrl(url);
+    }, retryDelay);
 }
 
 export async function createWindows() {
@@ -539,7 +542,7 @@ export async function createWindows() {
     addSplashLog();
     mainWin = createMainWindow();
 
-    mainWin.webContents.on("did-finish-load", () => {
+    eventCar.on("app-loaded", () => {
         splash?.destroy();
 
         if (!startMinimized) {
@@ -568,6 +571,8 @@ export async function createWindows() {
     });
 
     mainWin.webContents.on("did-navigate", (_, url: string, responseCode: number) => {
+        if (!splash?.isDestroyed()) updateSplashMessage(""); // clear the message
+
         // check url to ensure app doesn't loop
         if (responseCode >= 300 && new URL(url).pathname !== `/app`) {
             loadUrl(undefined);
