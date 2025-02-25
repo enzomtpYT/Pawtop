@@ -1,7 +1,7 @@
 /*
  * Vesktop, a desktop app aiming to give you a snappier Discord Experience
- * Copyright (c) 2025 Vendicated and Vesktop contributorss
- * SPDX-License-Identifier: GPL-3.0 or later
+ * Copyright (c) 2025 Vendicated and Vesktop contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 import { app } from "electron";
@@ -49,7 +49,7 @@ export const VENCORD_THEMES_DIR = join(DATA_DIR, "themes");
 // as otherwise "DATA_DIR" (which is used by ./settings) will be uninitialised
 export const VENCORD_DIR = (() => {
     const { State } = require("./settings") as typeof import("./settings");
-    return State.store.vencordDir ? join(State.store.vencordDir, "equibop") : join(SESSION_DATA_DIR, "equicord.asar");
+    return State.store.equicordDir ? join(State.store.equicordDir, "equibop") : join(SESSION_DATA_DIR, "equicord.asar");
 })();
 
 export const USER_AGENT = `Equibop/${app.getVersion()} (https://github.com/Equicord/Equibop)`;

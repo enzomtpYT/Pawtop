@@ -1,7 +1,7 @@
 /*
  * Vesktop, a desktop app aiming to give you a snappier Discord Experience
- * Copyright (c) 2025 Vendicated and Vesktop contributorss
- * SPDX-License-Identifier: GPL-3.0 or later
+ * Copyright (c) 2025 Vendicated and Vesktop contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 if (process.platform === "linux") import("./venmic");
@@ -112,11 +112,11 @@ handle(IpcEvents.SPELLCHECK_ADD_TO_DICTIONARY, (e, word: string) => {
     e.sender.session.addWordToSpellCheckerDictionary(word);
 });
 
-handleSync(IpcEvents.GET_VENCORD_DIR, e => (e.returnValue = State.store.vencordDir));
+handleSync(IpcEvents.GET_VENCORD_DIR, e => (e.returnValue = State.store.equicordDir));
 
 handle(IpcEvents.SELECT_VENCORD_DIR, async (_e, value?: null) => {
     if (value === null) {
-        delete State.store.vencordDir;
+        delete State.store.equicordDir;
         return "ok";
     }
 
@@ -128,7 +128,7 @@ handle(IpcEvents.SELECT_VENCORD_DIR, async (_e, value?: null) => {
     const dir = res.filePaths[0];
     if (!isValidVencordInstall(dir)) return "invalid";
 
-    State.store.vencordDir = dir;
+    State.store.equicordDir = dir;
 
     return "ok";
 });

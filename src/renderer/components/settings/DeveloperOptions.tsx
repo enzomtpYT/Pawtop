@@ -1,7 +1,7 @@
 /*
  * Vesktop, a desktop app aiming to give you a snappier Discord Experience
- * Copyright (c) 2025 Vendicated and Vesktop contributorss
- * SPDX-License-Identifier: GPL-3.0 or later
+ * Copyright (c) 2025 Vendicated and Vesktop contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 import {
@@ -51,21 +51,21 @@ function openDeveloperOptionsModal(settings: Settings) {
 }
 const VencordLocationPicker: SettingsComponent = ({ settings }) => {
     const forceUpdate = useForceUpdater();
-    const vencordDir = VesktopNative.fileManager.getVencordDir();
+    const equicordDir = VesktopNative.fileManager.getEquicordDir();
 
     return (
         <>
             <Forms.FormText>
                 Equicord files are loaded from{" "}
-                {vencordDir ? (
+                {equicordDir ? (
                     <a
                         href="about:blank"
                         onClick={e => {
                             e.preventDefault();
-                            VesktopNative.fileManager.showItemInFolder(vencordDir!);
+                            VesktopNative.fileManager.showItemInFolder(equicordDir!);
                         }}
                     >
-                        {vencordDir}
+                        {equicordDir}
                     </a>
                 ) : (
                     "the default location"
@@ -75,7 +75,7 @@ const VencordLocationPicker: SettingsComponent = ({ settings }) => {
                 <Button
                     size={Button.Sizes.SMALL}
                     onClick={async () => {
-                        const choice = await VesktopNative.fileManager.selectVencordDir();
+                        const choice = await VesktopNative.fileManager.selectEquicordDir();
                         switch (choice) {
                             case "cancelled":
                                 break;
@@ -104,7 +104,7 @@ const VencordLocationPicker: SettingsComponent = ({ settings }) => {
                     size={Button.Sizes.SMALL}
                     color={Button.Colors.RED}
                     onClick={async () => {
-                        await VesktopNative.fileManager.selectVencordDir(null);
+                        await VesktopNative.fileManager.selectEquicordDir(null);
                         forceUpdate();
                     }}
                 >

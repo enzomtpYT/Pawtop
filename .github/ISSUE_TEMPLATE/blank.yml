@@ -5,10 +5,9 @@ body:
     - type: markdown
       attributes:
           value: |
-              # READ THIS BEFORE OPENING AN ISSUE
+              ![Are you a developer? No? This form is not for you!](https://github.com/Equicord/Equibop/blob/dev/.github/ISSUE_TEMPLATE/developer-banner.png?raw=true)
 
-              This form is only meant for Vesktop/Equibop developers. If you don't know what you're doing,
-              please use the bug report or feature request templates instead.
+              GitHub Issues are for developers, not support. Please use our [support server](discord.gg/5Xh2W87egW) if you are not a developer.
 
     - type: textarea
       id: content
