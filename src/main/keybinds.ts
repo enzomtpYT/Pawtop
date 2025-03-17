@@ -15,7 +15,7 @@ import { mainWin } from "./mainWindow";
 
 const xdgRuntimeDir = process.env.XDG_RUNTIME_DIR || process.env.TMP || "/tmp";
 export const socketFile = join(xdgRuntimeDir, "vesktop-ipc");
-const LOCK_FILE = join(xdgRuntimeDir, "equibop-ipc.lock");
+const LOCK_FILE = join(xdgRuntimeDir, "vesktop-ipc.lock");
 
 const Actions = new Set([IpcEvents.TOGGLE_SELF_DEAF, IpcEvents.TOGGLE_SELF_MUTE]);
 

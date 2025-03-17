@@ -26,7 +26,7 @@ if (process.platform === "linux") {
         if (!app.requestSingleInstanceLock({ IS_DEV })) {
             const command = toggleType === "--toggle-mic" ? "VCD_TOGGLE_SELF_MUTE\n" : "VCD_TOGGLE_SELF_DEAF\n";
             writeFileSync(socketFile, command);
-            app.quit();
+            process.exit(0);
         }
     }
 }
