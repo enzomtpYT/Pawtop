@@ -12,7 +12,7 @@ import { writeFileSync } from "fs";
 
 import { DATA_DIR } from "./constants";
 import { createFirstLaunchTour } from "./firstLaunch";
-import { socketFile } from "./keybinds";
+import { initKeybinds, socketFile } from "./keybinds";
 import { createWindows, mainWin } from "./mainWindow";
 import { registerMicrophonePermissionsHandler, registerVideoPermissionsHandler } from "./mediaPermissions";
 import { registerScreenShareHandler } from "./screenShare";
@@ -22,12 +22,15 @@ import { isDeckGameMode } from "./utils/steamOS";
 
 if (process.platform === "linux") {
     const toggleType = process.argv.find(arg => arg === "--toggle-mic" || arg === "--toggle-deafen");
-    if (toggleType && !app.requestSingleInstanceLock({ IS_DEV })) {
-        const command = toggleType === "--toggle-mic" ? "VCD_TOGGLE_SELF_MUTE\n" : "VCD_TOGGLE_SELF_DEAF\n";
-        writeFileSync(socketFile, command);
-        process.exit(0);
+    if (toggleType) {
+        if (!app.requestSingleInstanceLock({ IS_DEV })) {
+            const command = toggleType === "--toggle-mic" ? "VCD_TOGGLE_SELF_MUTE\n" : "VCD_TOGGLE_SELF_DEAF\n";
+            writeFileSync(socketFile, command);
+            app.quit();
+        }
     }
 }
+
 if (IS_DEV) {
     require("source-map-support").install();
 } else {
@@ -41,6 +44,7 @@ process.env.EQUICORD_USER_DATA_DIR = DATA_DIR;
 
 function init() {
     app.setAsDefaultProtocolClient("discord");
+    initKeybinds();
 
     const { disableSmoothScroll, hardwareAcceleration, splashAnimationPath, arguments: args } = Settings.store;
 
@@ -92,12 +96,15 @@ function init() {
     // In the Flatpak on SteamOS the theme is detected as light, but SteamOS only has a dark mode, so we just override it
     if (isDeckGameMode) nativeTheme.themeSource = "dark";
 
-    app.on("second-instance", (_event, _cmdLine, _cwd, data: any) => {
+    app.on("second-instance", (_event, commandLine, _cwd, data: any) => {
         if (data.IS_DEV) app.quit();
         else if (mainWin) {
-            if (mainWin.isMinimized()) mainWin.restore();
-            if (!mainWin.isVisible()) mainWin.show();
-            mainWin.focus();
+            const isToggleCommand = commandLine.some(arg => arg === "--toggle-mic" || arg === "--toggle-deafen");
+            if (!isToggleCommand) {
+                if (mainWin.isMinimized()) mainWin.restore();
+                if (!mainWin.isVisible()) mainWin.show();
+                mainWin.focus();
+            }
         }
     });
 

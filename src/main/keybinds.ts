@@ -5,7 +5,7 @@
  */
 
 import { spawnSync } from "node:child_process";
-import { constants, existsSync, open, unlinkSync } from "node:fs";
+import { closeSync, constants, existsSync, open, openSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { Socket } from "net";
@@ -15,6 +15,7 @@ import { mainWin } from "./mainWindow";
 
 const xdgRuntimeDir = process.env.XDG_RUNTIME_DIR || process.env.TMP || "/tmp";
 export const socketFile = join(xdgRuntimeDir, "vesktop-ipc");
+const LOCK_FILE = join(xdgRuntimeDir, "equibop-ipc.lock");
 
 const Actions = new Set([IpcEvents.TOGGLE_SELF_DEAF, IpcEvents.TOGGLE_SELF_MUTE]);
 
@@ -73,10 +74,34 @@ function cleanup() {
     }
 }
 
-process.on("exit", cleanup);
+function acquireLock() {
+    try {
+        const fd = openSync(LOCK_FILE, constants.O_CREAT | constants.O_EXCL | constants.O_RDWR);
+        writeFileSync(fd, process.pid.toString());
+        closeSync(fd);
+        return true;
+    } catch (err) {
+        return false;
+    }
+}
 
 export function initKeybinds() {
+    if (!acquireLock()) {
+        console.log("Another instance holds the lock, skipping keybinds initialization");
+        return;
+    }
+
     if (createFIFO()) {
         openFIFO();
     }
+
+    process.on("exit", () => {
+        try {
+            if (existsSync(LOCK_FILE)) {
+                unlinkSync(LOCK_FILE);
+            }
+        } catch (err) {
+            console.error("Failed to remove lock file:", err);
+        }
+    });
 }
