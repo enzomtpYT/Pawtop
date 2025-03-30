@@ -6,31 +6,19 @@
 
 import "./ipc";
 
-import { app, BrowserWindow, nativeTheme, net, protocol } from "electron";
+import { app, BrowserWindow, ipcMain, nativeTheme, net, protocol } from "electron";
 import { autoUpdater } from "electron-updater";
-import { writeFileSync } from "fs";
+import { IpcEvents } from "shared/IpcEvents";
 
 import { DATA_DIR } from "./constants";
 import { createFirstLaunchTour } from "./firstLaunch";
-import { initKeybinds, socketFile } from "./keybinds";
+import { initKeybinds } from "./keybinds";
 import { createWindows, mainWin } from "./mainWindow";
 import { registerMicrophonePermissionsHandler, registerVideoPermissionsHandler } from "./mediaPermissions";
 import { registerScreenShareHandler } from "./screenShare";
 import { Settings, State } from "./settings";
 import { addSplashLog, createSplashWindow } from "./splash";
 import { isDeckGameMode } from "./utils/steamOS";
-
-if (process.platform === "linux") {
-    const toggleType = process.argv.find(arg => arg === "--toggle-mic" || arg === "--toggle-deafen");
-    if (toggleType) {
-        if (!app.requestSingleInstanceLock({ IS_DEV })) {
-            const command = toggleType === "--toggle-mic" ? "VCD_TOGGLE_SELF_MUTE\n" : "VCD_TOGGLE_SELF_DEAF\n";
-            writeFileSync(socketFile, command);
-            process.exit(0);
-        }
-    }
-}
-
 if (IS_DEV) {
     require("source-map-support").install();
 } else {
@@ -100,7 +88,12 @@ function init() {
         if (data.IS_DEV) app.quit();
         else if (mainWin) {
             const isToggleCommand = commandLine.some(arg => arg === "--toggle-mic" || arg === "--toggle-deafen");
-            if (!isToggleCommand) {
+            if (isToggleCommand) {
+                const command = commandLine.includes("--toggle-mic") 
+                    ? IpcEvents.TOGGLE_SELF_MUTE 
+                    : IpcEvents.TOGGLE_SELF_DEAF;
+                mainWin.webContents.send(command);
+            } else {
                 if (mainWin.isMinimized()) mainWin.restore();
                 if (!mainWin.isVisible()) mainWin.show();
                 mainWin.focus();

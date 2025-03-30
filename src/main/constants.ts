@@ -21,22 +21,6 @@ export const DATA_DIR =
 
 mkdirSync(DATA_DIR, { recursive: true });
 
-// TODO: remove eventually
-if (existsSync(LEGACY_DATA_DIR)) {
-    try {
-        console.warn("Detected legacy settings dir", LEGACY_DATA_DIR + ".", "migrating to", DATA_DIR);
-        for (const file of readdirSync(LEGACY_DATA_DIR)) {
-            renameSync(join(LEGACY_DATA_DIR, file), join(DATA_DIR, file));
-        }
-        rmdirSync(LEGACY_DATA_DIR);
-        renameSync(
-            join(app.getPath("appData"), "EquicordDesktop", "IndexedDB"),
-            join(DATA_DIR, "sessionData", "IndexedDB")
-        );
-    } catch (e) {
-        console.error("Migration failed", e);
-    }
-}
 const SESSION_DATA_DIR = join(DATA_DIR, "sessionData");
 app.setPath("sessionData", SESSION_DATA_DIR);
 
