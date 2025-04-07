@@ -17,4 +17,3 @@ import "./tray";
 import "./streamerMode";
 import "./windowMethods";
 import "./hideDownloadAppsButton";
-import "./disableDeepLinks";
