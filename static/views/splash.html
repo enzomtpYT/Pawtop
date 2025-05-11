@@ -64,7 +64,7 @@
             word-break: break-word;
             padding: 0 16px;
             position: absolute;
-            font-size: 14px
+            font-size: 14px;
         }
 
         p {
@@ -77,7 +77,7 @@
     </style>
 </head>
 
-<body  style="overflow: hidden;">
+<body style="overflow: hidden;">
     <div class="wrapper">
         <!-- the data url is here to ensure there isn't an empty frame before the image is loaded -->
         <img id="animation" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
@@ -96,10 +96,10 @@
 </body>
 
 <script>
-    window.onload = () => {
+    document.addEventListener("DOMContentLoaded", () => {
         const messageElement = document.querySelector('.message');
-        window.electronAPI.onUpdateMessage((message) => {
+        VesktopSplashNative.onUpdateMessage(message => {
             messageElement.textContent = message;
-        })
-    };
+        });
+    });
 </script>

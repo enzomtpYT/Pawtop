@@ -27,37 +27,37 @@
     },
     "dependencies": {
         "arrpc": "github:OpenAsar/arrpc#2234e9c9111f4c42ebcc3aa6a2215bfd979eef77",
-        "axios": "^1.7.7",
-        "electron-updater": "^6.3.9"
+        "axios": "^1.9.0",
+        "electron-updater": "^6.6.2"
     },
     "optionalDependencies": {
-        "@vencord/venmic": "^6.1.0",
-        "@homebridge/dbus-native": "0.6.0"
+        "@homebridge/dbus-native": "0.6.0",
+        "@vencord/venmic": "^6.1.0"
     },
     "devDependencies": {
         "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
-        "@stylistic/eslint-plugin": "^4.0.0",
-        "@types/node": "^22.13.4",
+        "@stylistic/eslint-plugin": "^4.2.0",
+        "@types/node": "^22.15.17",
         "@types/react": "18.3.1",
         "@vencord/types": "^1.11.5",
-        "dotenv": "^16.4.7",
-        "electron": "^34.2.0",
+        "dotenv": "^16.5.0",
+        "electron": "^34.5.5",
         "electron-builder": "^25.1.8",
-        "esbuild": "^0.25.0",
-        "eslint": "^9.20.1",
+        "esbuild": "^0.25.4",
+        "eslint": "^9.26.0",
         "eslint-import-resolver-alias": "^1.1.2",
         "eslint-plugin-path-alias": "^2.1.0",
-        "eslint-plugin-prettier": "^5.2.3",
+        "eslint-plugin-prettier": "^5.4.0",
         "eslint-plugin-simple-header": "^1.2.2",
         "eslint-plugin-simple-import-sort": "^12.1.1",
         "eslint-plugin-unused-imports": "^4.1.4",
-        "prettier": "^3.5.1",
+        "prettier": "^3.5.3",
         "source-map-support": "^0.5.21",
-        "tsx": "^4.19.2",
-        "type-fest": "^4.35.0",
-        "typescript": "^5.7.3",
-        "typescript-eslint": "^8.24.1",
-        "xml-formatter": "^3.6.4"
+        "tsx": "^4.19.4",
+        "type-fest": "^4.41.0",
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.32.0",
+        "xml-formatter": "^3.6.5"
     },
     "packageManager": "pnpm@9.1.0",
     "engines": {

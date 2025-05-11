@@ -249,7 +249,7 @@ function initMenuBar(win: BrowserWindow) {
         }
     ] satisfies MenuItemList;
 
-    const menu = Menu.buildFromTemplate([
+    const menuItems = [
         {
             label: "Equibop",
             role: "appMenu",
@@ -258,8 +258,10 @@ function initMenuBar(win: BrowserWindow) {
         { role: "fileMenu" },
         { role: "editMenu" },
         { role: "viewMenu" },
-        { role: "windowMenu" }
-    ]);
+        isDarwin && { role: "windowMenu" }
+    ] satisfies MenuItemList;
+
+    const menu = Menu.buildFromTemplate(menuItems.filter(isTruthy));
 
     Menu.setApplicationMenu(menu);
 }
