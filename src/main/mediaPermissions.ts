@@ -6,7 +6,7 @@
 
 import { session, systemPreferences } from "electron";
 
-export function registerMicrophonePermissionsHandler() {
+export function registerMediaPermissionsHandler() {
     if (process.platform !== "darwin") return;
 
     session.defaultSession.setPermissionRequestHandler(async (_webContents, permission, callback, details) => {
@@ -14,27 +14,10 @@ export function registerMicrophonePermissionsHandler() {
 
         if ("mediaTypes" in details) {
             if (details.mediaTypes?.includes("audio")) {
-                if (systemPreferences.getMediaAccessStatus("microphone") !== "granted") {
-                    await systemPreferences.askForMediaAccess("microphone").then(e => (granted = e));
-                }
+                granted &&= await systemPreferences.askForMediaAccess("microphone");
             }
-        }
-
-        callback(granted);
-    });
-}
-
-export function registerVideoPermissionsHandler() {
-    if (process.platform !== "darwin") return;
-
-    session.defaultSession.setPermissionRequestHandler(async (_webContents, permission, callback, details) => {
-        let granted = true;
-
-        if ("mediaTypes" in details) {
             if (details.mediaTypes?.includes("video")) {
-                if (systemPreferences.getMediaAccessStatus("camera") !== "granted") {
-                    await systemPreferences.askForMediaAccess("camera").then(e => (granted = e));
-                }
+                granted &&= await systemPreferences.askForMediaAccess("camera");
             }
         }
 

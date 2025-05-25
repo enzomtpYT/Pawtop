@@ -14,7 +14,7 @@ import { DATA_DIR } from "./constants";
 import { createFirstLaunchTour } from "./firstLaunch";
 import { initKeybinds } from "./keybinds";
 import { createWindows, mainWin } from "./mainWindow";
-import { registerMicrophonePermissionsHandler, registerVideoPermissionsHandler } from "./mediaPermissions";
+import { registerMediaPermissionsHandler } from "./mediaPermissions";
 import { registerScreenShareHandler } from "./screenShare";
 import { Settings, State } from "./settings";
 import { addSplashLog, createSplashWindow } from "./splash";
@@ -108,8 +108,7 @@ function init() {
         addSplashLog();
 
         registerScreenShareHandler();
-        registerMicrophonePermissionsHandler();
-        registerVideoPermissionsHandler();
+        registerMediaPermissionsHandler();
         // register file handler so we can load the custom splash animation from the user's filesystem
         protocol.handle("splash-animation", () => {
             return net.fetch("file:///" + splashAnimationPath);
