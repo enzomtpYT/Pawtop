@@ -2,7 +2,7 @@
 
 [![Equicord](https://img.shields.io/badge/Equicord-grey?style=flat)](https://github.com/Equicord/Equicord)
 [![Tests](https://github.com/Equicord/Equibop/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/Equicord/Equibop/actions/workflows/test.yml)
-[![Discord](https://img.shields.io/discord/1207691698386501634.svg?color=768AD4&label=Discord&logo=discord&logoColor=white)](https://discord.gg/5Xh2W87egW)
+[![Discord](https://img.shields.io/discord/1173279886065029291.svg?color=768AD4&label=Discord&logo=discord&logoColor=white)](https://discord.gg/5Xh2W87egW)
 
 Equibop is a fork of [Vesktop](https://github.com/Vencord/Vesktop).
 
@@ -10,26 +10,27 @@ You can join our [discord server](https://discord.gg/5Xh2W87egW) for commits, ch
 
 ## Main features
 
--   Much more lightweight and faster than the official Discord app
--   Linux Screenshare with sound & wayland
+- Much more lightweight and faster than the official Discord app
+- Linux Screenshare with sound & wayland
 
 **Extra included changes**
 
--   Equicord preinstalled
--   Custom Splash animations from [this PR](https://github.com/Vencord/Vesktop/pull/355)
--   Tray Customization & Voice detection and Badge from [this PR](https://github.com/Vencord/Vesktop/pull/517)
--   Global Keybind to Toggle voice status from [this PR](https://github.com/Vencord/Vesktop/pull/609)
--   Custom Arguments from [this PR](https://github.com/Equicord/Equibop/pull/46)
--   Remove (#) title prefix when Notification Badge option is toggled from [this PR](https://github.com/Vencord/Vesktop/pull/686)
--   Add Error Handling to Splash Screen from [this PR](https://github.com/Vencord/Vesktop/pull/1093)
--   Allow patching video & audio devices into screen share from [this PR](https://github.com/Vencord/Vesktop/pull/195)
+- Equicord preinstalled
+- Custom Splash animations from [this PR](https://github.com/Vencord/Vesktop/pull/355)
+- Tray Customization & Voice detection and Badge from [this PR](https://github.com/Vencord/Vesktop/pull/517)
+- Global Keybind to Toggle voice status from [this PR](https://github.com/Vencord/Vesktop/pull/609)
+- Custom Arguments from [this PR](https://github.com/Equicord/Equibop/pull/46)
+- Remove (#) title prefix when Notification Badge option is toggled from [this PR](https://github.com/Vencord/Vesktop/pull/686)
+- Add Error Handling to Splash Screen from [this PR](https://github.com/Vencord/Vesktop/pull/1093)
+- Allow patching video & audio devices into screen share from [this PR](https://github.com/Vencord/Vesktop/pull/195)
 
 **Linux Note**:
--   You can use the `--toggle-mic` & `--toggle-deafen` flags to toggle your microphone and deafen status from the terminal.
+
+- You can use the `--toggle-mic` & `--toggle-deafen` flags to toggle your microphone and deafen status from the terminal.
 
 **Not fully Supported**:
 <!-- not supported on windows yet lol -->
--   Global Keybinds
+- Global Keybinds
 
 ## Installing
 
@@ -48,11 +49,13 @@ If you don't know the difference, pick the Installer.
 ### Mac
 
 These work on both M Series and Intel Series Macs
--   [DMG](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-mac-universal.dmg)
--   [ZIP](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-mac-universal.zip)
+
+- [DMG](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-mac-universal.dmg)
+- [ZIP](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-mac-universal.zip)
 
 ### Linux
-[![equibop](https://img.shields.io/badge/AVAILABLE_ON_THE_AUR-333232?style=for-the-badge&logo=arch-linux&logoColor=0F94D2&labelColor=%23171717)](https://aur.archlinux.org/packages?O=0&K=equibop)
+
+[![Equibop](https://img.shields.io/badge/AVAILABLE_ON_THE_AUR-333232?style=for-the-badge&logo=arch-linux&logoColor=0F94D2&labelColor=%23171717)](https://aur.archlinux.org/packages?O=0&K=equibop)
 <br>
 <a href="https://flathub.org/apps/io.github.equicord.equibop">
   <img src="https://flathub.org/api/badge?svg" alt="Download on Flathub" style="width:220px; height:auto;">
@@ -61,15 +64,15 @@ These work on both M Series and Intel Series Macs
 If you don't know the difference, pick amd64.
 
 - amd64 / x86_64
-    - [AppImage](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-x86_64.AppImage)
-    - [Ubuntu/Debian (.deb)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-amd64.deb)
-    - [Fedora/RHEL (.rpm)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-x86_64.rpm)
-    - [tarball](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-x64.tar.gz)
+  - [AppImage](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-x86_64.AppImage)
+  - [Ubuntu/Debian (.deb)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-amd64.deb)
+  - [Fedora/RHEL (.rpm)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-x86_64.rpm)
+  - [tarball](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-x64.tar.gz)
 - Arm® 64 / aarch64
-    - [AppImage](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-arm64.AppImage)
-    - [Ubuntu/Debian (.deb)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-arm64.deb)
-    - [Fedora/RHEL (.rpm)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-aarch64.rpm)
-    - [tarball](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-arm64.tar.gz)
+  - [AppImage](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-arm64.AppImage)
+  - [Ubuntu/Debian (.deb)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-arm64.deb)
+  - [Fedora/RHEL (.rpm)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-aarch64.rpm)
+  - [tarball](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-arm64.tar.gz)
 
 #### Community packages
 
