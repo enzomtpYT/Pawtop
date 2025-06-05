@@ -7,7 +7,7 @@
 import "./traySetting.css";
 
 import { Margins, Modals, ModalSize, openModal } from "@vencord/types/utils";
-import { findByCodeLazy } from "@vencord/types/webpack";
+import { findComponentByCodeLazy } from "@vencord/types/webpack";
 import { Button, Forms, Select, Switch, Toasts } from "@vencord/types/webpack/common";
 import { setCurrentTrayIcon } from "renderer/patches/tray";
 import { useSettings } from "renderer/settings";
@@ -15,7 +15,10 @@ import { isLinux } from "renderer/utils";
 
 import { SettingsComponent } from "./Settings";
 
-const ColorPicker = findByCodeLazy("#{intl::USER_SETTINGS_PROFILE_COLOR_SELECT_COLOR}", ".BACKGROUND_PRIMARY)");
+const ColorPicker = findComponentByCodeLazy(
+    "#{intl::USER_SETTINGS_PROFILE_COLOR_SELECT_COLOR}",
+    ".BACKGROUND_PRIMARY)"
+);
 
 function PencilIcon(onClick) {
     return (
