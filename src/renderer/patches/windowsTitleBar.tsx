@@ -24,7 +24,7 @@ if (Settings.store.customTitleBar)
             },
             // Visual Refresh
             {
-                find: '"data-windows":',
+                find: ".winButtonsWithDivider]:",
                 replacement: [
                     {
                         // TODO: Fix eslint rule
