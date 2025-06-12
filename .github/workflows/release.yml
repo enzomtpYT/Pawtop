@@ -6,6 +6,8 @@ on:
             - v*
     workflow_dispatch:
 
+permissions: write-all
+
 jobs:
     release:
         runs-on: ${{ matrix.os }}
@@ -42,11 +44,11 @@ jobs:
               run: |
                   pnpm electron-builder --${{ matrix.platform }} --publish always
               env:
-                  GH_TOKEN: ${{ secrets.ETOKEN }}
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Run Electron Builder
               if: ${{ matrix.platform == 'mac' }}
               run: |
                   pnpm electron-builder --${{ matrix.platform }} --publish always
               env:
-                  GH_TOKEN: ${{ secrets.ETOKEN }}
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
