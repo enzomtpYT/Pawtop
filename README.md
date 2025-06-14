@@ -21,7 +21,6 @@ You can join our [discord server](https://discord.gg/5Xh2W87egW) for commits, ch
 - Global Keybind to Toggle voice status from [this PR](https://github.com/Vencord/Vesktop/pull/609)
 - Custom Arguments from [this PR](https://github.com/Equicord/Equibop/pull/46)
 - Remove (#) title prefix when Notification Badge option is toggled from [this PR](https://github.com/Vencord/Vesktop/pull/686)
-- Add Error Handling to Splash Screen from [this PR](https://github.com/Vencord/Vesktop/pull/1093)
 - Allow patching video & audio devices into screen share from [this PR](https://github.com/Vencord/Vesktop/pull/195)
 
 **Linux Note**:
@@ -83,6 +82,12 @@ Below you can find unofficial packages created by the community. They are not of
 
 ## Building from Source
 
+You need to have the following dependencies installed:
+
+- [Git](https://git-scm.com/downloads)
+- [Node.js](https://nodejs.org/en/download)
+- pnpm: `npm install --global pnpm`
+
 Packaging will create builds in the dist/ folder
 
 > [!NOTE]
@@ -98,10 +103,10 @@ pnpm i
 # Either run it without packaging
 pnpm start
 
-# Or package
+# Or package (will build packages for your OS)
 pnpm package
 
-# Or only build the pacman target
+# Or only build the Linux Pacman package
 pnpm package --linux pacman
 
 # Or package to a directory only

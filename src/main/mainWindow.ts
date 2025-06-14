@@ -17,6 +17,7 @@ import {
     systemPreferences,
     Tray
 } from "electron";
+import { EventEmitter } from "events";
 import { rm } from "fs/promises";
 import { join } from "path";
 import { IpcCommands, IpcEvents } from "shared/IpcEvents";
@@ -391,6 +392,15 @@ function initSpellCheck(win: BrowserWindow) {
     initSpellCheckLanguages(win, Settings.store.spellCheckLanguages);
 }
 
+function initDevtoolsListeners(win: BrowserWindow) {
+    win.webContents.on("devtools-opened", () => {
+        win.webContents.send(IpcEvents.DEVTOOLS_OPENED);
+    });
+    win.webContents.on("devtools-closed", () => {
+        win.webContents.send(IpcEvents.DEVTOOLS_CLOSED);
+    });
+}
+
 function initStaticTitle(win: BrowserWindow) {
     const listener = (e: { preventDefault: Function }) => e.preventDefault();
 
@@ -492,6 +502,7 @@ function createMainWindow() {
     makeLinksOpenExternally(win);
     initSettingsListeners(win);
     initSpellCheck(win);
+    initDevtoolsListeners(win);
     initStaticTitle(win);
 
     addSplashLog();
@@ -499,6 +510,7 @@ function createMainWindow() {
     win.webContents.setUserAgent(BrowserUserAgent);
     addSplashLog();
 
+    // if the open-url event is fired (in index.ts) while starting up, darwinURL will be set. If not fall back to checking the process args (which Windows and Linux use for URI calling.)
     loadUrl(darwinURL || process.argv.find(arg => arg.startsWith("discord://")));
     addSplashLog();
 
@@ -507,25 +519,24 @@ function createMainWindow() {
 
 const runVencordMain = once(() => require(VENCORD_DIR));
 
-import { EventEmitter } from "events";
-const eventCar = new EventEmitter();
+const loadEvents = new EventEmitter();
 
 export function loadUrl(uri: string | undefined) {
     const branch = Settings.store.discordBranch;
     const subdomain = branch === "canary" || branch === "ptb" ? `${branch}.` : "";
+
+    // we do not rely on 'did-finish-load' because it fires even if loadURL fails which triggers early detruction of the splash
     mainWin
         .loadURL(`https://${subdomain}discord.com/${uri ? new URL(uri).pathname.slice(1) || "app" : "app"}`)
-        .then(() => eventCar.emit("app-loaded"))
+        .then(() => loadEvents.emit("app-loaded"))
         .catch(error => retryUrl(error.url, error.code));
 }
 
 const retryDelay = 1000;
 function retryUrl(url: string, description: string) {
     console.log(`retrying in ${retryDelay}ms`);
-    updateSplashMessage(description);
-    setTimeout(() => {
-        loadUrl(url);
-    }, retryDelay);
+    updateSplashMessage(`Failed to load Discord: ${description}`);
+    setTimeout(() => loadUrl(url), retryDelay);
 }
 
 export async function createWindows() {
@@ -544,7 +555,7 @@ export async function createWindows() {
     addSplashLog();
     mainWin = createMainWindow();
 
-    eventCar.on("app-loaded", () => {
+    loadEvents.on("app-loaded", () => {
         splash?.destroy();
 
         if (!startMinimized) {
@@ -573,7 +584,7 @@ export async function createWindows() {
     });
 
     mainWin.webContents.on("did-navigate", (_, url: string, responseCode: number) => {
-        if (!splash?.isDestroyed()) updateSplashMessage(""); // clear the message
+        updateSplashMessage(""); // clear the splash message
 
         // check url to ensure app doesn't loop
         if (responseCode >= 300 && new URL(url).pathname !== `/app`) {

@@ -15,7 +15,6 @@ export const PORTABLE =
     !process.execPath.toLowerCase().endsWith("electron.exe") &&
     !existsSync(join(equibopDir, "Uninstall Equibop.exe"));
 
-const LEGACY_DATA_DIR = join(app.getPath("appData"), "EquicordDesktop", "EquicordDesktop");
 export const DATA_DIR =
     process.env.EQUICORD_USER_DATA_DIR || (PORTABLE ? join(equibopDir, "Data") : join(app.getPath("userData")));
 

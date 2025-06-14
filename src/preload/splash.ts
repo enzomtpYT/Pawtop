@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-const { contextBridge, ipcRenderer } = require("electron/renderer");
+import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld("electronAPI", {
-    onUpdateMessage: callback => ipcRenderer.on("update-splash-message", (_event, message: string) => callback(message))
+contextBridge.exposeInMainWorld("VesktopSplashNative", {
+    onUpdateMessage(callback: (message: string) => void) {
+        ipcRenderer.on("update-splash-message", (_, message: string) => callback(message));
+    }
 });

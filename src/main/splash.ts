@@ -16,7 +16,7 @@ export let splash: BrowserWindow;
 const totalTasks = 12;
 let doneTasks = 0;
 
-export function createSplashWindow(startMinimized = false) {
+export function createSplashWindow() {
     const { splashBackground, splashColor, splashTheming, splashAnimationPath, splashProgress } = Settings.store;
 
     splash = new BrowserWindow({
@@ -24,7 +24,9 @@ export function createSplashWindow(startMinimized = false) {
         icon: ICON_PATH,
         show: !process.argv.includes("--start-minimized"),
         width: 300,
-        webPreferences: { preload: join(__dirname, "splash_preload.js") }
+        webPreferences: {
+            preload: join(__dirname, "splashPreload.js")
+        }
     });
 
     splash.loadFile(join(VIEW_DIR, "splash.html"));

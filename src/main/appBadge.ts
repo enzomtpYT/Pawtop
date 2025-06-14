@@ -55,13 +55,11 @@ export function setBadgeCount(count: number) {
             });
             break;
         case "darwin":
-            if (app.dock) {
-                if (count === 0) {
-                    app.dock.setBadge("");
-                    break;
-                }
-                app.dock.setBadge(count === -1 ? "•" : count.toString());
+            if (count === 0) {
+                app.dock!.setBadge("");
+                break;
             }
+            app.dock!.setBadge(count === -1 ? "•" : count.toString());
             break;
         case "win32":
             const [index, description] = getBadgeIndexAndDescription(count);

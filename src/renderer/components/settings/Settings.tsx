@@ -7,7 +7,7 @@
 import "./settings.css";
 
 import { ErrorBoundary } from "@vencord/types/components";
-import { Forms, Switch, Text } from "@vencord/types/webpack/common";
+import { Forms, Text } from "@vencord/types/webpack/common";
 import { ComponentType } from "react";
 import { Settings, useSettings } from "renderer/settings";
 import { isLinux, isMac, isWindows } from "renderer/utils";
@@ -25,6 +25,7 @@ import {
     TrayIconPicker,
     TraySwitch
 } from "./TraySettings";
+import { VesktopSettingsSwitch } from "./VesktopSettingsSwitch";
 import { WindowsTransparencyControls } from "./WindowsTransparencyControls";
 interface BooleanSetting {
     key: keyof typeof Settings.store;
@@ -46,6 +47,14 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
             title: "Hardware Acceleration",
             description: "Enable hardware acceleration",
             defaultValue: true
+        },
+        {
+            key: "hardwareVideoAcceleration",
+            title: "Video Hardware Acceleration",
+            description:
+                "Enable hardware video acceleration. This can improve performance of screenshare and video playback, but may cause graphical glitches and infinitely loading streams.",
+            defaultValue: false,
+            disabled: () => Settings.store.hardwareAcceleration === false
         }
     ],
     "User Interface": [
@@ -156,32 +165,35 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
 function SettingsSections() {
     const Settings = useSettings();
 
-    const sections = Object.entries(SettingsOptions).map(([title, settings]) => (
-        <Forms.FormSection
-            title={title}
-            key={title}
-            className="vcd-settings-section"
-            titleClassName="vcd-settings-title"
-        >
-            {settings.map(Setting => {
-                if (typeof Setting === "function") return <Setting settings={Settings} />;
+    const sections = Object.entries(SettingsOptions).map(([title, settings], i, arr) => (
+        <div key={title} className="vcd-settings-category">
+            <Text variant="heading-lg/semibold" color="header-primary" className="vcd-settings-category-title">
+                {title}
+            </Text>
 
-                const { defaultValue, title, description, key, disabled, invisible } = Setting;
-                if (invisible?.()) return null;
+            <div className="vcd-settings-category-content">
+                {settings.map(Setting => {
+                    if (typeof Setting === "function") return <Setting settings={Settings} />;
 
-                return (
-                    <Switch
-                        value={Settings[key as any] ?? defaultValue}
-                        onChange={v => (Settings[key as any] = v)}
-                        note={description}
-                        disabled={disabled?.()}
-                        key={key}
-                    >
-                        {title}
-                    </Switch>
-                );
-            })}
-        </Forms.FormSection>
+                    const { defaultValue, title, description, key, disabled, invisible } = Setting;
+                    if (invisible?.()) return null;
+
+                    return (
+                        <VesktopSettingsSwitch
+                            value={Settings[key as any] ?? defaultValue}
+                            onChange={v => (Settings[key as any] = v)}
+                            note={description}
+                            disabled={disabled?.()}
+                            key={key}
+                        >
+                            {title}
+                        </VesktopSettingsSwitch>
+                    );
+                })}
+            </div>
+
+            {i < arr.length - 1 && <Forms.FormDivider className="vcd-settings-category-divider" />}
+        </div>
     ));
 
     return <>{sections}</>;
@@ -191,7 +203,9 @@ export default ErrorBoundary.wrap(
     function SettingsUI() {
         return (
             <Forms.FormSection>
-                <Text variant="heading-lg/semibold" style={{ color: "var(--header-primary)" }} tag="h2">
+                {/* FIXME: Outdated type */}
+                {/* @ts-expect-error Outdated type */}
+                <Text variant="heading-xl/semibold" color="header-primary" className="vcd-settings-title">
                     Equibop Settings
                 </Text>
                 <SettingsSections />
