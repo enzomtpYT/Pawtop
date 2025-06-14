@@ -22,7 +22,7 @@ export function createSplashWindow(startMinimized = false) {
     splash = new BrowserWindow({
         ...SplashProps,
         icon: ICON_PATH,
-        show: !startMinimized,
+        show: !process.argv.includes("--start-minimized"),
         width: 300,
         webPreferences: { preload: join(__dirname, "splash_preload.js") }
     });

@@ -41,7 +41,7 @@ import { darwinURL } from "./index";
 import { sendRendererCommand } from "./ipcCommands";
 import { initKeybinds } from "./keybinds";
 import { Settings, State, VencordSettings } from "./settings";
-import { addSplashLog, createSplashWindow, updateSplashMessage } from "./splash";
+import { addSplashLog, splash, updateSplashMessage } from "./splash";
 import { setTrayIcon } from "./tray";
 import { makeLinksOpenExternally } from "./utils/makeLinksOpenExternally";
 import { applyDeckKeyboardFix, askToApplySteamLayout, isDeckGameMode } from "./utils/steamOS";
@@ -531,9 +531,7 @@ function retryUrl(url: string, description: string) {
 export async function createWindows() {
     const startMinimized = process.argv.includes("--start-minimized");
 
-    let splash: BrowserWindow | undefined;
     if (Settings.store.enableSplashScreen !== false) {
-        splash = createSplashWindow(startMinimized);
         // SteamOS letterboxes and scales it terribly, so just full screen it
         if (isDeckGameMode) splash.setFullScreen(true);
         addSplashLog();
