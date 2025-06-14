@@ -759,6 +759,7 @@ function ModalComponent({
         audio: true,
         includeSources: "None"
     });
+
     const qualitySettings = (useVesktopState().screenshareQuality ??= {
         resolution: "720",
         frameRate: "30"
