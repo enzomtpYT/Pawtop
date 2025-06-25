@@ -28,7 +28,15 @@
     </screenshot>
   </screenshots>
   <releases>
-        <release version="v2.1.4" date="2025-05-14" type="stable">
+    <release version="v2.1.5" date="2025-06-25" type="stable">
+      <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.5</url>
+      <description>
+        <p>What's Changed:</p>
+        <p>• upgrade to all changes in vesktop v1.5.7</p>
+        <p>• fix spellcheck</p>
+      </description>
+    </release>
+    <release version="v2.1.4" date="2025-05-14" type="stable">
       <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.4</url>
       <description>
         <p>What's Changed:</p>
