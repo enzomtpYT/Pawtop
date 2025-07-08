@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { LazyComponent } from "@vencord/types/utils";
+import { FilterFn, waitFor } from "@vencord/types/webpack";
+
 // Discord deletes this from the window so we need to capture it in a variable
 export const { localStorage } = window;
 
@@ -62,3 +65,26 @@ export const classNameFactory =
         }
         return Array.from(classNames, name => prefix + name).join(" ");
     };
+
+type LazyComponentWrapper<ComponentType> = ComponentType & { $$vencordGetWrappedComponent(): ComponentType };
+
+export function waitForComponent<T extends React.ComponentType<any> = React.ComponentType<any> & Record<string, any>>(
+    name: string,
+    filter: FilterFn | string | string[]
+) {
+    let myValue: T = function () {
+        throw new Error(`Vencord could not find the ${name} Component`);
+    } as any;
+
+    const lazyComponent = LazyComponent(() => myValue) as LazyComponentWrapper<T>;
+    waitFor(
+        filter,
+        (v: any) => {
+            myValue = v;
+            Object.assign(lazyComponent, v);
+        },
+        { isIndirect: true }
+    );
+
+    return lazyComponent;
+}
