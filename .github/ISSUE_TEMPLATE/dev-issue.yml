@@ -5,10 +5,13 @@ body:
     - type: markdown
       attributes:
           value: |
-              ![Are you a developer? No? This form is not for you!](https://github.com/Equicord/Equibop/blob/dev/.github/ISSUE_TEMPLATE/developer-banner.png?raw=true)
+              # This form is reserved for Vesktop Developers. Do not open an issue.
 
-              GitHub Issues are for developers, not support. Please use our [support server](https://discord.gg/equicord-1173279886065029291) if you are not a developer.
+              Instead, use the [#support channel](https://discord.com/channels/1173279886065029291/1297590739911573585) on our [Discord server](https://equicord.org/discord) for help and reporting issues.
 
+              Your issue will be closed immediately with no comment and you will be blocked if you ignore this.
+
+              This is because 99% of issues are not actually bugs, but rather user or system issues and it adds a lot of noise to our development process.
     - type: textarea
       id: content
       attributes:
