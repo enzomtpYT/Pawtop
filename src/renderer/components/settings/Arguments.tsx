@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { Margins, Modals, ModalSize, openModal } from "@vencord/types/utils";
-import { Button, Forms, TextInput } from "@vencord/types/webpack/common";
+import { Margins, Modals, ModalSize, openModal } from "@equicord/types/utils";
+import { Button, Forms, TextInput } from "@equicord/types/webpack/common";
 import { useSettings } from "renderer/settings";
 
 import { SettingsComponent } from "./Settings";

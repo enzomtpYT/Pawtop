@@ -4,20 +4,18 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { Logger } from "@vencord/types/utils";
-import { findByPropsLazy, onceReady } from "@vencord/types/webpack";
-import { FluxDispatcher, UserStore } from "@vencord/types/webpack/common";
-
-const voiceActions = findByPropsLazy("isSelfMute");
+import { Logger } from "@equicord/types/utils";
+import { onceReady } from "@equicord/types/webpack";
+import { FluxDispatcher, UserStore, VoiceActions } from "@equicord/types/webpack/common";
 
 var isInCall = false;
 const logger = new Logger("VesktopTrayIcon");
 
 export function setCurrentTrayIcon() {
     if (isInCall) {
-        if (voiceActions.isSelfDeaf()) {
+        if (VoiceActions.isSelfDeaf()) {
             VesktopNative.tray.setIcon("deafened");
-        } else if (voiceActions.isSelfMute()) {
+        } else if (VoiceActions.isSelfMute()) {
             VesktopNative.tray.setIcon("muted");
         } else {
             VesktopNative.tray.setIcon("idle");

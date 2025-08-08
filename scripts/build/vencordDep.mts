@@ -17,7 +17,7 @@ const names = {
 
 export default globalExternalsWithRegExp({
     getModuleInfo(modulePath) {
-        const path = modulePath.replace("@vencord/types/", "");
+        const path = modulePath.replace("@equicord/types/", "");
         let varName = names[path];
         if (!varName) {
             const altMapping = names[path.split("/")[0]];
@@ -34,5 +34,5 @@ export default globalExternalsWithRegExp({
             type: "cjs"
         };
     },
-    modulePathFilter: /^@vencord\/types.+$/
+    modulePathFilter: /^@equicord\/types.+$/
 });

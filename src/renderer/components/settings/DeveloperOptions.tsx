@@ -13,8 +13,8 @@ import {
     ModalSize,
     openModal,
     useForceUpdater
-} from "@vencord/types/utils";
-import { Button, Forms, Text, Toasts } from "@vencord/types/webpack/common";
+} from "@equicord/types/utils";
+import { Button, Forms, Text, Toasts } from "@equicord/types/webpack/common";
 import { Settings } from "shared/settings";
 
 import { SettingsComponent } from "./Settings";

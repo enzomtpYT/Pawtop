@@ -6,8 +6,8 @@
 
 import "./traySetting.css";
 
-import { Margins, Modals, ModalSize, openModal } from "@vencord/types/utils";
-import { Button, ColorPicker, Forms, Select, Switch, Toasts } from "@vencord/types/webpack/common";
+import { Margins, Modals, ModalSize, openModal } from "@equicord/types/utils";
+import { Button, ColorPicker, Forms, Select, Switch, Toasts } from "@equicord/types/webpack/common";
 import { setCurrentTrayIcon } from "renderer/patches/tray";
 import { useSettings } from "renderer/settings";
 import { isLinux } from "renderer/utils";

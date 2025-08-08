@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { LazyComponent } from "@vencord/types/utils";
-import { FilterFn, waitFor } from "@vencord/types/webpack";
+import { LazyComponent } from "@equicord/types/utils";
+import { FilterFn, waitFor } from "@equicord/types/webpack";
 
 // Discord deletes this from the window so we need to capture it in a variable
 export const { localStorage } = window;

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { Logger } from "@vencord/types/utils";
-import { MediaEngineStore } from "renderer/common";
+import { Logger } from "@equicord/types/utils";
+import { MediaEngineStore } from "@equicord/types/webpack/common";
 
 const logger = new Logger("FixAutoGain");
 
