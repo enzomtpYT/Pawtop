@@ -24,8 +24,8 @@ importers:
         version: 6.6.2(patch_hash=080505564abb2ebbda932bbf8fe91540c74dd905de994888d52ffce6f882f887)
     devDependencies:
       '@equicord/types':
-        specifier: ^1.11.6
-        version: 1.11.6
+        specifier: ^1.11.7
+        version: 1.11.7
       '@fal-works/esbuild-plugin-global-externals':
         specifier: ^2.1.2
         version: 2.1.2
@@ -164,8 +164,8 @@ packages:
     resolution: {integrity: sha512-fKpv9kg4SPmt+hY7SVBnIYULE9QJl8L3sCfcBsnqbJwwBwAeTLokJ9TRt9y7bK0JAzIW2y78TVVjvnQEms/yyA==}
     engines: {node: '>=16.4'}
 
-  '@equicord/types@1.11.6':
-    resolution: {integrity: sha512-SjQpBOZEylmocZNu3yGeUNIY/NVhCMw5ILPJBT0O8HQex8lxye836o/D2BYFe52FBizNjbrhe4eqjGArbbwCTg==}
+  '@equicord/types@1.11.7':
+    resolution: {integrity: sha512-6fvbtWox0p7YN9p0uOdRfJgRyq24lff3kmcg2vmel6xTyGIRONjMCPzUi76jtPVHGlw0tTBDTdTf9coUNGYp1Q==}
 
   '@esbuild/aix-ppc64@0.25.5':
     resolution: {integrity: sha512-9o3TMmpmftaCMepOdA5k/yDw8SfInyzWWTjYTFCX3kPSDJMROQTb8jg+h9Cnwnmm1vOzvxN7gIfB5V2ewpjtGA==}
@@ -3111,7 +3111,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@equicord/types@1.11.6':
+  '@equicord/types@1.11.7':
     dependencies:
       '@types/lodash': 4.17.15
       '@types/node': 22.16.0

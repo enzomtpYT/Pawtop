@@ -15,7 +15,7 @@
 
         "baseUrl": "./src/",
 
-        "typeRoots": ["./node_modules/@types", "./node_modules/@vencord"]
+        "typeRoots": ["./node_modules/@types", "./node_modules/@vencord", "./node_modules/@equicord"]
     },
     "include": ["src/**/*"]
 }

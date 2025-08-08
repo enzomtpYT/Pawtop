@@ -203,8 +203,6 @@ export default ErrorBoundary.wrap(
     function SettingsUI() {
         return (
             <Forms.FormSection>
-                {/* FIXME: Outdated type */}
-                {/* @ts-expect-error Outdated type */}
                 <Text variant="heading-xl/semibold" color="header-primary" className="vcd-settings-title">
                     Equibop Settings
                 </Text>
