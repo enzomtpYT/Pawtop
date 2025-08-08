@@ -7,18 +7,12 @@
 import "./traySetting.css";
 
 import { Margins, Modals, ModalSize, openModal } from "@vencord/types/utils";
-import { filters } from "@vencord/types/webpack";
-import { Button, Forms, Select, Switch, Toasts } from "@vencord/types/webpack/common";
+import { Button, ColorPicker, Forms, Select, Switch, Toasts } from "@vencord/types/webpack/common";
 import { setCurrentTrayIcon } from "renderer/patches/tray";
 import { useSettings } from "renderer/settings";
-import { isLinux, waitForComponent } from "renderer/utils";
+import { isLinux } from "renderer/utils";
 
 import { SettingsComponent } from "./Settings";
-
-const ColorPicker = waitForComponent(
-    "ColorPicker",
-    filters.componentByCode("#{intl::USER_SETTINGS_PROFILE_COLOR_SELECT_COLOR}", "showEyeDropper")
-);
 
 function PencilIcon(onClick) {
     return (
@@ -247,7 +241,7 @@ export const TrayIconPicker: SettingsComponent = ({ settings }) => {
                 <ColorPicker
                     color={parseInt(settings.trayColor ?? "3DB77F", 16)}
                     onChange={newColor => {
-                        const hexColor = newColor.toString(16).padStart(6, "0");
+                        const hexColor = newColor?.toString(16).padStart(6, "0") ?? "000000";
                         settings.trayColor = hexColor;
                         VesktopNative.tray.generateTrayIcons();
                     }}
