@@ -5,7 +5,7 @@
  */
 
 import { addContextMenuPatch } from "@equicord/types/api/ContextMenu";
-import { FluxDispatcher, Menu, useMemo, useStateFromStores } from "@equicord/types/webpack/common";
+import { FluxDispatcher, Menu, SpellCheckStore, useMemo, useStateFromStores } from "@equicord/types/webpack/common";
 import { useSettings } from "renderer/settings";
 
 import { addPatch } from "./shared";
