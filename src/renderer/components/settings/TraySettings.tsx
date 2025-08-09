@@ -202,10 +202,12 @@ export const CustomizeTraySwitch: SettingsComponent = ({ settings }) => {
 export const TrayColorTypeSelect: SettingsComponent = ({ settings }) => {
     if (!settings.tray) return null;
     const options = [{ label: "Default", value: "default", default: true }];
-    // @ts-expect-error I couldn't figure it out ref mainwindow L547-549
-    if (!isLinux) options.push({ label: "System Accent", value: "system" });
-    // @ts-expect-error I wanted the old sorting
-    options.push({ label: "Custom", value: "custom" });
+    if (!isLinux) {
+        // @ts-expect-error I couldn't figure it out ref mainwindow L547-549
+        options.push({ label: "System Accent", value: "system" });
+        // @ts-expect-error I wanted the old sorting
+        options.push({ label: "Custom", value: "custom" });
+    }
     return (
         <div className="vcd-tray-settings">
             <div className="vcd-tray-settings-labels">
@@ -230,7 +232,7 @@ export const TrayColorTypeSelect: SettingsComponent = ({ settings }) => {
 };
 
 export const TrayIconPicker: SettingsComponent = ({ settings }) => {
-    if (!settings.tray || settings.trayColorType !== "custom") return null;
+    if (!settings.tray || settings.trayColorType !== "custom" || isLinux) return null;
     return (
         <div className="vcd-tray-settings">
             <div className="vcd-tray-container">
