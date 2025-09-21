@@ -204,9 +204,7 @@ export const TrayColorTypeSelect: SettingsComponent = ({ settings }) => {
     const options = [{ label: "Default", value: "default", default: true }];
     if (!isLinux) {
         // @ts-expect-error I couldn't figure it out ref mainwindow L547-549
-        options.push({ label: "System Accent", value: "system" });
-        // @ts-expect-error I wanted the old sorting
-        options.push({ label: "Custom", value: "custom" });
+        options.push({ label: "System Accent", value: "system" }, { label: "Custom", value: "custom" });
     }
     return (
         <div className="vcd-tray-settings">
