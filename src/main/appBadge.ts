@@ -49,7 +49,7 @@ export function setBadgeCount(count: number) {
                         : "application://equibop.desktop",
                     [
                         ["count", ["x", count === -1 ? 0 : count]],
-                        ["count-visible", ["b", count !== 0]]
+                        ["count-visible", ["b", count > 0]]
                     ]
                 ]
             });
