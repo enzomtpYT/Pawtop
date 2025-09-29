@@ -14,7 +14,7 @@ import { Settings } from "./settings";
 
 const logger = new Logger("VesktopRPC", "#5865f2");
 
-const arRPC = Vencord.Plugins.plugins["WebRichPresence"] as any as {
+const arRPC = Vencord.Plugins.plugins.WebRichPresence as any as {
     handleEvent(e: MessageEvent): void;
 };
 
