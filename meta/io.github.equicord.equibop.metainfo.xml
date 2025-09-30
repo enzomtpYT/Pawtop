@@ -28,6 +28,15 @@
     </screenshot>
   </screenshots>
   <releases>
+      <release version="v2.1.7" date="2025-09-30" type="stable">
+      <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.7</url>
+      <description>
+        <p>What's Changed:</p>
+        <p>• fix arRPC </p>
+        <p>• fix Unity LauncherEntry showing 0 when you have unread message but no pings</p>
+        <p>• colorpicker disabled for linux patch doesn't seem to work only in it</p>
+      </description>
+    </release>
       <release version="v2.1.6" date="2025-08-07" type="stable">
       <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.6</url>
       <description>
