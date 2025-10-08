@@ -12,21 +12,15 @@ jobs:
 
         steps:
             - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4 # Install pnpm using packageManager key in package.json
-
-            - name: Use Node.js 20
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: "pnpm"
+            - uses: oven-sh/setup-bun@v2
 
             - name: Install dependencies
-              run: pnpm install --frozen-lockfile
+              run: bun install
 
             - name: Run tests
-              run: pnpm test
+              run: bun test
 
             - name: Test if it compiles
               run: |
-                  pnpm build
-                  pnpm build --dev
+                  bun run build
+                  bun run build --dev
