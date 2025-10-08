@@ -17,7 +17,7 @@ export function addPatch<P extends PatchData>(p: P) {
     const { patches, ...globals } = p;
 
     for (const patch of patches) {
-        Vencord.Plugins.addPatch(patch, "Equibop", "EquibopPatchGlobals");
+        Vencord.Plugins.addPatch(patch, "Equibop", "VesktopPatchGlobals");
     }
 
     Object.assign(VesktopPatchGlobals, globals);
