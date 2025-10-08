@@ -1,12 +1,12 @@
 {
-    "name": "vesktop",
+    "name": "equibop",
     "version": "1.5.8",
     "private": true,
-    "description": "Vesktop is a custom Discord desktop app",
+    "description": "Equibop is a custom Discord desktop app",
     "keywords": [],
-    "homepage": "https://vencord.dev/",
+    "homepage": "https://equicord.org",
     "license": "GPL-3.0-or-later",
-    "author": "Vendicated <vendicated@riseup.net>",
+    "author": "Equicord <contact@equicord.org>",
     "main": "dist/js/main.js",
     "scripts": {
         "build": "tsx scripts/build/build.mts",
@@ -63,9 +63,9 @@
         "pnpm": ">=8"
     },
     "build": {
-        "appId": "dev.vencord.vesktop",
-        "productName": "Vesktop",
-        "executableName": "vesktop",
+        "appId": "org.equicord.equibop",
+        "productName": "Equibop",
+        "executableName": "equibop",
         "files": [
             "!*",
             "!node_modules",
@@ -85,7 +85,7 @@
         "linux": {
             "icon": "build/icon.svg",
             "category": "Network",
-            "maintainer": "vendicated+vesktop@riseup.net",
+            "maintainer": "contact@equicord.org",
             "target": [
                 {
                     "target": "deb",
@@ -118,13 +118,13 @@
             ],
             "desktop": {
                 "entry": {
-                    "Name": "Vesktop",
+                    "Name": "Equibop",
                     "GenericName": "Internet Messenger",
                     "Type": "Application",
                     "Categories": "Network;InstantMessaging;Chat;",
                     "Keywords": "discord;vencord;electron;chat;",
                     "MimeType": "x-scheme-handler/discord",
-                    "StartupWMClass": "vesktop"
+                    "StartupWMClass": "equibop"
                 }
             }
         },

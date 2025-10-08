@@ -42,13 +42,13 @@ export async function resolveAssetPath(asset: UserAssetType) {
 }
 
 app.whenReady().then(() => {
-    protocol.handle("vesktop", async req => {
-        if (!req.url.startsWith("vesktop://assets/")) {
+    protocol.handle("equibop", async req => {
+        if (!req.url.startsWith("equibop://assets/")) {
             return new Response(null, { status: 404 });
         }
 
         const asset = decodeURI(req.url)
-            .slice("vesktop://assets/".length)
+            .slice("equibop://assets/".length)
             .replace(/\?v=\d+$/, "")
             .replace(/\/+$/, "");
 

@@ -9,7 +9,7 @@ import { currentSettings } from "renderer/components/ScreenSharePicker";
 import { State } from "renderer/settings";
 import { isLinux } from "renderer/utils";
 
-const logger = new Logger("VesktopStreamFixes");
+const logger = new Logger("EquibopStreamFixes");
 
 if (isLinux) {
     const original = navigator.mediaDevices.getDisplayMedia;

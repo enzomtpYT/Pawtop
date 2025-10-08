@@ -15,7 +15,7 @@ export const AutoStartToggle: SettingsComponent = () => {
     return (
         <VesktopSettingsSwitch
             title="Start With System"
-            description="Automatically start Vesktop on computer start-up"
+            description="Automatically start Equibop on computer start-up"
             value={autoStartEnabled}
             onChange={async v => {
                 await VesktopNative.autostart[v ? "enable" : "disable"]();

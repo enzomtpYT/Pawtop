@@ -67,7 +67,7 @@ function Asset({ asset }: { asset: UserAssetType }) {
                 {wordsToTitle(wordsFromCamel(asset))}
             </Text>
             <div className="vcd-user-assets-asset">
-                <img className="vcd-user-assets-image" src={`vesktop://assets/${asset}?v=${version}`} alt="" />
+                <img className="vcd-user-assets-image" src={`equibop://assets/${asset}?v=${version}`} alt="" />
                 <div className="vcd-user-assets-actions">
                     <Button onClick={onChooseAsset()}>Customize</Button>
                     <Button color={Button.Colors.PRIMARY} onClick={onChooseAsset(null)}>

@@ -74,7 +74,7 @@ function initMenuBar(win: BrowserWindow) {
 
     const subMenu = [
         {
-            label: "About Vesktop",
+            label: "About Equibop",
             click: createAboutWindow
         },
         {
@@ -84,14 +84,14 @@ function initMenuBar(win: BrowserWindow) {
                 app.relaunch();
                 app.quit();
             },
-            toolTip: "Vesktop will automatically restart after this operation"
+            toolTip: "Equibop will automatically restart after this operation"
         },
         {
-            label: "Reset Vesktop",
+            label: "Reset Equibop",
             async click() {
                 await clearData(win);
             },
-            toolTip: "Vesktop will automatically restart after this operation"
+            toolTip: "Equibop will automatically restart after this operation"
         },
         {
             label: "Relaunch",
@@ -158,7 +158,7 @@ function initMenuBar(win: BrowserWindow) {
 
     const menuItems = [
         {
-            label: "Vesktop",
+            label: "Equibop",
             role: "appMenu",
             submenu: subMenu.filter(isTruthy)
         },
@@ -314,7 +314,7 @@ function initStaticTitle(win: BrowserWindow) {
 
     addSettingsListener("staticTitle", enabled => {
         if (enabled) {
-            win.setTitle("Vesktop");
+            win.setTitle("Equibop");
             win.on("page-title-updated", listener);
         } else {
             win.off("page-title-updated", listener);
@@ -365,7 +365,7 @@ function createMainWindow() {
             transparencyOption !== "none" && {
                 transparent: true
             }),
-        ...(staticTitle && { title: "Vesktop" }),
+        ...(staticTitle && { title: "Equibop" }),
         ...(process.platform === "darwin" && getDarwinOptions()),
         ...getWindowBoundsOptions(),
         autoHideMenuBar: enableMenu

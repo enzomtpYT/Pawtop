@@ -12,7 +12,7 @@ import { IpcCommands } from "shared/IpcEvents";
 import { onIpcCommand } from "./ipcCommands";
 import { Settings } from "./settings";
 
-const logger = new Logger("VesktopRPC", "#5865f2");
+const logger = new Logger("EquibopRPC", "#5865f2");
 const StreamerModeStore = findStoreLazy("StreamerModeStore");
 
 const arRPC = Vencord.Plugins.plugins["WebRichPresence (arRPC)"] as any as {
