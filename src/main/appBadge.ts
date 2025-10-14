@@ -1,14 +1,16 @@
 /*
  * Vesktop, a desktop app aiming to give you a snappier Discord Experience
- * Copyright (c) 2023 Vendicated and Vencord contributors
+ * Copyright (c) 2025 Vendicated and Vesktop contributors
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 import { app, NativeImage, nativeImage } from "electron";
 import { join } from "path";
+import { IpcEvents } from "shared/IpcEvents";
 import { BADGE_DIR } from "shared/paths";
 
-import { AppEvents } from "./events";
+import { mainWin } from "./mainWindow";
+import { dbus, getSessionBus } from "./utils/dbus";
 
 const imgCache = new Map<number, NativeImage>();
 function loadBadge(index: number) {
@@ -21,19 +23,36 @@ function loadBadge(index: number) {
     return img;
 }
 
-let lastIndex: null | number = -1;
+let lastBadgeIndex: null | number = -1;
+export var lastBadgeCount: number = -1;
 
-/**
- * -1 = show unread indicator
- * 0 = clear
- */
 export function setBadgeCount(count: number) {
-    AppEvents.emit("setTrayVariant", count !== 0 ? "trayUnread" : "tray");
-
+    lastBadgeCount = count;
     switch (process.platform) {
         case "linux":
-            if (count === -1) count = 0;
-            app.setBadgeCount(count);
+            if (typeof count !== "number") {
+                // sanitize
+                throw new Error("count must be a number");
+            }
+
+            const sessionBus = getSessionBus();
+            sessionBus.connection.message({
+                type: dbus.messageType.signal,
+                serial: 1,
+                path: "/",
+                interface: "com.canonical.Unity.LauncherEntry",
+                member: "Update",
+                signature: "sa{sv}",
+                body: [
+                    process.env.container === "1"
+                        ? "application://io.github.equicord.equibop.desktop" // flatpak handling
+                        : "application://equibop.desktop",
+                    [
+                        ["count", ["x", count === -1 ? 0 : count]],
+                        ["count-visible", ["b", count > 0]]
+                    ]
+                ]
+            });
             break;
         case "darwin":
             if (count === 0) {
@@ -44,15 +63,17 @@ export function setBadgeCount(count: number) {
             break;
         case "win32":
             const [index, description] = getBadgeIndexAndDescription(count);
-            if (lastIndex === index) break;
+            if (lastBadgeIndex === index) break;
 
-            lastIndex = index;
+            lastBadgeIndex = index;
 
             // circular import shenanigans
             const { mainWin } = require("./mainWindow") as typeof import("./mainWindow");
             mainWin.setOverlayIcon(index === null ? null : loadBadge(index), description);
             break;
     }
+
+    mainWin.webContents.send(IpcEvents.SET_CURRENT_VOICE_TRAY_ICON);
 }
 
 function getBadgeIndexAndDescription(count: number): [number | null, string] {
