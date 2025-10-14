@@ -23,7 +23,8 @@
         "watch": "bun run build --watch",
         "updateMeta": "bun run scripts/utils/updateMeta.mts",
         "updateArrpcDB": "node ./node_modules/arrpc/update_db.js",
-        "postinstall": "bun updateArrpcDB"
+        "applyPatches": "node scripts/applyPatches.mjs",
+        "postinstall": "bun updateArrpcDB && bun applyPatches"
     },
     "dependencies": {
         "arrpc": "github:OpenAsar/arrpc#2234e9c9111f4c42ebcc3aa6a2215bfd979eef77",

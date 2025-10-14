@@ -55,5 +55,5 @@ export interface State {
 
     steamOSLayoutVersion?: number;
 
-    vencordDir?: string;
+    equicordDir?: string;
 }

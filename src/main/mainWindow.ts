@@ -22,7 +22,7 @@ import type { SettingsStore } from "shared/utils/SettingsStore";
 
 import { createAboutWindow } from "./about";
 import { initArRPC } from "./arrpc";
-import { BrowserUserAgent, DEFAULT_HEIGHT, DEFAULT_WIDTH, MIN_HEIGHT, MIN_WIDTH, VENCORD_FILES_DIR } from "./constants";
+import { BrowserUserAgent, DEFAULT_HEIGHT, DEFAULT_WIDTH, MIN_HEIGHT, MIN_WIDTH, VENCORD_DIR } from "./constants";
 import { AppEvents } from "./events";
 import { darwinURL } from "./index";
 import { sendRendererCommand } from "./ipcCommands";
@@ -32,7 +32,7 @@ import { destroyTray, initTray } from "./tray";
 import { clearData } from "./utils/clearData";
 import { makeLinksOpenExternally } from "./utils/makeLinksOpenExternally";
 import { applyDeckKeyboardFix, askToApplySteamLayout, isDeckGameMode } from "./utils/steamOS";
-import { downloadVencordFiles, ensureVencordFiles } from "./utils/vencordLoader";
+import { downloadVencordAsar, ensureVencordFiles } from "./utils/vencordLoader";
 
 let isQuitting = false;
 
@@ -80,7 +80,7 @@ function initMenuBar(win: BrowserWindow) {
         {
             label: "Force Update Vencord",
             async click() {
-                await downloadVencordFiles();
+                await downloadVencordAsar();
                 app.relaunch();
                 app.quit();
             },
@@ -406,7 +406,7 @@ function createMainWindow() {
     return win;
 }
 
-const runVencordMain = once(() => require(join(VENCORD_FILES_DIR, "vencordDesktopMain.js")));
+const runVencordMain = once(() => require(VENCORD_DIR));
 
 export function loadUrl(uri: string | undefined) {
     const branch = Settings.store.discordBranch;
