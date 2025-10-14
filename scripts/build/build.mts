@@ -4,101 +4,115 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { BuildContext, BuildOptions, context } from "esbuild";
-import { copyFile } from "fs/promises";
-
-import vencordDep from "./vencordDep.mjs";
+import { copyFile } from "node:fs/promises";
+import { type BuildContext, type BuildOptions, context } from "esbuild";
 import { includeDirPlugin } from "./includeDirPlugin.mts";
+import vencordDep from "./vencordDep.mjs";
 
 const isDev = process.argv.includes("--dev");
 
 const CommonOpts: BuildOptions = {
-    minify: !isDev,
-    bundle: true,
-    sourcemap: "linked",
-    logLevel: "info"
+	minify: !isDev,
+	bundle: true,
+	sourcemap: "linked",
+	logLevel: "info",
+	metafile: true,
 };
 
 const NodeCommonOpts: BuildOptions = {
-    ...CommonOpts,
-    format: "cjs",
-    platform: "node",
-    external: ["electron"],
-    target: ["esnext"],
-    define: {
-        IS_DEV: JSON.stringify(isDev)
-    }
+	...CommonOpts,
+	format: "cjs",
+	platform: "node",
+	external: ["electron"],
+	target: ["esnext"],
+	define: {
+		IS_DEV: JSON.stringify(isDev),
+	},
 };
 
 const contexts = [] as BuildContext[];
 async function createContext(options: BuildOptions) {
-    contexts.push(await context(options));
+	contexts.push(await context(options));
 }
 
 async function copyVenmic() {
-    if (process.platform !== "linux") return;
+	if (process.platform !== "linux") return;
 
-    return Promise.all([
-        copyFile(
-            "./node_modules/@vencord/venmic/prebuilds/venmic-addon-linux-x64/node-napi-v7.node",
-            "./static/dist/venmic-x64.node"
-        ),
-        copyFile(
-            "./node_modules/@vencord/venmic/prebuilds/venmic-addon-linux-arm64/node-napi-v7.node",
-            "./static/dist/venmic-arm64.node"
-        )
-    ]).catch(() => console.warn("Failed to copy venmic. Building without venmic support"));
+	return Promise.all([
+		copyFile(
+			"./node_modules/@vencord/venmic/prebuilds/venmic-addon-linux-x64/node-napi-v7.node",
+			"./static/dist/venmic-x64.node",
+		),
+		copyFile(
+			"./node_modules/@vencord/venmic/prebuilds/venmic-addon-linux-arm64/node-napi-v7.node",
+			"./static/dist/venmic-arm64.node",
+		),
+	]).catch(() =>
+		console.warn("Failed to copy venmic. Building without venmic support"),
+	);
 }
 
 await Promise.all([
-    copyVenmic(),
-    createContext({
-        ...NodeCommonOpts,
-        entryPoints: ["src/main/index.ts"],
-        outfile: "dist/js/main.js",
-        footer: { js: "//# sourceURL=VCDMain" }
-    }),
-    createContext({
-        ...NodeCommonOpts,
-        entryPoints: ["src/main/arrpc/worker.ts"],
-        outfile: "dist/js/arRpcWorker.js",
-        footer: { js: "//# sourceURL=VCDArRpcWorker" }
-    }),
-    createContext({
-        ...NodeCommonOpts,
-        entryPoints: ["src/preload/index.ts"],
-        outfile: "dist/js/preload.js",
-        footer: { js: "//# sourceURL=VCDPreload" }
-    }),
-    createContext({
-        ...NodeCommonOpts,
-        entryPoints: ["src/preload/splash.ts"],
-        outfile: "dist/js/splashPreload.js"
-    }),
-    createContext({
-        ...CommonOpts,
-        globalName: "Equibop",
-        entryPoints: ["src/renderer/index.ts"],
-        outfile: "dist/js/renderer.js",
-        format: "iife",
-        inject: ["./scripts/build/injectReact.mjs"],
-        jsxFactory: "VencordCreateElement",
-        jsxFragment: "VencordFragment",
-        external: ["@vencord/types/*"],
-        plugins: [vencordDep, includeDirPlugin("patches", "src/renderer/patches")],
-        footer: { js: "//# sourceURL=VCDRenderer" }
-    })
+	copyVenmic(),
+	createContext({
+		...NodeCommonOpts,
+		entryPoints: ["src/main/index.ts"],
+		outfile: "dist/js/main.js",
+		footer: { js: "//# sourceURL=VCDMain" },
+	}),
+	createContext({
+		...NodeCommonOpts,
+		entryPoints: ["src/main/arrpc/worker.ts"],
+		outfile: "dist/js/arRpcWorker.js",
+		footer: { js: "//# sourceURL=VCDArRpcWorker" },
+	}),
+	createContext({
+		...NodeCommonOpts,
+		entryPoints: ["src/preload/index.ts"],
+		outfile: "dist/js/preload.js",
+		footer: { js: "//# sourceURL=VCDPreload" },
+	}),
+	createContext({
+		...NodeCommonOpts,
+		entryPoints: ["src/preload/splash.ts"],
+		outfile: "dist/js/splashPreload.js",
+	}),
+	createContext({
+		...CommonOpts,
+		globalName: "Equibop",
+		entryPoints: ["src/renderer/index.ts"],
+		outfile: "dist/js/renderer.js",
+		format: "iife",
+		inject: ["./scripts/build/injectReact.mjs"],
+		jsxFactory: "VencordCreateElement",
+		jsxFragment: "VencordFragment",
+		external: ["@vencord/types/*"],
+		plugins: [vencordDep, includeDirPlugin("patches", "src/renderer/patches")],
+		footer: { js: "//# sourceURL=VCDRenderer" },
+	}),
 ]);
 
 const watch = process.argv.includes("--watch");
 
 if (watch) {
-    await Promise.all(contexts.map(ctx => ctx.watch()));
+	await Promise.all(contexts.map((ctx) => ctx.watch()));
 } else {
-    await Promise.all(
-        contexts.map(async ctx => {
-            await ctx.rebuild();
-            await ctx.dispose();
-        })
-    );
+	const results = await Promise.all(
+		contexts.map(async (ctx) => {
+			const result = await ctx.rebuild();
+			await ctx.dispose();
+			return result;
+		}),
+	);
+
+	for (const result of results) {
+		if (result.metafile) {
+			const outputs = Object.keys(result.metafile.outputs);
+			for (const output of outputs) {
+				const meta = result.metafile.outputs[output];
+				const size = (meta.bytes / 1024).toFixed(2);
+				console.log(`  ${output} ${size} KB`);
+			}
+		}
+	}
 }
