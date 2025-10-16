@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { Logger } from "@vencord/types/utils";
-import { findLazy, findStoreLazy, onceReady } from "@vencord/types/webpack";
-import { FluxDispatcher, InviteActions } from "@vencord/types/webpack/common";
+import { Logger } from "@equicord/types/utils";
+import { findLazy, findStoreLazy, onceReady } from "@equicord/types/webpack";
+import { FluxDispatcher, InviteActions } from "@equicord/types/webpack/common";
 import { IpcCommands } from "shared/IpcEvents";
 
 import { onIpcCommand } from "./ipcCommands";

@@ -15,8 +15,8 @@ import {
     openModal,
     wordsFromCamel,
     wordsToTitle
-} from "@vencord/types/utils";
-import { Button, showToast, Text, useState } from "@vencord/types/webpack/common";
+} from "@equicord/types/utils";
+import { Button, showToast, Text, useState } from "@equicord/types/webpack/common";
 import { UserAssetType } from "main/userAssets";
 
 import { SettingsComponent } from "./Settings";

@@ -6,5 +6,5 @@
 
 import "./start";
 
-import { spawnNodeModuleBin } from "./utils/spawn.mjs";
-spawnNodeModuleBin("bun run", ["scripts/build/build.mts", "--", "--watch", "--dev"]);
+import { spawn } from "child_process";
+spawn("bun", ["run", "scripts/build/build.mts", "--watch", "--dev"], { stdio: "inherit" });

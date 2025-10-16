@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { FormSwitch } from "@vencord/types/components";
+import { FormSwitch } from "@equicord/types/components";
 import { ComponentProps } from "react";
 
 export function VesktopSettingsSwitch(props: ComponentProps<typeof FormSwitch>) {

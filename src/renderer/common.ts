@@ -4,6 +4,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { findStoreLazy } from "@vencord/types/webpack";
+import { findStoreLazy } from "@equicord/types/webpack";
 
 export const MediaEngineStore = findStoreLazy("MediaEngineStore");

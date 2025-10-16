@@ -6,8 +6,8 @@
 
 import "./settings.css";
 
-import { ErrorBoundary } from "@vencord/types/components";
-import { Forms, Text } from "@vencord/types/webpack/common";
+import { ErrorBoundary } from "@equicord/types/components";
+import { Forms, Text } from "@equicord/types/webpack/common";
 import { ComponentType } from "react";
 import { Settings, useSettings } from "renderer/settings";
 import { isMac, isWindows } from "renderer/utils";

@@ -18,7 +18,7 @@ import { VesktopLogger } from "./logger";
 import { Settings } from "./settings";
 export { Settings };
 
-import type SettingsPlugin from "@vencord/types/plugins/_core/settings";
+import type SettingsPlugin from "@equicord/types/plugins/_core/settings";
 
 VesktopLogger.log("read if cute :3");
 VesktopLogger.log("Equibop v" + VesktopNative.app.getVersion());

@@ -27,6 +27,7 @@
         "postinstall": "bun updateArrpcDB && bun applyPatches"
     },
     "dependencies": {
+        "@equicord/types": "^1.13.3",
         "arrpc": "github:OpenAsar/arrpc#2234e9c9111f4c42ebcc3aa6a2215bfd979eef77",
         "electron-updater": "^6.6.2"
     },
@@ -39,7 +40,6 @@
         "@stylistic/eslint-plugin": "^5.4.0",
         "@types/node": "^24.7.0",
         "@types/react": "19.2.1",
-        "@vencord/types": "^1.13.2",
         "dotenv": "^17.2.3",
         "electron": "^38.0.0",
         "electron-builder": "^26.0.12",

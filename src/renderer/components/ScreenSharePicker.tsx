@@ -6,10 +6,10 @@
 
 import "./screenSharePicker.css";
 
-import { FormSwitch } from "@vencord/types/components";
-import { closeModal, Logger, Modals, ModalSize, openModal, useAwaiter } from "@vencord/types/utils";
-import { onceReady } from "@vencord/types/webpack";
-import { Button, Card, FluxDispatcher, Forms, Select, Text, UserStore, useState } from "@vencord/types/webpack/common";
+import { FormSwitch } from "@equicord/types/components";
+import { closeModal, Logger, Modals, ModalSize, openModal, useAwaiter } from "@equicord/types/utils";
+import { onceReady } from "@equicord/types/webpack";
+import { Button, Card, FluxDispatcher, Forms, Select, Text, UserStore, useState } from "@equicord/types/webpack/common";
 import { Node } from "@vencord/venmic";
 import type { Dispatch, SetStateAction } from "react";
 import { MediaEngineStore } from "renderer/common";
