@@ -27,7 +27,6 @@
         "postinstall": "bun updateArrpcDB && bun applyPatches"
     },
     "dependencies": {
-        "@equicord/types": "^1.13.3",
         "arrpc": "github:OpenAsar/arrpc#2234e9c9111f4c42ebcc3aa6a2215bfd979eef77",
         "electron-updater": "^6.6.2"
     },
@@ -36,6 +35,7 @@
         "@vencord/venmic": "^6.1.0"
     },
     "devDependencies": {
+        "@equicord/types": "^1.13.3",
         "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
         "@stylistic/eslint-plugin": "^5.4.0",
         "@types/node": "^24.7.0",
