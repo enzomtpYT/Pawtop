@@ -23,7 +23,10 @@ export function setBadge() {
         const disableUnreadBadge = NotificationSettingsStore.getDisableUnreadBadge();
 
         let totalCount = mentionCount + pendingRequests;
-        if (!totalCount && hasUnread && !disableUnreadBadge) totalCount = -1;
+
+        if (!Settings.store.badgeOnlyForMentions && !totalCount && hasUnread && !disableUnreadBadge) {
+            totalCount = -1;
+        }
 
         VesktopNative.app.setBadgeCount(totalCount);
     } catch (e) {

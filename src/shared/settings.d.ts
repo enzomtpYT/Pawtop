@@ -19,6 +19,7 @@ export interface Settings {
     hardwareVideoAcceleration?: boolean;
     arRPC?: boolean;
     appBadge?: boolean;
+    badgeOnlyForMentions?: boolean;
     disableMinSize?: boolean;
     clickTrayToShowHide?: boolean;
     customTitleBar?: boolean;
