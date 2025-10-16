@@ -35,7 +35,7 @@ function openDeveloperOptionsModal(settings: Settings) {
 
             <ModalContent>
                 <div style={{ padding: "1em 0" }}>
-                    <Forms.FormTitle tag="h5">Vencord Location</Forms.FormTitle>
+                    <Forms.FormTitle tag="h5">Equicord Location</Forms.FormTitle>
                     <VencordLocationPicker settings={settings} />
 
                     <Forms.FormTitle tag="h5" className={Margins.top16}>
@@ -60,7 +60,7 @@ const VencordLocationPicker: SettingsComponent = ({ settings }) => {
     return (
         <>
             <Forms.FormText>
-                Vencord files are loaded from{" "}
+                Equicord files are loaded from{" "}
                 {equicordDir ? (
                     <a
                         href="about:blank"
@@ -85,7 +85,7 @@ const VencordLocationPicker: SettingsComponent = ({ settings }) => {
                                 break;
                             case "ok":
                                 Toasts.show({
-                                    message: "Vencord install changed. Fully restart Equibop to apply.",
+                                    message: "Equicord install changed. Fully restart Equibop to apply.",
                                     id: Toasts.genId(),
                                     type: Toasts.Type.SUCCESS
                                 });
@@ -93,7 +93,7 @@ const VencordLocationPicker: SettingsComponent = ({ settings }) => {
                             case "invalid":
                                 Toasts.show({
                                     message:
-                                        "You did not choose a valid Vencord install. Make sure you're selecting the dist dir!",
+                                        "You did not choose a valid Equicord install. Make sure you're selecting the dist dir!",
                                     id: Toasts.genId(),
                                     type: Toasts.Type.FAILURE
                                 });

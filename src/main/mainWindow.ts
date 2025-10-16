@@ -78,7 +78,7 @@ function initMenuBar(win: BrowserWindow) {
             click: createAboutWindow
         },
         {
-            label: "Force Update Vencord",
+            label: "Force Update Equicord",
             async click() {
                 await downloadVencordAsar();
                 app.relaunch();
