@@ -20,7 +20,7 @@ export const DATA_DIR =
 
 mkdirSync(DATA_DIR, { recursive: true });
 
-const SESSION_DATA_DIR = join(DATA_DIR, "sessionData");
+export const SESSION_DATA_DIR = join(DATA_DIR, "sessionData");
 app.setPath("sessionData", SESSION_DATA_DIR);
 
 export const VENCORD_SETTINGS_DIR = join(DATA_DIR, "settings");
@@ -58,3 +58,5 @@ export const enum MessageBoxChoice {
     Default,
     Cancel
 }
+
+export const IS_FLATPAK = process.env.FLATPAK_ID !== undefined;

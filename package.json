@@ -11,6 +11,7 @@
     "scripts": {
         "build": "bun run scripts/build/build.mts",
         "build:dev": "bun run build --dev",
+        "buildLibVesktop": "bun install --cwd packages/libvesktop && bun run --cwd packages/libvesktop build",
         "package": "bun run build && electron-builder",
         "package:dir": "bun run build && electron-builder --dir",
         "lint": "eslint",
@@ -31,7 +32,6 @@
         "electron-updater": "^6.6.2"
     },
     "optionalDependencies": {
-        "@homebridge/dbus-native": "0.6.0",
         "@vencord/venmic": "^6.1.0"
     },
     "devDependencies": {
@@ -51,6 +51,7 @@
         "eslint-plugin-simple-header": "^1.2.2",
         "eslint-plugin-simple-import-sort": "^12.1.1",
         "eslint-plugin-unused-imports": "^4.2.0",
+        "libvesktop": "link:packages/libvesktop",
         "prettier": "^3.6.2",
         "source-map-support": "^0.5.21",
         "type-fest": "^5.0.1",
