@@ -21,7 +21,11 @@ const linkCallbacks = new Map<string, LinkCallback>();
 (async function () {
     const { workerPort } = workerData as { workerPort: MessagePort };
 
+    const Bridge = await import("arrpc/src/bridge.js");
+
     server = await new Server();
+
+    server.on("activity", (data: any) => Bridge.send(data));
 
     server.on("activity", (data: any) => {
         const event: ArRpcEvent = {
