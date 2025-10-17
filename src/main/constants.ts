@@ -60,3 +60,6 @@ export const enum MessageBoxChoice {
 }
 
 export const IS_FLATPAK = process.env.FLATPAK_ID !== undefined;
+export const isWayland =
+    process.platform === "linux" && (process.env.XDG_SESSION_TYPE === "wayland" || !!process.env.WAYLAND_DISPLAY);
+export const isLinux = process.platform === "linux";

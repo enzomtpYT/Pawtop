@@ -22,10 +22,19 @@ import type { SettingsStore } from "shared/utils/SettingsStore";
 
 import { createAboutWindow } from "./about";
 import { initArRPC } from "./arrpc";
-import { BrowserUserAgent, DEFAULT_HEIGHT, DEFAULT_WIDTH, MIN_HEIGHT, MIN_WIDTH, VENCORD_DIR } from "./constants";
+import {
+    BrowserUserAgent,
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH,
+    isLinux,
+    MIN_HEIGHT,
+    MIN_WIDTH,
+    VENCORD_DIR
+} from "./constants";
 import { AppEvents } from "./events";
 import { darwinURL } from "./index";
 import { sendRendererCommand } from "./ipcCommands";
+import { initKeybinds } from "./keybinds";
 import { Settings, State, VencordSettings } from "./settings";
 import { createSplashWindow, updateSplashMessage } from "./splash";
 import { destroyTray, initTray } from "./tray";
@@ -475,4 +484,5 @@ export async function createWindows() {
     });
 
     initArRPC();
+    if (isLinux) initKeybinds();
 }
