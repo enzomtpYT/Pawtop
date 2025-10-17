@@ -431,7 +431,7 @@ export async function createWindows() {
 
     let splash: BrowserWindow | undefined;
     if (Settings.store.enableSplashScreen !== false) {
-        splash = createSplashWindow(startMinimized);
+        splash = await createSplashWindow(startMinimized);
 
         // SteamOS letterboxes and scales it terribly, so just full screen it
         if (isDeckGameMode) splash.setFullScreen(true);

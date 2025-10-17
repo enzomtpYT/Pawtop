@@ -9,11 +9,13 @@ import { join } from "path";
 import { SplashProps } from "shared/browserWinProperties";
 import { VIEW_DIR } from "shared/paths";
 
+import { DATA_DIR } from "./constants";
 import { Settings } from "./settings";
+import { fileExistsAsync } from "./utils/fileExists";
 
 let splash: BrowserWindow | undefined;
 
-export function createSplashWindow(startMinimized = false) {
+export async function createSplashWindow(startMinimized = false) {
     splash = new BrowserWindow({
         ...SplashProps,
         show: !startMinimized,
@@ -37,6 +39,22 @@ export function createSplashWindow(startMinimized = false) {
         if (splashBackground) {
             splash.webContents.insertCSS(`body { --bg: ${splashBackground} !important }`);
         }
+    }
+
+    const customSplashPath = join(DATA_DIR, "userAssets", "splash");
+    const hasCustomSplash = await fileExistsAsync(customSplashPath);
+
+    if (!hasCustomSplash) {
+        splash.webContents.insertCSS(`
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(-360deg); }
+            }
+
+            img {
+                animation: spin 2s linear infinite;
+            }
+        `);
     }
 
     return splash;
