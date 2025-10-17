@@ -21,6 +21,8 @@ const linkCallbacks = new Map<string, LinkCallback>();
 (async function () {
     const { workerPort } = workerData as { workerPort: MessagePort };
 
+    process.env.ARRPC_BRIDGE_PORT = "6969";
+
     const Bridge = await import("arrpc/src/bridge.js");
 
     server = await new Server();
