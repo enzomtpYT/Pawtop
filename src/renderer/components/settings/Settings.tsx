@@ -6,12 +6,13 @@
 
 import "./settings.css";
 
-import { ErrorBoundary } from "@equicord/types/components";
-import { Forms, Text } from "@equicord/types/webpack/common";
+import { Divider, ErrorBoundary } from "@equicord/types/components";
+import { Text } from "@equicord/types/webpack/common";
 import { ComponentType } from "react";
 import { Settings, useSettings } from "renderer/settings";
 import { isMac, isWindows } from "renderer/utils";
 
+import { Arguments } from "./Arguments";
 import { AutoStartToggle } from "./AutoStartToggle";
 import { DeveloperOptionsButton } from "./DeveloperOptions";
 import { DiscordBranchPicker } from "./DiscordBranchPicker";
@@ -87,6 +88,7 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
         UserAssetsButton
     ],
     Behaviour: [
+        Arguments,
         {
             key: "tray",
             title: "Tray Icon",
@@ -169,7 +171,7 @@ function SettingsSections() {
                 })}
             </div>
 
-            {i < arr.length - 1 && <Forms.FormDivider className="vcd-settings-category-divider" />}
+            {i < arr.length - 1 && <Divider className="vcd-settings-category-divider" />}
         </div>
     ));
 

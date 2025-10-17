@@ -24,6 +24,7 @@ export interface Settings {
     disableMinSize?: boolean;
     clickTrayToShowHide?: boolean;
     customTitleBar?: boolean;
+    arguments?: string;
 
     enableSplashScreen?: boolean;
     splashTheming?: boolean;

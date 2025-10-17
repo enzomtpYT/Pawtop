@@ -35,7 +35,7 @@ export let enableHardwareAcceleration = true;
 function init() {
     setAsDefaultProtocolClient("discord");
 
-    const { disableSmoothScroll, hardwareAcceleration, hardwareVideoAcceleration } = Settings.store;
+    const { disableSmoothScroll, hardwareAcceleration, hardwareVideoAcceleration, arguments: args } = Settings.store;
 
     const enabledFeatures = new Set(app.commandLine.getSwitchValue("enable-features").split(","));
     const disabledFeatures = new Set(app.commandLine.getSwitchValue("disable-features").split(","));
@@ -69,6 +69,11 @@ function init() {
     app.commandLine.appendSwitch("disable-backgrounding-occluded-windows");
     if (process.platform === "win32") {
         disabledFeatures.add("CalculateNativeWinOcclusion");
+    }
+
+    if (args) {
+        app.commandLine.appendArgument(args);
+        console.log("Running with additional arguments:", args);
     }
 
     // work around chrome 66 disabling autoplay by default

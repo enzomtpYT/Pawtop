@@ -32,3 +32,28 @@
 .vcd-settings-switch {
     margin-bottom: 0;
 }
+
+/* arguments */
+
+.vcd-custom-tray-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vcd-tray-settings {
+    padding: 16px 0;
+}
+
+.vcd-tray-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vcd-tray-settings-labels {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
