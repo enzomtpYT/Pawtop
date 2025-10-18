@@ -359,6 +359,7 @@ function createMainWindow() {
             devTools: true,
             preload: join(__dirname, "preload.js"),
             spellcheck: true,
+            ...(Settings.store.middleClickAutoscroll && { enableBlinkFeatures: "MiddleClickAutoscroll" }),
             // disable renderer backgrounding to prevent the app from unloading when in the background
             backgroundThrottling: false
         },

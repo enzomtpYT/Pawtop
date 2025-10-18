@@ -10,7 +10,7 @@ import { Divider, ErrorBoundary } from "@equicord/types/components";
 import { Text } from "@equicord/types/webpack/common";
 import { ComponentType } from "react";
 import { Settings, useSettings } from "renderer/settings";
-import { isMac, isWindows } from "renderer/utils";
+import { isLinux, isMac, isWindows } from "renderer/utils";
 
 import { Arguments } from "./Arguments";
 import { AutoStartToggle } from "./AutoStartToggle";
@@ -131,6 +131,13 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
     ],
     Notifications: [NotificationBadgeToggle],
     Miscellaneous: [
+        {
+            key: "middleClickAutoscroll",
+            title: "Middle Click Autoscroll",
+            description: "Enables middle-click scrolling (Requires a full restart)",
+            defaultValue: false,
+            invisible: () => isLinux
+        },
         {
             key: "arRPC",
             title: "Rich Presence",

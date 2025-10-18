@@ -12,6 +12,7 @@ export interface Settings {
     tray?: boolean;
     minimizeToTray?: boolean;
     autoStartMinimized?: boolean;
+    middleClickAutoscroll?: boolean;
     openLinksWithElectron?: boolean;
     staticTitle?: boolean;
     enableMenu?: boolean;
