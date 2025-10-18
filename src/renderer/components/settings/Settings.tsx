@@ -84,6 +84,12 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
             description: "Adapt the splash window colors to your custom theme",
             defaultValue: true
         },
+        {
+            key: "splashProgress",
+            title: "Show progress bar in Splash",
+            description: "Adds a fancy progress bar to the splash window",
+            defaultValue: false
+        },
         WindowsTransparencyControls,
         UserAssetsButton
     ],

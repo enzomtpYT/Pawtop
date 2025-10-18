@@ -13,7 +13,10 @@ import { DATA_DIR } from "./constants";
 import { Settings } from "./settings";
 import { fileExistsAsync } from "./utils/fileExists";
 
-let splash: BrowserWindow | undefined;
+export let splash: BrowserWindow | undefined;
+
+const totalTasks = 9;
+let doneTasks = 0;
 
 export async function createSplashWindow(startMinimized = false) {
     splash = new BrowserWindow({
@@ -26,7 +29,7 @@ export async function createSplashWindow(startMinimized = false) {
 
     splash.loadFile(join(VIEW_DIR, "splash.html"));
 
-    const { splashBackground, splashColor, splashTheming } = Settings.store;
+    const { splashBackground, splashColor, splashTheming, splashProgress } = Settings.store;
 
     if (splashTheming !== false) {
         if (splashColor) {
@@ -57,6 +60,37 @@ export async function createSplashWindow(startMinimized = false) {
         `);
     }
 
+    if (splashProgress) {
+        splash.webContents.executeJavaScript(`
+            document.getElementById("progress-percentage").innerHTML = "${doneTasks}%";
+        `);
+    } else {
+        splash.webContents.executeJavaScript(`
+            document.getElementById("progress-section").style.display = "none";
+        `);
+    }
+
+    return splash;
+}
+
+/**
+ * Adds a new log count to the splash
+ */
+export function addSplashLog() {
+    if (splash && !splash.isDestroyed()) {
+        doneTasks++;
+        const percentage = Math.min(100, Math.round((doneTasks / totalTasks) * 100));
+        splash.webContents.executeJavaScript(`
+            document.getElementById("progress").style.width = "${percentage}%";
+            document.getElementById("progress-percentage").innerHTML = "${percentage}%";
+        `);
+    }
+}
+
+/**
+ * Returns the splash window
+ */
+export function getSplash() {
     return splash;
 }
 

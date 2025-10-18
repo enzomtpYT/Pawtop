@@ -36,7 +36,7 @@ import { darwinURL } from "./index";
 import { sendRendererCommand } from "./ipcCommands";
 import { initKeybinds } from "./keybinds";
 import { Settings, State, VencordSettings } from "./settings";
-import { createSplashWindow, updateSplashMessage } from "./splash";
+import { addSplashLog, createSplashWindow, updateSplashMessage } from "./splash";
 import { destroyTray, initTray } from "./tray";
 import { clearData } from "./utils/clearData";
 import { makeLinksOpenExternally } from "./utils/makeLinksOpenExternally";
@@ -332,9 +332,13 @@ function initStaticTitle(win: BrowserWindow) {
 }
 
 function createMainWindow() {
+    addSplashLog();
+
     // Clear up previous settings listeners
     removeSettingsListeners();
     removeVencordSettingsListeners();
+
+    addSplashLog();
 
     const { staticTitle, transparencyOption, enableMenu, customTitleBar, splashTheming, splashBackground } =
         Settings.store;
@@ -380,6 +384,9 @@ function createMainWindow() {
         autoHideMenuBar: enableMenu
     }));
     win.setMenuBarVisibility(false);
+
+    addSplashLog();
+
     if (process.platform === "darwin" && customTitleBar) win.setWindowButtonVisibility(false);
 
     win.on("close", e => {
@@ -405,11 +412,15 @@ function createMainWindow() {
     initDevtoolsListeners(win);
     initStaticTitle(win);
 
+    addSplashLog();
+
     win.webContents.setUserAgent(BrowserUserAgent);
+    addSplashLog();
 
     // if the open-url event is fired (in index.ts) while starting up, darwinURL will be set. If not fall back to checking the process args (which Windows and Linux use for URI calling.)
     // win.webContents.session.clearCache().then(() => {
     loadUrl(darwinURL || process.argv.find(arg => arg.startsWith("discord://")));
+    addSplashLog();
     // });
 
     return win;
@@ -444,11 +455,14 @@ export async function createWindows() {
 
         // SteamOS letterboxes and scales it terribly, so just full screen it
         if (isDeckGameMode) splash.setFullScreen(true);
+        addSplashLog();
     }
 
+    addSplashLog();
     await ensureVencordFiles();
     runVencordMain();
 
+    addSplashLog();
     mainWin = createMainWindow();
 
     AppEvents.on("appLoaded", () => {
