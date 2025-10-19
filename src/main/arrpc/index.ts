@@ -18,6 +18,12 @@ export function destroyArRPC() {
     bunProcess = null as any;
 }
 
+export async function restartArRPC() {
+    destroyArRPC();
+    await new Promise(resolve => setTimeout(resolve, 500));
+    await initArRPC();
+}
+
 export async function initArRPC() {
     if (!Settings.store.arRPC) {
         destroyArRPC();

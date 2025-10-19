@@ -21,7 +21,7 @@ import { once } from "shared/utils/once";
 import type { SettingsStore } from "shared/utils/SettingsStore";
 
 import { createAboutWindow } from "./about";
-import { initArRPC } from "./arrpc";
+import { destroyArRPC, initArRPC } from "./arrpc";
 import {
     BrowserUserAgent,
     DEFAULT_HEIGHT,
@@ -49,6 +49,7 @@ applyDeckKeyboardFix();
 
 app.on("before-quit", () => {
     isQuitting = true;
+    destroyArRPC();
 });
 
 export let mainWin: BrowserWindow;

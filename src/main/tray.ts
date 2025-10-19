@@ -7,6 +7,7 @@
 import { app, BrowserWindow, Menu, Tray } from "electron";
 
 import { createAboutWindow } from "./about";
+import { restartArRPC } from "./arrpc";
 import { AppEvents } from "./events";
 import { Settings } from "./settings";
 import { resolveAssetPath } from "./userAssets";
@@ -64,6 +65,13 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
             label: "Reset Equibop",
             async click() {
                 await clearData(win);
+            }
+        },
+        {
+            label: "Restart arRPC",
+            visible: Settings.store.arRPC === true,
+            async click() {
+                await restartArRPC();
             }
         },
         {
