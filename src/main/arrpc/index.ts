@@ -16,8 +16,20 @@ let worker: Worker;
 
 const inviteCodeRegex = /^(\w|-)+$/;
 
+export function destroyArRPC() {
+    if (!worker) return;
+
+    worker.terminate();
+    worker = null as any;
+}
+
 export async function initArRPC() {
-    if (worker || !Settings.store.arRPC) return;
+    if (!Settings.store.arRPC) {
+        destroyArRPC();
+        return;
+    }
+
+    if (worker) return;
 
     try {
         const { port1: hostPort, port2: workerPort } = new MessageChannel();
