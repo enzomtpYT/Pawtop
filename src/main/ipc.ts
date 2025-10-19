@@ -31,11 +31,11 @@ import { autoStart } from "./autoStart";
 import { VENCORD_QUICKCSS_FILE, VENCORD_THEMES_DIR } from "./constants";
 import { mainWin } from "./mainWindow";
 import { Settings, State } from "./settings";
-import { VENCORD_DIR } from "./vencordDir";
 import { handle, handleSync } from "./utils/ipcWrappers";
 import { PopoutWindows } from "./utils/popout";
 import { isDeckGameMode, showGamePage } from "./utils/steamOS";
 import { isValidVencordInstall } from "./utils/vencordLoader";
+import { VENCORD_DIR } from "./vencordDir";
 
 handleSync(IpcEvents.GET_VENCORD_PRELOAD_FILE, () => join(VENCORD_DIR, "preload.js"));
 handleSync(IpcEvents.GET_VENCORD_RENDERER_SCRIPT, () => readFileSync(join(VENCORD_DIR, "renderer.js"), "utf-8"));

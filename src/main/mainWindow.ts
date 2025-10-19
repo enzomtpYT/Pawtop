@@ -23,26 +23,19 @@ import type { SettingsStore } from "shared/utils/SettingsStore";
 import { createAboutWindow } from "./about";
 import { destroyArRPC, initArRPC } from "./arrpc";
 import { CommandLine } from "./cli";
-import {
-    BrowserUserAgent,
-    DEFAULT_HEIGHT,
-    DEFAULT_WIDTH,
-    isLinux,
-    MIN_HEIGHT,
-    MIN_WIDTH
-} from "./constants";
+import { BrowserUserAgent, DEFAULT_HEIGHT, DEFAULT_WIDTH, isLinux, MIN_HEIGHT, MIN_WIDTH } from "./constants";
 import { AppEvents } from "./events";
 import { darwinURL } from "./index";
 import { sendRendererCommand } from "./ipcCommands";
 import { initKeybinds } from "./keybinds";
 import { Settings, State, VencordSettings } from "./settings";
 import { addSplashLog, createSplashWindow, updateSplashMessage } from "./splash";
-import { VENCORD_DIR } from "./vencordDir";
 import { destroyTray, initTray } from "./tray";
 import { clearData } from "./utils/clearData";
 import { makeLinksOpenExternally } from "./utils/makeLinksOpenExternally";
 import { applyDeckKeyboardFix, askToApplySteamLayout, isDeckGameMode } from "./utils/steamOS";
 import { downloadVencordAsar, ensureVencordFiles } from "./utils/vencordLoader";
+import { VENCORD_DIR } from "./vencordDir";
 
 let isQuitting = false;
 
