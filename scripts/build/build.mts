@@ -23,7 +23,7 @@ const NodeCommonOpts: BuildOptions = {
     ...CommonOpts,
     format: "cjs",
     platform: "node",
-    external: ["electron", "original-fs"],
+    external: ["electron", "original-fs", "arrpc-bun"],
     target: ["esnext"],
     loader: {
         ".node": "file"
@@ -84,9 +84,9 @@ await Promise.all([
     }),
     createContext({
         ...NodeCommonOpts,
-        entryPoints: ["src/main/arrpc/worker.ts"],
-        outfile: "dist/js/arRpcWorker.js",
-        footer: { js: "//# sourceURL=VCDArRpcWorker" }
+        entryPoints: ["src/main/arrpc/bunWorker.ts"],
+        outfile: "dist/js/arrpc/bunWorker.js",
+        footer: { js: "//# sourceURL=VCDArRpcBunWorker" }
     }),
     createContext({
         ...NodeCommonOpts,

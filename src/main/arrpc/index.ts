@@ -4,23 +4,18 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { ChildProcess, spawn } from "child_process";
 import { resolve } from "path";
-import { IpcCommands } from "shared/IpcEvents";
-import { MessageChannel, Worker } from "worker_threads";
 
-import { sendRendererCommand } from "../ipcCommands";
 import { Settings } from "../settings";
-import { ArRpcEvent, ArRpcHostEvent } from "./types";
 
-let worker: Worker;
-
-const inviteCodeRegex = /^(\w|-)+$/;
+let bunProcess: ChildProcess;
 
 export function destroyArRPC() {
-    if (!worker) return;
+    if (!bunProcess) return;
 
-    worker.terminate();
-    worker = null as any;
+    bunProcess.kill();
+    bunProcess = null as any;
 }
 
 export async function initArRPC() {
@@ -29,57 +24,28 @@ export async function initArRPC() {
         return;
     }
 
-    if (worker) return;
+    if (bunProcess) return;
 
     try {
-        const { port1: hostPort, port2: workerPort } = new MessageChannel();
+        const workerPath = resolve(__dirname, "./arrpc/bunWorker.js");
 
-        worker = new Worker(resolve(__dirname, "./arRpcWorker.js"), {
-            workerData: {
-                workerPort
-            },
-            transferList: [workerPort]
+        bunProcess = spawn("bun", [workerPath], {
+            stdio: "inherit",
+            env: {
+                ...process.env,
+                ARRPC_NO_PROCESS_SCANNING: "1" // Disable process scanning in Electron context
+            }
         });
 
-        hostPort.on("message", async ({ type, nonce, data }: ArRpcEvent) => {
-            switch (type) {
-                case "activity": {
-                    sendRendererCommand(IpcCommands.RPC_ACTIVITY, data);
-                    break;
-                }
+        bunProcess.on("error", err => {
+            console.error("[arRPC] Failed to start:", err);
+        });
 
-                case "invite": {
-                    const invite = String(data);
-
-                    const response: ArRpcHostEvent = {
-                        type: "ack-invite",
-                        nonce,
-                        data: false
-                    };
-
-                    if (!inviteCodeRegex.test(invite)) {
-                        return hostPort.postMessage(response);
-                    }
-
-                    response.data = await sendRendererCommand(IpcCommands.RPC_INVITE, invite).catch(() => false);
-
-                    hostPort.postMessage(response);
-                    break;
-                }
-
-                case "link": {
-                    const response: ArRpcHostEvent = {
-                        type: "ack-link",
-                        nonce: nonce,
-                        data: false
-                    };
-
-                    response.data = await sendRendererCommand(IpcCommands.RPC_DEEP_LINK, data).catch(() => false);
-
-                    hostPort.postMessage(response);
-                    break;
-                }
+        bunProcess.on("exit", code => {
+            if (code !== 0 && code !== null) {
+                console.error(`[arRPC] Process exited with code ${code}`);
             }
+            bunProcess = null as any;
         });
     } catch (e) {
         console.error("Failed to start arRPC server", e);

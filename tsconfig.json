@@ -17,5 +17,6 @@
 
         "typeRoots": ["./node_modules/@types", "./node_modules/@vencord"]
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist", "src/main/arrpc/bunWorker.ts"]
 }

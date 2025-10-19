@@ -23,12 +23,12 @@
         "testTypes": "tsc --noEmit",
         "watch": "bun run build --watch",
         "updateMeta": "bun run scripts/utils/updateMeta.mts",
-        "updateArrpcDB": "node ./node_modules/arrpc/update_db.js",
+        "updateArrpcDB": "bun ./node_modules/arrpc-bun/scripts/update_db.ts",
         "applyPatches": "node scripts/applyPatches.mjs",
         "postinstall": "bun updateArrpcDB && bun applyPatches"
     },
     "dependencies": {
-        "arrpc": "github:OpenAsar/arrpc#2234e9c9111f4c42ebcc3aa6a2215bfd979eef77",
+        "arrpc-bun": "latest",
         "electron-updater": "^6.6.2"
     },
     "optionalDependencies": {
@@ -37,14 +37,14 @@
     "devDependencies": {
         "@equicord/types": "^1.13.3",
         "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
-        "@stylistic/eslint-plugin": "^5.4.0",
-        "@types/node": "^24.7.0",
+        "@stylistic/eslint-plugin": "^5.5.0",
+        "@types/node": "^24.8.1",
         "@types/react": "19.2.1",
         "dotenv": "^17.2.3",
-        "electron": "^38.0.0",
+        "electron": "^38.3.0",
         "electron-builder": "^26.0.12",
-        "esbuild": "^0.25.10",
-        "eslint": "^9.37.0",
+        "esbuild": "^0.25.11",
+        "eslint": "^9.38.0",
         "eslint-import-resolver-alias": "^1.1.2",
         "eslint-plugin-path-alias": "^2.1.0",
         "eslint-plugin-prettier": "^5.5.4",
@@ -54,9 +54,9 @@
         "libvesktop": "file:packages/libvesktop",
         "prettier": "^3.6.2",
         "source-map-support": "^0.5.21",
-        "type-fest": "^5.0.1",
+        "type-fest": "^5.1.0",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.46.0",
+        "typescript-eslint": "^8.46.1",
         "xml-formatter": "^3.6.7"
     },
     "packageManager": "bun@latest",
