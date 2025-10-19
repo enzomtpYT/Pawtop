@@ -7,7 +7,8 @@
 import { existsSync } from "fs";
 import { join } from "path";
 
-import { USER_AGENT, VENCORD_DIR } from "../constants";
+import { USER_AGENT } from "../constants";
+import { VENCORD_DIR } from "../vencordDir";
 import { downloadFile, fetchie } from "./http";
 
 const API_BASE = "https://api.github.com";

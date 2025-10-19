@@ -1,6 +1,6 @@
 {
     "name": "equibop",
-    "version": "1.5.8",
+    "version": "1.6.0",
     "private": true,
     "description": "Equibop is a custom Discord desktop app",
     "keywords": [],
@@ -22,7 +22,7 @@
         "test": "bun lint && bun testTypes",
         "testTypes": "tsc --noEmit",
         "watch": "bun run build --watch",
-        "updateMeta": "bun run scripts/utils/updateMeta.mts",
+        "generateMeta": "bun run scripts/utils/generateMeta.mts",
         "updateArrpcDB": "bun ./node_modules/arrpc-bun/scripts/update_db.ts",
         "applyPatches": "node scripts/applyPatches.mjs",
         "postinstall": "bun updateArrpcDB && bun applyPatches"

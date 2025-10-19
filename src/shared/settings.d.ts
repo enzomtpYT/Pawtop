@@ -62,4 +62,9 @@ export interface State {
     linuxAutoStartEnabled?: boolean;
 
     equicordDir?: string;
+
+    updater?: {
+        ignoredVersion?: string;
+        snoozeUntil?: number;
+    };
 }

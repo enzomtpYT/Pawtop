@@ -7,13 +7,13 @@
 import { BrowserWindow } from "electron";
 import { join } from "path";
 import { SplashProps } from "shared/browserWinProperties";
-import { VIEW_DIR } from "shared/paths";
 
 import { DATA_DIR } from "./constants";
 import { Settings } from "./settings";
 import { fileExistsAsync } from "./utils/fileExists";
 
 export let splash: BrowserWindow | undefined;
+import { loadView } from "./vesktopStatic";
 
 const totalTasks = 9;
 let doneTasks = 0;
@@ -27,7 +27,7 @@ export async function createSplashWindow(startMinimized = false) {
         }
     });
 
-    splash.loadFile(join(VIEW_DIR, "splash.html"));
+    loadView(splash, "splash.html");
 
     const { splashBackground, splashColor, splashTheming, splashProgress } = Settings.store;
 

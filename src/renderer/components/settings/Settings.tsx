@@ -6,6 +6,7 @@
 
 import "./settings.css";
 
+import { classNameFactory } from "@equicord/types/api/Styles";
 import { Divider, ErrorBoundary } from "@equicord/types/components";
 import { Text } from "@equicord/types/webpack/common";
 import { ComponentType } from "react";
@@ -17,6 +18,7 @@ import { AutoStartToggle } from "./AutoStartToggle";
 import { DeveloperOptionsButton } from "./DeveloperOptions";
 import { DiscordBranchPicker } from "./DiscordBranchPicker";
 import { NotificationBadgeToggle } from "./NotificationBadgeToggle";
+import { Updater } from "./Updater";
 import { UserAssetsButton } from "./UserAssets";
 import { VesktopSettingsSwitch } from "./VesktopSettingsSwitch";
 import { WindowsTransparencyControls } from "./WindowsTransparencyControls";
@@ -29,6 +31,8 @@ interface BooleanSetting {
     disabled?(): boolean;
     invisible?(): boolean;
 }
+
+export const cl = classNameFactory("vcd-settings-");
 
 export type SettingsComponent = ComponentType<{ settings: typeof Settings.store }>;
 
@@ -159,12 +163,12 @@ function SettingsSections() {
     const Settings = useSettings();
 
     const sections = Object.entries(SettingsOptions).map(([title, settings], i, arr) => (
-        <div key={title} className="vcd-settings-category">
-            <Text variant="heading-lg/semibold" color="header-primary" className="vcd-settings-category-title">
+        <div key={title} className={cl("category")}>
+            <Text variant="heading-lg/semibold" color="header-primary" className={cl("category-title")}>
                 {title}
             </Text>
 
-            <div className="vcd-settings-category-content">
+            <div className={cl("category-content")}>
                 {settings.map(Setting => {
                     if (typeof Setting === "function") return <Setting settings={Settings} />;
 
@@ -184,7 +188,7 @@ function SettingsSections() {
                 })}
             </div>
 
-            {i < arr.length - 1 && <Divider className="vcd-settings-category-divider" />}
+            {i < arr.length - 1 && <Divider className={cl("category-divider")} />}
         </div>
     ));
 
@@ -195,9 +199,10 @@ export default ErrorBoundary.wrap(
     function SettingsUI() {
         return (
             <section>
-                <Text variant="heading-xl/semibold" color="header-primary" className="vcd-settings-title">
-                    Equibop Settings
+                <Text variant="heading-xl/semibold" color="header-primary" className={cl("title")}>
+                    Vesktop Settings
                 </Text>
+                <Updater />
                 <SettingsSections />
             </section>
         );

@@ -22,14 +22,14 @@ import type { SettingsStore } from "shared/utils/SettingsStore";
 
 import { createAboutWindow } from "./about";
 import { destroyArRPC, initArRPC } from "./arrpc";
+import { CommandLine } from "./cli";
 import {
     BrowserUserAgent,
     DEFAULT_HEIGHT,
     DEFAULT_WIDTH,
     isLinux,
     MIN_HEIGHT,
-    MIN_WIDTH,
-    VENCORD_DIR
+    MIN_WIDTH
 } from "./constants";
 import { AppEvents } from "./events";
 import { darwinURL } from "./index";
@@ -37,6 +37,7 @@ import { sendRendererCommand } from "./ipcCommands";
 import { initKeybinds } from "./keybinds";
 import { Settings, State, VencordSettings } from "./settings";
 import { addSplashLog, createSplashWindow, updateSplashMessage } from "./splash";
+import { VENCORD_DIR } from "./vencordDir";
 import { destroyTray, initTray } from "./tray";
 import { clearData } from "./utils/clearData";
 import { makeLinksOpenExternally } from "./utils/makeLinksOpenExternally";
@@ -449,7 +450,7 @@ function retryUrl(url: string, description: string) {
 }
 
 export async function createWindows() {
-    const startMinimized = process.argv.includes("--start-minimized");
+    const startMinimized = CommandLine.values["start-minimized"];
 
     let splash: BrowserWindow | undefined;
     if (Settings.store.enableSplashScreen !== false) {

@@ -4,12 +4,14 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import "./updater";
 import "./ipc";
 import "./userAssets";
+import "./vesktopProtocol";
 
 import { app, BrowserWindow, nativeTheme } from "electron";
-import { autoUpdater } from "electron-updater";
 
+import { checkCommandLineForHelpOrVersion } from "./cli";
 import { DATA_DIR } from "./constants";
 import { createFirstLaunchTour } from "./firstLaunch";
 import { createWindows, mainWin } from "./mainWindow";
@@ -19,9 +21,7 @@ import { Settings, State } from "./settings";
 import { setAsDefaultProtocolClient } from "./utils/setAsDefaultProtocolClient";
 import { isDeckGameMode } from "./utils/steamOS";
 
-if (!IS_DEV) {
-    autoUpdater.checkForUpdatesAndNotify();
-}
+checkCommandLineForHelpOrVersion();
 
 console.log("Equibop v" + app.getVersion());
 
