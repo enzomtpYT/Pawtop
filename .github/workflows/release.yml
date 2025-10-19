@@ -6,6 +6,9 @@ on:
             - v*
     workflow_dispatch:
 
+permissions:
+    contents: write
+
 jobs:
     release:
         runs-on: ${{ matrix.os }}
@@ -44,10 +47,10 @@ jobs:
                   echo "$API_KEY" > apple.p8
                   bun run electron-builder --${{ matrix.platform }} --publish always
               env:
-                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                CSC_LINK: ${{ secrets.APPLE_SIGNING_CERT }}
-                CSC_KEY_PASSWORD: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
-                API_KEY: ${{ secrets.APPLE_API_KEY }}
-                APPLE_API_KEY: apple.p8
-                APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
-                APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  CSC_LINK: ${{ secrets.APPLE_SIGNING_CERT }}
+                  CSC_KEY_PASSWORD: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
+                  API_KEY: ${{ secrets.APPLE_API_KEY }}
+                  APPLE_API_KEY: apple.p8
+                  APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+                  APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
