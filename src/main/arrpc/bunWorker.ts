@@ -7,6 +7,8 @@
 import * as Bridge from "arrpc-bun/src/bridge";
 import Server from "arrpc-bun/src/server";
 
+Bridge.init();
+
 (async () => {
     // @ts-ignore
     const server = await new Server();
@@ -14,8 +16,6 @@ import Server from "arrpc-bun/src/server";
     server.on("activity", (data: any) => {
         Bridge.send(data);
     });
-
-    console.log("[arRPC-Bun] Server started");
 
     const shutdown = async () => {
         console.log("[arRPC-Bun] Shutting down...");

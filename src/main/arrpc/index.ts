@@ -37,10 +37,7 @@ export async function initArRPC() {
 
         bunProcess = spawn("bun", [workerPath], {
             stdio: "inherit",
-            env: {
-                ...process.env,
-                ARRPC_NO_PROCESS_SCANNING: "1" // Disable process scanning in Electron context
-            }
+            env: process.env
         });
 
         bunProcess.on("error", err => {
