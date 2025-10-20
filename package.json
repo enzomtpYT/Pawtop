@@ -1,12 +1,12 @@
 {
     "name": "pawtop",
-    "version": "2.1.8",
+    "version": "2.1.9",
     "private": true,
     "description": "A fork of Equibop pre-packaged with PawsomeVencord",
     "keywords": [],
     "homepage": "https://github.com/enzomtpYT/PawsomeVencord",
     "license": "GPL-3.0 or later",
-    "author": "enzomptp",
+    "author": "enzomtp",
     "main": "dist/js/main.js",
     "scripts": {
         "build": "tsx scripts/build/build.mts",
