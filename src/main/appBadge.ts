@@ -45,8 +45,8 @@ export function setBadgeCount(count: number) {
                 signature: "sa{sv}",
                 body: [
                     process.env.container === "1"
-                        ? "application://io.github.equicord.equibop.desktop" // flatpak handling
-                        : "application://equibop.desktop",
+                        ? "application://io.github.enzomtpyt.pawtop.desktop" // flatpak handling
+                        : "application://pawtop.desktop",
                     [
                         ["count", ["x", count === -1 ? 0 : count]],
                         ["count-visible", ["b", count > 0]]

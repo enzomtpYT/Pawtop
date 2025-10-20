@@ -167,7 +167,7 @@ export const TraySwitch: SettingsComponent = ({ settings }) => {
                 settings.tray = v;
                 setCurrentTrayIcon();
             }}
-            note="Add a system tray entry for Equibop"
+            note="Add a system tray entry for Pawtop"
         >
             Enable Tray Icon
         </Switch>

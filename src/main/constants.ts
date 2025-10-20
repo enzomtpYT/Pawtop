@@ -13,7 +13,7 @@ const equibopDir = dirname(process.execPath);
 export const PORTABLE =
     process.platform === "win32" &&
     !process.execPath.toLowerCase().endsWith("electron.exe") &&
-    !existsSync(join(equibopDir, "Uninstall Equibop.exe"));
+    !existsSync(join(equibopDir, "Uninstall Pawtop.exe"));
 
 export const DATA_DIR =
     process.env.EQUICORD_USER_DATA_DIR || (PORTABLE ? join(equibopDir, "Data") : join(app.getPath("userData")));
@@ -32,10 +32,10 @@ export const VENCORD_THEMES_DIR = join(DATA_DIR, "themes");
 // as otherwise "DATA_DIR" (which is used by ./settings) will be uninitialised
 export const VENCORD_DIR = (() => {
     const { State } = require("./settings") as typeof import("./settings");
-    return State.store.equicordDir ? join(State.store.equicordDir, "equibop") : join(SESSION_DATA_DIR, "equicord.asar");
+    return State.store.equicordDir ? join(State.store.equicordDir, "pawtop") : join(SESSION_DATA_DIR, "pawtop.asar");
 })();
 
-export const USER_AGENT = `Equibop/${app.getVersion()} (https://github.com/Equicord/Equibop)`;
+export const USER_AGENT = `Pawtop/${app.getVersion()} (https://github.com/enzomtpYT/PawsomeVencord)`;
 
 // dimensions shamelessly stolen from Discord Desktop :3
 export const MIN_WIDTH = 940;

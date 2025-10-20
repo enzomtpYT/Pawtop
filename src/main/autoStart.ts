@@ -18,10 +18,10 @@ interface AutoStart {
 function makeAutoStartLinux(): AutoStart {
     const configDir = process.env.XDG_CONFIG_HOME || join(process.env.HOME!, ".config");
     const dir = join(configDir, "autostart");
-    const file = join(dir, "equibop.desktop");
+    const file = join(dir, "pawtop.desktop");
 
     // IM STUPID
-    const legacyName = join(dir, "equicord.desktop");
+    const legacyName = join(dir, "pawtop.desktop");
     if (existsSync(legacyName)) renameSync(legacyName, file);
 
     // "Quoting must be done by enclosing the argument between double quotes and escaping the double quote character,
@@ -35,8 +35,8 @@ function makeAutoStartLinux(): AutoStart {
             const desktopFile = stripIndent`
                 [Desktop Entry]
                 Type=Application
-                Name=Equibop
-                Comment=Equibop autostart script
+                Name=Pawtop
+                Comment=Pawtop autostart script
                 Exec=${commandLine}
                 StartupNotify=false
                 Terminal=false

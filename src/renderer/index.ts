@@ -22,13 +22,13 @@ export { Settings };
 
 import type SettingsPlugin from "@equicord/types/plugins/_core/settings";
 
-VesktopLogger.log("Equibop v" + VesktopNative.app.getVersion());
+VesktopLogger.log("Pawtop v" + VesktopNative.app.getVersion());
 
 const customSettingsSections = (Vencord.Plugins.plugins.Settings as any as typeof SettingsPlugin).customSections;
 
 customSettingsSections.push(() => ({
-    section: "Equibop",
-    label: "Equibop Settings",
+    section: "Pawtop",
+    label: "Pawtop Settings",
     element: SettingsUi,
     className: "vc-vesktop-settings"
 }));
@@ -43,8 +43,8 @@ if (Settings.store[equicordDir]) {
         setTimeout(
             () =>
                 Alerts.show({
-                    title: "Custom Equicord Location",
-                    body: "Due to security hardening changes in Equibop, your custom Equicord location had to be reset. Please configure it again in the settings.",
+                    title: "Custom PawsomeVencord Location",
+                    body: "Due to security hardening changes in Pawtop, your custom PawsomeVencord location had to be reset. Please configure it again in the settings.",
                     onConfirm: () => delete Settings.store[equicordDir]
                 }),
             5000

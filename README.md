@@ -1,12 +1,12 @@
-# Equibop [<img src="/static/icon.png" width="225" align="right" alt="Equibop">](https://github.com/Equicord/Equibop)
+# Pawtop [<img src="/static/icon.png" width="225" align="right" alt="Pawtop">](https://github.com/enzomtpYT/Pawtop)
 
-[![Equicord](https://img.shields.io/badge/Equicord-grey?style=flat)](https://github.com/Equicord/Equicord)
-[![Tests](https://github.com/Equicord/Equibop/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/Equicord/Equibop/actions/workflows/test.yml)
-[![Discord](https://img.shields.io/discord/1173279886065029291.svg?color=768AD4&label=Discord&logo=discord&logoColor=white)](https://equicord.org/discord)
+[![PawsomeVencord](https://img.shields.io/badge/PawsomeVencord-grey?style=flat)](https://github.com/enzomtpYT/PawsomeVencord)
+[![Tests](https://github.com/enzomtpYT/Pawtop/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/enzomtpYT/Pawtop/actions/workflows/test.yml)
+[![Discord](https://img.shields.io/discord/1173279886065029291.svg?color=768AD4&label=Discord&logo=discord&logoColor=white)](https://discord.gg/w9jVtzNx4c)
 
-Equibop is a fork of [Vesktop](https://github.com/Vencord/Vesktop).
+Pawtop is a fork of [Equibop](https://github.com/Equicord/Equibop).
 
-You can join our [discord server](https://equicord.org/discord) for commits, changes, chat or even support.<br></br>
+You can join our [discord server](https://discord.gg/w9jVtzNx4c) for commits, changes, chat or even support.<br></br>
 
 ## Main features
 
@@ -15,7 +15,7 @@ You can join our [discord server](https://equicord.org/discord) for commits, cha
 
 **Extra included changes**
 
-- Equicord preinstalled
+- PawsomeVencord preinstalled
 - Custom Splash animations from [this PR](https://github.com/Vencord/Vesktop/pull/355)
 - Tray Customization & Voice detection and Badge from [this PR](https://github.com/Vencord/Vesktop/pull/517)
 - Global Keybind to Toggle voice status from [this PR](https://github.com/Vencord/Vesktop/pull/609)
@@ -38,47 +38,47 @@ You can join our [discord server](https://equicord.org/discord) for commits, cha
 If you don't know the difference, pick the Installer.
 
 - Installer
-  - [Universal](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-win.exe)
-  - [x64 / amd64](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-win-x64.exe)
-  - [Arm® 64](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-win-arm64.exe)
+  - [Universal](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-win.exe)
+  - [x64 / amd64](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-win-x64.exe)
+  - [Arm® 64](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-win-arm64.exe)
 - Portable
-  - [x64 / amd64](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-win-x64.zip)
-  - [Arm® 64](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-win-arm64.zip)
+  - [x64 / amd64](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-win-x64.zip)
+  - [Arm® 64](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-win-arm64.zip)
 
 ### Mac
 
 These work on both M Series and Intel Series Macs
 
-- [DMG](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-mac-universal.dmg)
-- [ZIP](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-mac-universal.zip)
+- [DMG](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-mac-universal.dmg)
+- [ZIP](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-mac-universal.zip)
 
 ### Linux
 
-[![Equibop](https://img.shields.io/badge/AVAILABLE_ON_THE_AUR-333232?style=for-the-badge&logo=arch-linux&logoColor=0F94D2&labelColor=%23171717)](https://aur.archlinux.org/packages?O=0&K=equibop)
+[![Pawtop](https://img.shields.io/badge/AVAILABLE_ON_THE_AUR-333232?style=for-the-badge&logo=arch-linux&logoColor=0F94D2&labelColor=%23171717)](https://aur.archlinux.org/packages?O=0&K=pawtop)
 <br>
-<a href="https://flathub.org/apps/io.github.equicord.equibop">
+<a href="https://flathub.org/apps/io.github.enzomtpyt.pawtop">
   <img src="https://flathub.org/api/badge?svg" alt="Download on Flathub" style="width:220px; height:auto;">
 </a>
 
 If you don't know the difference, pick amd64.
 
 - amd64 / x86_64
-  - [AppImage](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-x86_64.AppImage)
-  - [Ubuntu/Debian (.deb)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-amd64.deb)
-  - [Fedora/RHEL (.rpm)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-x86_64.rpm)
-  - [tarball](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-x64.tar.gz)
+  - [AppImage](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-linux-x86_64.AppImage)
+  - [Ubuntu/Debian (.deb)](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-linux-amd64.deb)
+  - [Fedora/RHEL (.rpm)](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-linux-x86_64.rpm)
+  - [tarball](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-linux-x64.tar.gz)
 - Arm® 64 / aarch64
-  - [AppImage](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-arm64.AppImage)
-  - [Ubuntu/Debian (.deb)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-arm64.deb)
-  - [Fedora/RHEL (.rpm)](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-aarch64.rpm)
-  - [tarball](https://github.com/Equicord/Equibop/releases/latest/download/Equibop-linux-arm64.tar.gz)
+  - [AppImage](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-linux-arm64.AppImage)
+  - [Ubuntu/Debian (.deb)](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-linux-arm64.deb)
+  - [Fedora/RHEL (.rpm)](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-linux-aarch64.rpm)
+  - [tarball](https://github.com/enzomtpYT/Pawtop/releases/latest/download/Pawtop-linux-arm64.tar.gz)
 
 #### Community packages
 
 Below you can find unofficial packages created by the community. They are not officially supported by us, so before reporting issues, please first confirm the issue also happens on official builds. When in doubt, consult with their packager first. The flatpak and AppImage should work on any distro that [supports them](https://flatpak.org/setup/), so I recommend you just use those instead!
 
-- Arch Linux: [Equibop on the Arch user repository](https://aur.archlinux.org/packages?K=equibop)
-- NixOS: `nix-shell -p equibop`
+- Arch Linux: [Pawtop on the Arch user repository](https://aur.archlinux.org/packages?K=pawtop)
+- NixOS: `nix-shell -p pawtop`
 
 ## Building from Source
 
@@ -94,8 +94,8 @@ Packaging will create builds in the dist/ folder
 > On Windows, if you run the test script, you will get test errors about venmic, you can ignore these as it's a linux only module.
 
 ```sh
-git clone https://github.com/Equicord/Equibop
-cd Equibop
+git clone https://github.com/enzomtpYT/Pawtop
+cd Pawtop
 
 # Install Dependencies
 pnpm i

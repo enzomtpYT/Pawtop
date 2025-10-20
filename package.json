@@ -1,12 +1,12 @@
 {
-    "name": "equibop",
+    "name": "pawtop",
     "version": "2.1.7",
     "private": true,
-    "description": "A fork of Vesktop pre-packaged with Equicord",
+    "description": "A fork of Equibop pre-packaged with PawsomeVencord",
     "keywords": [],
-    "homepage": "https://github.com/Equicord/Equibop",
+    "homepage": "https://github.com/enzomtpYT/PawsomeVencord",
     "license": "GPL-3.0 or later",
-    "author": "Equicord",
+    "author": "enzomptp",
     "main": "dist/js/main.js",
     "scripts": {
         "build": "tsx scripts/build/build.mts",
@@ -64,9 +64,9 @@
         "pnpm": ">=8"
     },
     "build": {
-        "appId": "io.github.equicord.equibop",
+        "appId": "io.github.enzomtpyt.pawtop",
         "artifactName": "${productName}-${os}-${arch}.${ext}",
-        "productName": "Equibop",
+        "productName": "Pawtop",
         "files": [
             "!*",
             "!node_modules",
@@ -118,13 +118,13 @@
             ],
             "desktop": {
                 "entry": {
-                    "Name": "Equibop",
+                    "Name": "Pawtop",
                     "GenericName": "Internet Messenger",
                     "Type": "Application",
                     "Categories": "Network;InstantMessaging;Chat;",
-                    "Keywords": "discord;equibop;vesktop;vencord;equicord;electron;chat;",
+                    "Keywords": "discord;pawtop;vesktop;vencord;equicord;electron;chat;pawsomevencord",
                     "MimeType": "x-scheme-handler/discord",
-                    "StartupWMClass": "equibop"
+                    "StartupWMClass": "pawtop"
                 }
             }
         },

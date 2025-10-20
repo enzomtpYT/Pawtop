@@ -25,7 +25,7 @@ if (!IS_DEV) {
     autoUpdater.checkForUpdatesAndNotify();
 }
 
-console.log("Equibop v" + app.getVersion());
+console.log("Pawtop v" + app.getVersion());
 
 // Make the Vencord files use our DATA_DIR
 process.env.EQUICORD_USER_DATA_DIR = DATA_DIR;
@@ -133,7 +133,7 @@ function init() {
     });
 
     app.whenReady().then(async () => {
-        if (process.platform === "win32") app.setAppUserModelId("io.github.equicord.equibop");
+        if (process.platform === "win32") app.setAppUserModelId("io.github.enzomtpyt.pawtop");
 
         createSplashWindow();
         addSplashLog();
@@ -158,10 +158,10 @@ function init() {
 
 if (!app.requestSingleInstanceLock({ IS_DEV })) {
     if (IS_DEV) {
-        console.log("Equibop is already running. Quitting previous instance...");
+        console.log("Pawtop is already running. Quitting previous instance...");
         init();
     } else {
-        console.log("Equibop is already running. Quitting...");
+        console.log("Pawtop is already running. Quitting...");
         app.quit();
     }
 } else {

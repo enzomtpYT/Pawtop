@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component type="desktop-application">
   <!--Created with jdAppStreamEdit 7.1-->
-  <id>io.github.equicord.equibop</id>
-  <name>Equibop</name>
-  <summary>Snappier Discord app with Equicord</summary>
-  <developer_name>Equicord Contributors</developer_name>
-  <launchable type="desktop-id">io.github.equicord.equibop.desktop</launchable>
+  <id>io.github.enzomtpyt.pawtop</id>
+  <name>Pawtop</name>
+  <summary>Snappier Discord app with PawsomeVencord</summary>
+  <developer_name>PawsomeVencord Contributors</developer_name>
+  <launchable type="desktop-id">io.github.enzomtpyt.pawtop.desktop</launchable>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0</project_license>
-  <project_group>Equicord</project_group>
+  <project_group>PawsomeVencord</project_group>
   <description>
-    <p>Equibop is a cross-platform Vesktop Fork desktop app aiming to give you extra plugins but still give you a snappier Discord experience, with Equicord pre-installed.</p>
+    <p>Pawtop is a cross-platform Vesktop Fork desktop app aiming to give you extra plugins but still give you a snappier Discord experience, with PawsomeVencord pre-installed.</p>
     <p>Which comes bundled with Venmic, a purpose-built library to provide functioning audio screenshare.</p>
   </description>
   <screenshots>
     <screenshot type="default">
-      <caption>Equicord settings page and about window open</caption>
+      <caption>PawsomeVencord settings page and about window open</caption>
       <image type="source">https://files.catbox.moe/4medht.png</image>
     </screenshot>
     <screenshot>
@@ -29,7 +29,7 @@
   </screenshots>
   <releases>
       <release version="v2.1.7" date="2025-09-30" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.7</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.1.7</url>
       <description>
         <p>What's Changed:</p>
         <p>• fix arRPC </p>
@@ -38,14 +38,14 @@
       </description>
     </release>
       <release version="v2.1.6" date="2025-08-07" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.6</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.1.6</url>
       <description>
         <p>What's Changed:</p>
         <p>• upgrade to all changes in vesktop v1.5.8</p>
       </description>
     </release>
     <release version="v2.1.5" date="2025-06-25" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.5</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.1.5</url>
       <description>
         <p>What's Changed:</p>
         <p>• upgrade to all changes in vesktop v1.5.7</p>
@@ -53,14 +53,14 @@
       </description>
     </release>
     <release version="v2.1.4" date="2025-05-14" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.4</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.1.4</url>
       <description>
         <p>What's Changed:</p>
         <p>• fix windows decorations actions patch</p>
       </description>
     </release>
     <release version="v2.1.3" date="2025-05-11" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.3</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.1.3</url>
       <description>
         <p>What's Changed:</p>
         <p>• again alot of fixes, improvements and update PRs</p>
@@ -68,7 +68,7 @@
       </description>
     </release>
     <release version="v2.1.2" date="2025-02-08" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.2</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.1.2</url>
       <description>
         <p>What's Changed:</p>
         <p>• alot of fixes, improvements and update PRs</p>
@@ -76,59 +76,59 @@
       </description>
     </release>
     <release version="v2.1.1" date="2024-11-07" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.1</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.1.1</url>
       <description/>
     </release>
     <release version="v2.1.0" date="2024-11-01" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.1.0</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.1.0</url>
       <description/>
     </release>
     <release version="v2.0.9" date="2024-09-10" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.0.9</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.0.9</url>
       <description/>
     </release>
     <release version="v2.0.8" date="2024-08-17" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.0.8</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.0.8</url>
       <description/>
     </release>
     <release version="v2.0.7" date="2024-08-02" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.0.7</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.0.7</url>
       <description/>
     </release>
     <release version="v2.0.6" date="2024-07-20" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.0.6</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.0.6</url>
       <description/>
     </release>
     <release version="v2.0.5" date="2024-07-19" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.0.5</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.0.5</url>
       <description/>
     </release>
     <release version="v2.0.4" date="2024-07-19" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.0.4</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.0.4</url>
       <description/>
     </release>
     <release version="v2.0.3" date="2024-07-19" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.0.3</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.0.3</url>
       <description/>
     </release>
     <release version="v2.0.2" date="2024-07-16" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.0.2</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.0.2</url>
       <description/>
     </release>
     <release version="v2.0.1" date="2024-07-15" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.0.1</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.0.1</url>
       <description/>
     </release>
     <release version="v2.0.0" date="2024-07-13" type="stable">
-      <url>https://github.com/Equicord/Equibop/releases/tag/v2.0.0</url>
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v2.0.0</url>
       <description/>
     </release>
   </releases>
-  <url type="homepage">https://github.com/Equicord/Equibop</url>
-  <url type="bugtracker">https://github.com/Equicord/Equibop/issues</url>
-  <url type="help">https://github.com/Equicord/Equibop/issues</url>
+  <url type="homepage">https://github.com/enzomtpYT/Pawtop</url>
+  <url type="bugtracker">https://github.com/enzomtpYT/Pawtop/issues</url>
+  <url type="help">https://github.com/enzomtpYT/Pawtop/issues</url>
   <url type="donation">https://github.com/sponsors/Vendicated</url>
-  <url type="vcs-browser">https://github.com/Equicord/Equibop</url>
+  <url type="vcs-browser">https://github.com/enzomtpYT/Pawtop</url>
   <categories>
     <category>InstantMessaging</category>
     <category>Network</category>
@@ -152,8 +152,8 @@
   </content_rating>
   <keywords>
     <keyword>Discord</keyword>
-    <keyword>Equibop</keyword>
-    <keyword>Equicord</keyword>
+    <keyword>Pawtop</keyword>
+    <keyword>PawsomeVencord</keyword>
     <keyword>Vencord</keyword>
     <keyword>Vesktop</keyword>
     <keyword>Privacy</keyword>

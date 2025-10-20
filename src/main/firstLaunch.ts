@@ -28,7 +28,7 @@ interface Data {
 
 export function createFirstLaunchTour() {
     if (process.platform === "darwin") {
-        exec(`codesign --force --deep --sign - /Applications/Equibop.app`, error => {
+        exec(`codesign --force --deep --sign - /Applications/Pawtop.app`, error => {
             if (error) return;
         });
     }
@@ -68,7 +68,7 @@ export function createFirstLaunchTour() {
         if (data.autoStart) autoStart.enable();
 
         if (data.importSettings) {
-            const from = join(app.getPath("userData"), "..", "Equicord", "settings");
+            const from = join(app.getPath("userData"), "..", "PawsomeVencord", "settings");
             const to = join(DATA_DIR, "settings");
             try {
                 const files = readdirSync(from);

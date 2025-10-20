@@ -33,9 +33,9 @@ jobs:
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
 
-                  gh release upload "${{ github.event.release.tag_name }}" meta/io.github.equicord.equibop.metainfo.xml
+                  gh release upload "${{ github.event.release.tag_name }}" meta/io.github.enzomtpyt.pawtop.metainfo.xml
 
-                  git add meta/io.github.equicord.equibop.metainfo.xml
+                  git add meta/io.github.enzomtpyt.pawtop.metainfo.xml
                   git commit -m "metainfo: add entry for ${{ github.event.release.tag_name }}"
                   git push origin HEAD:main
               env:

@@ -97,7 +97,7 @@ function initTray(win: BrowserWindow) {
             click: createAboutWindow
         },
         {
-            label: "Repair Equicord",
+            label: "Repair PawsomeVencord",
             async click() {
                 await downloadVencordAsar();
                 app.relaunch();
@@ -105,7 +105,7 @@ function initTray(win: BrowserWindow) {
             }
         },
         {
-            label: "Reset Equibop",
+            label: "Reset Pawtop",
             async click() {
                 await clearData(win);
             }
@@ -131,15 +131,15 @@ function initTray(win: BrowserWindow) {
 
     tray = new Tray(ICON_PATH);
     setTrayIcon("icon");
-    tray.setToolTip("Equibop");
+    tray.setToolTip("Pawtop");
     tray.setContextMenu(trayMenu);
     tray.on("click", onTrayClick);
 }
 
 async function clearData(win: BrowserWindow) {
     const { response } = await dialog.showMessageBox(win, {
-        message: "Are you sure you want to reset Equibop?",
-        detail: "This will log you out, clear caches and reset all your settings!\n\nEquibop will automatically restart after this operation.",
+        message: "Are you sure you want to reset Pawtop?",
+        detail: "This will log you out, clear caches and reset all your settings!\n\nPawtop will automatically restart after this operation.",
         buttons: ["Yes", "No"],
         cancelId: MessageBoxChoice.Cancel,
         defaultId: MessageBoxChoice.Default,
@@ -168,24 +168,24 @@ function initMenuBar(win: BrowserWindow) {
 
     const subMenu = [
         {
-            label: "About Equibop",
+            label: "About Pawtop",
             click: createAboutWindow
         },
         {
-            label: "Force Update Equicord",
+            label: "Force Update PawsomeVencord",
             async click() {
                 await downloadVencordAsar();
                 app.relaunch();
                 app.quit();
             },
-            toolTip: "Equibop will automatically restart after this operation"
+            toolTip: "Pawtop will automatically restart after this operation"
         },
         {
-            label: "Reset Equibop",
+            label: "Reset Pawtop",
             async click() {
                 await clearData(win);
             },
-            toolTip: "Equibop will automatically restart after this operation"
+            toolTip: "Pawtop will automatically restart after this operation"
         },
         {
             label: "Relaunch",
@@ -252,7 +252,7 @@ function initMenuBar(win: BrowserWindow) {
 
     const menuItems = [
         {
-            label: "Equibop",
+            label: "Pawtop",
             role: "appMenu",
             submenu: subMenu.filter(isTruthy)
         },
@@ -408,7 +408,7 @@ function initStaticTitle(win: BrowserWindow) {
 
     addSettingsListener("staticTitle", enabled => {
         if (enabled) {
-            win.setTitle("Equibop");
+            win.setTitle("Pawtop");
             win.on("page-title-updated", listener);
         } else {
             win.off("page-title-updated", listener);
@@ -465,7 +465,7 @@ function createMainWindow() {
             transparencyOption !== "none" && {
                 transparent: true
             }),
-        ...(staticTitle && { title: "Equibop" }),
+        ...(staticTitle && { title: "Pawtop" }),
         ...(process.platform === "darwin" && getDarwinOptions()),
         ...getWindowBoundsOptions(),
         autoHideMenuBar: enableMenu
