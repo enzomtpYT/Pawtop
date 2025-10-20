@@ -29,7 +29,7 @@ export async function createSplashWindow(startMinimized = false) {
 
     loadView(splash, "splash.html");
 
-    const { splashBackground, splashColor, splashTheming, splashProgress } = Settings.store;
+    const { splashBackground, splashColor, splashTheming, splashProgress, splashPixelated } = Settings.store;
 
     if (splashTheming !== false) {
         if (splashColor) {
@@ -42,6 +42,14 @@ export async function createSplashWindow(startMinimized = false) {
         if (splashBackground) {
             splash.webContents.insertCSS(`body { --bg: ${splashBackground} !important }`);
         }
+    }
+
+    if (splashPixelated) {
+        splash.webContents.insertCSS(`img { image-rendering: pixelated; }`);
+    }
+
+    if (splashPixelated) {
+        splash.webContents.insertCSS(`img { image-rendering: pixelated; }`);
     }
 
     const customSplashPath = join(DATA_DIR, "userAssets", "splash");
