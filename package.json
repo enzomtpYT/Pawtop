@@ -38,7 +38,7 @@
         "@equicord/types": "^1.13.3",
         "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
         "@stylistic/eslint-plugin": "^5.5.0",
-        "@types/node": "^24.9.0",
+        "@types/node": "^24.9.1",
         "@types/react": "19.2.1",
         "dotenv": "^17.2.3",
         "electron": "^38.3.0",

@@ -84,6 +84,7 @@ await Promise.all([
     }),
     createContext({
         ...NodeCommonOpts,
+        format: "esm",
         entryPoints: ["src/main/arrpc/bunWorker.ts"],
         outfile: "dist/js/arrpc/bunWorker.js",
         footer: { js: "//# sourceURL=VesktopArRpcBunWorker" }
