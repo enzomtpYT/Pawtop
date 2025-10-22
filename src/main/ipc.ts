@@ -12,9 +12,9 @@ import {
     BrowserWindow,
     clipboard,
     dialog,
-    IpcMainInvokeEvent,
+    type IpcMainInvokeEvent,
     nativeImage,
-    RelaunchOptions,
+    type RelaunchOptions,
     session,
     shell
 } from "electron";
@@ -28,7 +28,8 @@ import { debounce } from "shared/utils/debounce";
 import { IpcEvents } from "../shared/IpcEvents";
 import { setBadgeCount } from "./appBadge";
 import { autoStart } from "./autoStart";
-import { VENCORD_QUICKCSS_FILE, VENCORD_THEMES_DIR } from "./constants";
+import { VENCORD_QUICKCSS_FILE, VENCORD_SETTINGS_DIR, VENCORD_THEMES_DIR } from "./constants";
+import { AppEvents } from "./events";
 import { mainWin } from "./mainWindow";
 import { Settings, State } from "./settings";
 import { handle, handleSync } from "./utils/ipcWrappers";
@@ -162,16 +163,21 @@ function readCss() {
     return readFile(VENCORD_QUICKCSS_FILE, "utf-8").catch(() => "");
 }
 
-open(VENCORD_QUICKCSS_FILE, "a+").then(fd => {
-    fd.close();
-    watch(
-        VENCORD_QUICKCSS_FILE,
-        { persistent: false },
-        debounce(async () => {
-            mainWin?.webContents.postMessage("VencordQuickCssUpdate", await readCss());
-        }, 50)
-    );
-});
+mkdirSync(VENCORD_SETTINGS_DIR, { recursive: true });
+open(VENCORD_QUICKCSS_FILE, "a+")
+    .then(fd => {
+        fd.close();
+        watch(
+            VENCORD_QUICKCSS_FILE,
+            { persistent: false },
+            debounce(async () => {
+                mainWin?.webContents.postMessage("VencordQuickCssUpdate", await readCss());
+            }, 50)
+        );
+    })
+    .catch(err => {
+        console.error("Failed to setup quickCss file watcher:", err);
+    });
 
 mkdirSync(VENCORD_THEMES_DIR, { recursive: true });
 watch(
@@ -181,3 +187,11 @@ watch(
         mainWin?.webContents.postMessage("VencordThemeUpdate", void 0);
     })
 );
+
+handle(IpcEvents.VOICE_STATE_CHANGED, (_, variant: string) => {
+    AppEvents.emit("setTrayVariant", variant as any);
+});
+
+handle(IpcEvents.VOICE_CALL_STATE_CHANGED, (_, inCall: boolean) => {
+    AppEvents.emit("voiceCallStateChanged", inCall);
+});

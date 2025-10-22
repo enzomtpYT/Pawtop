@@ -10,26 +10,29 @@ import { createAboutWindow } from "./about";
 import { restartArRPC } from "./arrpc";
 import { AppEvents } from "./events";
 import { Settings } from "./settings";
-import { resolveAssetPath } from "./userAssets";
+import { resolveAssetPath, UserAssetType } from "./userAssets";
 import { clearData } from "./utils/clearData";
 import { downloadVencordAsar } from "./utils/vencordLoader";
 
+type TrayVariant = "tray" | "trayUnread" | "traySpeaking" | "trayIdle" | "trayMuted" | "trayDeafened";
+
 let tray: Tray;
-let trayVariant: "tray" | "trayUnread" = "tray";
+let trayVariant: TrayVariant = "tray";
 
 AppEvents.on("userAssetChanged", async asset => {
-    if (tray && (asset === "tray" || asset === "trayUnread")) {
-        tray.setImage(await resolveAssetPath(trayVariant));
+    if (tray && asset.startsWith("tray")) {
+        tray.setImage(await resolveAssetPath(trayVariant as UserAssetType));
     }
 });
 
-AppEvents.on("setTrayVariant", async variant => {
+AppEvents.on("setTrayVariant", async (variant: TrayVariant) => {
     if (trayVariant === variant) return;
 
     trayVariant = variant;
     if (!tray) return;
 
-    tray.setImage(await resolveAssetPath(trayVariant));
+    const iconPath = await resolveAssetPath(trayVariant as UserAssetType);
+    tray.setImage(iconPath);
 });
 
 export function destroyTray() {

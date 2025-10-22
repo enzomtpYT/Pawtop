@@ -91,6 +91,10 @@ export const VesktopNative = {
         copyImage: (imageBuffer: Uint8Array, imageSrc: string) =>
             invoke<void>(IpcEvents.CLIPBOARD_COPY_IMAGE, imageBuffer, imageSrc)
     },
+    tray: {
+        setVoiceState: (state: string) => invoke<void>(IpcEvents.VOICE_STATE_CHANGED, state),
+        setVoiceCallState: (inCall: boolean) => invoke<void>(IpcEvents.VOICE_CALL_STATE_CHANGED, inCall)
+    },
     voice: {
         onToggleSelfMute: (listener: (...args: any[]) => void) => {
             ipcRenderer.on(IpcEvents.TOGGLE_SELF_MUTE, listener);
