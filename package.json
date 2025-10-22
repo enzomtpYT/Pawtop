@@ -24,8 +24,7 @@
         "watch": "bun run build --watch",
         "generateMeta": "bun run scripts/utils/generateMeta.mts",
         "updateArrpcDB": "bun ./node_modules/arrpc-bun/scripts/update_db.ts",
-        "applyPatches": "node scripts/applyPatches.mjs",
-        "postinstall": "bun updateArrpcDB && bun applyPatches"
+        "postinstall": "bun updateArrpcDB"
     },
     "dependencies": {
         "arrpc-bun": "latest",
@@ -41,7 +40,7 @@
         "@types/node": "^24.9.1",
         "@types/react": "19.2.1",
         "dotenv": "^17.2.3",
-        "electron": "^38.3.0",
+        "electron": "^38.4.0",
         "electron-builder": "^26.0.12",
         "esbuild": "^0.25.11",
         "eslint": "^9.38.0",
