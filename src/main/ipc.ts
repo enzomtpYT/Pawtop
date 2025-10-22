@@ -23,13 +23,13 @@ import { open, readFile } from "fs/promises";
 import { enableHardwareAcceleration } from "main";
 import { release } from "os";
 import { join } from "path";
+import { STATIC_DIR } from "shared/paths";
 import { debounce } from "shared/utils/debounce";
 
 import { IpcEvents } from "../shared/IpcEvents";
 import { setBadgeCount } from "./appBadge";
 import { autoStart } from "./autoStart";
 import { VENCORD_QUICKCSS_FILE, VENCORD_SETTINGS_DIR, VENCORD_THEMES_DIR } from "./constants";
-import { STATIC_DIR } from "shared/paths";
 import { AppEvents } from "./events";
 import { mainWin } from "./mainWindow";
 import { Settings, State } from "./settings";

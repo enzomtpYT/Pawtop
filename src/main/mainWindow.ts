@@ -10,7 +10,6 @@ import {
     BrowserWindowConstructorOptions,
     Menu,
     MenuItemConstructorOptions,
-    nativeImage,
     nativeTheme,
     screen,
     session
