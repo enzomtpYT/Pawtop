@@ -5,6 +5,8 @@
  */
 
 import { app, BrowserWindow } from "electron";
+import { join } from "path";
+import { STATIC_DIR } from "shared/paths";
 
 import { makeLinksOpenExternally } from "./utils/makeLinksOpenExternally";
 import { loadView } from "./vesktopStatic";
@@ -16,6 +18,7 @@ export async function createAboutWindow() {
     const about = new BrowserWindow({
         center: true,
         autoHideMenuBar: true,
+        ...(process.platform === "win32" && { icon: join(STATIC_DIR, "icon.ico") }),
         height,
         width
     });

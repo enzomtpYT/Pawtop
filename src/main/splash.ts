@@ -7,6 +7,7 @@
 import { BrowserWindow } from "electron";
 import { join } from "path";
 import { SplashProps } from "shared/browserWinProperties";
+import { STATIC_DIR } from "shared/paths";
 
 import { DATA_DIR } from "./constants";
 import { Settings } from "./settings";
@@ -21,6 +22,7 @@ let doneTasks = 0;
 export async function createSplashWindow(startMinimized = false) {
     splash = new BrowserWindow({
         ...SplashProps,
+        ...(process.platform === "win32" && { icon: join(STATIC_DIR, "icon.ico") }),
         show: !startMinimized,
         webPreferences: {
             preload: join(__dirname, "splashPreload.js")

@@ -10,12 +10,14 @@ import {
     BrowserWindowConstructorOptions,
     Menu,
     MenuItemConstructorOptions,
+    nativeImage,
     nativeTheme,
     screen,
     session
 } from "electron";
 import { join } from "path";
 import { IpcCommands, IpcEvents } from "shared/IpcEvents";
+import { STATIC_DIR } from "shared/paths";
 import { isTruthy } from "shared/utils/guards";
 import { once } from "shared/utils/once";
 import type { SettingsStore } from "shared/utils/SettingsStore";
@@ -347,6 +349,7 @@ function createMainWindow() {
     const win = (mainWin = new BrowserWindow({
         show: Settings.store.enableSplashScreen === false,
         backgroundColor,
+        ...(process.platform === "win32" && { icon: join(STATIC_DIR, "icon.ico") }),
         webPreferences: {
             nodeIntegration: false,
             sandbox: false,

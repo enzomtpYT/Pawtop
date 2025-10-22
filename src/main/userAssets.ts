@@ -30,7 +30,12 @@ export type UserAssetType = (typeof CUSTOMIZABLE_ASSETS)[number];
 
 const DEFAULT_ASSETS: Record<UserAssetType, string> = {
     splash: "tray.png",
-    tray: `tray/${process.platform === "darwin" ? "trayTemplate" : "tray"}.png`,
+    tray:
+        process.platform === "darwin"
+            ? "tray/trayTemplate.png"
+            : process.platform === "win32"
+              ? "icon.ico"
+              : "tray/tray.png",
     trayUnread: "tray/trayUnread.png",
     traySpeaking: "tray/speaking.png",
     trayIdle: "tray/idle.png",

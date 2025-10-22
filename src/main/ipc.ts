@@ -29,6 +29,7 @@ import { IpcEvents } from "../shared/IpcEvents";
 import { setBadgeCount } from "./appBadge";
 import { autoStart } from "./autoStart";
 import { VENCORD_QUICKCSS_FILE, VENCORD_SETTINGS_DIR, VENCORD_THEMES_DIR } from "./constants";
+import { STATIC_DIR } from "shared/paths";
 import { AppEvents } from "./events";
 import { mainWin } from "./mainWindow";
 import { Settings, State } from "./settings";
@@ -150,7 +151,8 @@ handle(IpcEvents.CLIPBOARD_COPY_IMAGE, async (_, buf: ArrayBuffer, src: string) 
 
 function openDebugPage(page: string) {
     const win = new BrowserWindow({
-        autoHideMenuBar: true
+        autoHideMenuBar: true,
+        ...(process.platform === "win32" && { icon: join(STATIC_DIR, "icon.ico") })
     });
 
     win.loadURL(page);
