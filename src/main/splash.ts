@@ -51,7 +51,7 @@ export function createSplashWindow() {
     } else {
         splash.webContents.insertCSS(`img {image-rendering: pixelated}`);
         splash.webContents.executeJavaScript(`
-            document.getElementById("animation").src = "../troll.gif";
+            document.getElementById("animation").src = "../anim.gif";
         `);
     }
 
