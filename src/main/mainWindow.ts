@@ -4,17 +4,19 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { join } from "node:path";
+
 import {
     app,
     BrowserWindow,
-    BrowserWindowConstructorOptions,
+    type BrowserWindowConstructorOptions,
     Menu,
-    MenuItemConstructorOptions,
+    type MenuItemConstructorOptions,
     nativeTheme,
+    type Rectangle,
     screen,
     session
 } from "electron";
-import { join } from "path";
 import { IpcCommands, IpcEvents } from "shared/IpcEvents";
 import { STATIC_DIR } from "shared/paths";
 import { isTruthy } from "shared/utils/guards";
@@ -178,55 +180,6 @@ function initMenuBar(win: BrowserWindow) {
     Menu.setApplicationMenu(menu);
 }
 
-function getWindowBoundsOptions(): BrowserWindowConstructorOptions {
-    // We want the default window behaivour to apply in game mode since it expects everything to be fullscreen and maximized.
-    if (isDeckGameMode) return {};
-
-    const { x, y, width, height } = State.store.windowBounds ?? {};
-
-    const options = {
-        width: width ?? DEFAULT_WIDTH,
-        height: height ?? DEFAULT_HEIGHT
-    } as BrowserWindowConstructorOptions;
-
-    const storedDisplay = screen.getAllDisplays().find(display => display.id === State.store.displayId);
-
-    if (x != null && y != null && storedDisplay) {
-        options.x = x;
-        options.y = y;
-    }
-
-    if (!Settings.store.disableMinSize) {
-        options.minWidth = MIN_WIDTH;
-        options.minHeight = MIN_HEIGHT;
-    }
-
-    return options;
-}
-
-function getDarwinOptions(): BrowserWindowConstructorOptions {
-    const options = {
-        titleBarStyle: "hidden",
-        trafficLightPosition: { x: 10, y: 10 }
-    } as BrowserWindowConstructorOptions;
-
-    const { splashTheming, splashBackground } = Settings.store;
-    const { macosTranslucency } = VencordSettings.store;
-
-    if (macosTranslucency) {
-        options.vibrancy = "sidebar";
-        options.backgroundColor = "#ffffff00";
-    } else {
-        if (splashTheming !== false) {
-            options.backgroundColor = splashBackground;
-        } else {
-            options.backgroundColor = nativeTheme.shouldUseDarkColors ? "#313338" : "#ffffff";
-        }
-    }
-
-    return options;
-}
-
 function initWindowBoundsListeners(win: BrowserWindow) {
     const saveState = () => {
         State.store.maximized = win.isMaximized();
@@ -239,7 +192,6 @@ function initWindowBoundsListeners(win: BrowserWindow) {
 
     const saveBounds = () => {
         State.store.windowBounds = win.getBounds();
-        State.store.displayId = screen.getDisplayMatching(State.store.windowBounds).id;
     };
 
     win.on("resize", saveBounds);
@@ -284,7 +236,7 @@ function initSettingsListeners(win: BrowserWindow) {
     addSettingsListener("spellCheckLanguages", languages => initSpellCheckLanguages(win, languages));
 }
 
-async function initSpellCheckLanguages(win: BrowserWindow, languages?: string[]) {
+async function initSpellCheckLanguages(_win: BrowserWindow, languages?: string[]) {
     languages ??= await sendRendererCommand(IpcCommands.GET_LANGUAGES);
     if (!languages) return;
 
@@ -327,65 +279,118 @@ function initStaticTitle(win: BrowserWindow) {
     });
 }
 
-function createMainWindow() {
+function getWindowBoundsOptions(): BrowserWindowConstructorOptions {
     addSplashLog();
 
-    // Clear up previous settings listeners
-    removeSettingsListeners();
-    removeVencordSettingsListeners();
+    // We want the default window behaviour to apply in game mode since it expects everything to be fullscreen and maximized.
+    if (isDeckGameMode) return {};
 
+    const { x, y, width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT } = State.store.windowBounds ?? {};
+
+    const options = { width, height } as BrowserWindowConstructorOptions;
+
+    if (x != null && y != null) {
+        function isInBounds(rect: Rectangle, display: Rectangle) {
+            return !(
+                rect.x + rect.width < display.x ||
+                rect.x > display.x + display.width ||
+                rect.y + rect.height < display.y ||
+                rect.y > display.y + display.height
+            );
+        }
+
+        const inBounds = screen.getAllDisplays().some(d => isInBounds({ x, y, width, height }, d.bounds));
+        if (inBounds) {
+            options.x = x;
+            options.y = y;
+        }
+    }
+
+    if (!Settings.store.disableMinSize) {
+        options.minWidth = MIN_WIDTH;
+        options.minHeight = MIN_HEIGHT;
+    }
+
+    return options;
+}
+
+function buildBrowserWindowOptions(): BrowserWindowConstructorOptions {
     addSplashLog();
 
     const { staticTitle, transparencyOption, enableMenu, customTitleBar, splashTheming, splashBackground } =
         Settings.store;
 
-    const { frameless, transparent } = VencordSettings.store;
+    const { frameless, transparent, macosTranslucency } = VencordSettings.store;
 
     const noFrame = frameless === true || customTitleBar === true;
     const backgroundColor =
         splashTheming !== false ? splashBackground : nativeTheme.shouldUseDarkColors ? "#313338" : "#ffffff";
 
-    const win = (mainWin = new BrowserWindow({
+    const options: BrowserWindowConstructorOptions = {
         show: Settings.store.enableSplashScreen === false,
         backgroundColor,
         ...(process.platform === "win32" && { icon: join(STATIC_DIR, "icon.ico") }),
         webPreferences: {
             nodeIntegration: false,
-            sandbox: false,
+            sandbox: false, // TODO
             contextIsolation: true,
             devTools: true,
             preload: join(__dirname, "preload.js"),
             spellcheck: true,
-            ...(Settings.store.middleClickAutoscroll && { enableBlinkFeatures: "MiddleClickAutoscroll" }),
+            ...(Settings.store.middleClickAutoscroll && {
+                enableBlinkFeatures: "MiddleClickAutoscroll"
+            }),
             // disable renderer backgrounding to prevent the app from unloading when in the background
             backgroundThrottling: false
         },
         frame: !noFrame,
-        ...(transparent && {
-            transparent: true,
-            backgroundColor: "#00000000"
-        }),
-        ...(transparencyOption &&
-            transparencyOption !== "none" && {
-                backgroundColor: "#00000000",
-                backgroundMaterial: transparencyOption
-            }),
-        // Fix transparencyOption for custom discord titlebar
-        ...(customTitleBar &&
-            transparencyOption &&
-            transparencyOption !== "none" && {
-                transparent: true
-            }),
-        ...(staticTitle && { title: "Equibop" }),
-        ...(process.platform === "darwin" && getDarwinOptions()),
-        ...getWindowBoundsOptions(),
-        autoHideMenuBar: enableMenu
-    }));
+        autoHideMenuBar: enableMenu,
+        ...getWindowBoundsOptions()
+    };
+
+    if (transparent) {
+        options.transparent = true;
+        options.backgroundColor = "#00000000";
+    }
+
+    if (transparencyOption && transparencyOption !== "none") {
+        options.backgroundColor = "#00000000";
+        options.backgroundMaterial = transparencyOption;
+
+        if (customTitleBar) {
+            options.transparent = true;
+        }
+    }
+
+    if (staticTitle) {
+        options.title = "Equibop";
+    }
+
+    if (process.platform === "darwin") {
+        options.titleBarStyle = "hidden";
+        options.trafficLightPosition = { x: 10, y: 10 };
+
+        if (macosTranslucency) {
+            options.vibrancy = "sidebar";
+            options.backgroundColor = "#ffffff00";
+        }
+    }
+
+    return options;
+}
+
+function createMainWindow() {
+    // Clear up previous settings listeners
+    removeSettingsListeners();
+    removeVencordSettingsListeners();
+
+    const win = (mainWin = new BrowserWindow(buildBrowserWindowOptions()));
+
     win.setMenuBarVisibility(false);
 
     addSplashLog();
 
-    if (process.platform === "darwin" && customTitleBar) win.setWindowButtonVisibility(false);
+    if (process.platform === "darwin" && Settings.store.customTitleBar) win.setWindowButtonVisibility(false);
 
     win.on("close", e => {
         const useTray = !isDeckGameMode && Settings.store.minimizeToTray !== false && Settings.store.tray !== false;
@@ -467,20 +472,20 @@ export async function createWindows() {
         splash?.destroy();
 
         if (!startMinimized) {
-            if (splash) mainWin!.show();
-            if (State.store.maximized && !isDeckGameMode) mainWin!.maximize();
+            if (splash) mainWin?.show();
+            if (State.store.maximized && !isDeckGameMode) mainWin?.maximize();
         }
 
         if (isDeckGameMode) {
             // always use entire display
-            mainWin!.setFullScreen(true);
+            mainWin?.setFullScreen(true);
 
             askToApplySteamLayout(mainWin);
         }
 
         mainWin.once("show", () => {
-            if (State.store.maximized && !mainWin!.isMaximized() && !isDeckGameMode) {
-                mainWin!.maximize();
+            if (State.store.maximized && !mainWin?.isMaximized() && !isDeckGameMode) {
+                mainWin?.maximize();
             }
         });
     });

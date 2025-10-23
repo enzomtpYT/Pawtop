@@ -6,7 +6,12 @@
 
 if (process.platform === "linux") import("./venmic");
 
-import { execFile } from "child_process";
+import { execFile } from "node:child_process";
+import { mkdirSync, readFileSync, watch } from "node:fs";
+import { open, readFile } from "node:fs/promises";
+import { release } from "node:os";
+import { join } from "node:path";
+
 import {
     app,
     BrowserWindow,
@@ -18,18 +23,14 @@ import {
     session,
     shell
 } from "electron";
-import { mkdirSync, readFileSync, watch } from "fs";
-import { open, readFile } from "fs/promises";
 import { enableHardwareAcceleration } from "main";
-import { release } from "os";
-import { join } from "path";
 import { STATIC_DIR } from "shared/paths";
 import { debounce } from "shared/utils/debounce";
 
 import { IpcEvents } from "../shared/IpcEvents";
 import { setBadgeCount } from "./appBadge";
 import { autoStart } from "./autoStart";
-import { VENCORD_QUICKCSS_FILE, VENCORD_SETTINGS_DIR, VENCORD_THEMES_DIR } from "./constants";
+import { VENCORD_QUICKCSS_FILE, VENCORD_THEMES_DIR } from "./constants";
 import { AppEvents } from "./events";
 import { mainWin } from "./mainWindow";
 import { Settings, State } from "./settings";
@@ -165,7 +166,6 @@ function readCss() {
     return readFile(VENCORD_QUICKCSS_FILE, "utf-8").catch(() => "");
 }
 
-mkdirSync(VENCORD_SETTINGS_DIR, { recursive: true });
 open(VENCORD_QUICKCSS_FILE, "a+")
     .then(fd => {
         fd.close();

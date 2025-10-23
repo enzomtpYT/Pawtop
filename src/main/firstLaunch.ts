@@ -65,7 +65,11 @@ export function createFirstLaunchTour() {
                     copyFileSync(join(from, file), join(to, file));
                 }
             } catch (e) {
-                console.error("Failed to import settings:", e);
+                if (e instanceof Error && "code" in e && e.code === "ENOENT") {
+                    console.log("No Vencord settings found to import.");
+                } else {
+                    console.error("Failed to import Vencord settings:", e);
+                }
             }
         }
 
