@@ -1,6 +1,6 @@
 {
     "name": "equibop",
-    "version": "3.0.2",
+    "version": "3.0.3",
     "private": true,
     "description": "Equibop is a custom Discord desktop app",
     "keywords": [],
@@ -72,12 +72,6 @@
             "dist/js/arrpc/**/*",
             "node_modules/arrpc-bun/**/*"
         ],
-        "extraResources": [
-            {
-                "from": "resources/bun",
-                "to": "bun"
-            }
-        ],
         "files": [
             "!*",
             "!node_modules",
@@ -105,6 +99,16 @@
                 "rpm",
                 "AppImage"
             ],
+            "extraResources": [
+                {
+                    "from": "resources/bun/linux-x64",
+                    "to": "bun/linux-x64"
+                },
+                {
+                    "from": "resources/bun/linux-arm64",
+                    "to": "bun/linux-arm64"
+                }
+            ],
             "desktop": {
                 "entry": {
                     "Name": "Equibop",
@@ -125,6 +129,16 @@
                     "arch": [
                         "universal"
                     ]
+                }
+            ],
+            "extraResources": [
+                {
+                    "from": "resources/bun/darwin-x64",
+                    "to": "bun/darwin-x64"
+                },
+                {
+                    "from": "resources/bun/darwin-arm64",
+                    "to": "bun/darwin-arm64"
                 }
             ],
             "category": "public.app-category.social-networking",
@@ -165,6 +179,12 @@
         },
         "win": {
             "icon": "build/icon.ico",
+            "extraResources": [
+                {
+                    "from": "resources/bun/win32-x64",
+                    "to": "bun/win32-x64"
+                }
+            ],
             "target": [
                 {
                     "target": "nsis",

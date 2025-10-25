@@ -5,13 +5,15 @@ import { file, spawn, write } from "bun";
 const BUN_VERSION = "1.3.1";
 const OUTPUT_DIR = join(import.meta.dir, "../../resources/bun");
 
-const TARGETS = [
+const ALL_TARGETS = [
     { platform: "linux", arch: "x64", url: `https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/bun-linux-x64.zip` },
     { platform: "linux", arch: "arm64", url: `https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/bun-linux-aarch64.zip` },
     { platform: "darwin", arch: "x64", url: `https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/bun-darwin-x64.zip` },
     { platform: "darwin", arch: "arm64", url: `https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/bun-darwin-aarch64.zip` },
     { platform: "win32", arch: "x64", url: `https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/bun-windows-x64.zip` }
 ];
+
+const TARGETS = ALL_TARGETS;
 
 const markerFile = join(OUTPUT_DIR, ".download-complete");
 if (existsSync(markerFile)) {
@@ -21,7 +23,7 @@ if (existsSync(markerFile)) {
 
 mkdirSync(OUTPUT_DIR, { recursive: true });
 
-console.log("Downloading Bun binaries...");
+console.log("Downloading Bun binaries for all platforms...");
 
 for (const target of TARGETS) {
     const outDir = join(OUTPUT_DIR, `${target.platform}-${target.arch}`);
@@ -65,6 +67,6 @@ for (const target of TARGETS) {
     }
 }
 
-await write(markerFile, `Downloaded on ${new Date().toISOString()}\nVersion: ${BUN_VERSION}`);
+await write(markerFile, `Downloaded on ${new Date().toISOString()}\nVersion: ${BUN_VERSION}\nPlatforms: all`);
 
 console.log("Done!");
