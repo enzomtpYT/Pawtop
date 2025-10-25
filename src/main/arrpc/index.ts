@@ -33,7 +33,8 @@ export async function initArRPC() {
     if (bunProcess) return;
 
     try {
-        const workerPath = resolve(__dirname, "./arrpc/bunWorker.js");
+        // check for unpacked version first (for production builds)
+        const workerPath = resolve(__dirname, "./arrpc/bunWorker.js").replace("app.asar", "app.asar.unpacked");
 
         bunProcess = spawn("bun", [workerPath], {
             stdio: "inherit",

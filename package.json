@@ -67,13 +67,18 @@
         "appId": "org.equicord.equibop",
         "productName": "Equibop",
         "executableName": "equibop",
+        "asarUnpack": [
+            "dist/js/arrpc/**/*",
+            "node_modules/arrpc-bun/**/*"
+        ],
         "files": [
             "!*",
             "!node_modules",
             "dist/js",
             "static",
             "package.json",
-            "LICENSE"
+            "LICENSE",
+            "node_modules/arrpc-bun/**/*"
         ],
         "protocols": {
             "name": "Discord",
