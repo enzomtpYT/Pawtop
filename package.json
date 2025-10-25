@@ -99,16 +99,6 @@
                 "rpm",
                 "AppImage"
             ],
-            "extraResources": [
-                {
-                    "from": "resources/bun/linux-x64",
-                    "to": "bun/linux-x64"
-                },
-                {
-                    "from": "resources/bun/linux-arm64",
-                    "to": "bun/linux-arm64"
-                }
-            ],
             "desktop": {
                 "entry": {
                     "Name": "Equibop",
@@ -127,21 +117,11 @@
                 {
                     "target": "default",
                     "arch": [
-                        "universal"
+                        "x64",
+                        "arm64"
                     ]
                 }
             ],
-            "extraResources": [
-                {
-                    "from": "resources/bun/darwin-x64",
-                    "to": "bun/darwin-x64"
-                },
-                {
-                    "from": "resources/bun/darwin-arm64",
-                    "to": "bun/darwin-arm64"
-                }
-            ],
-            "x64ArchFiles": "Contents/Resources/bun/darwin-x64/**/*",
             "category": "public.app-category.social-networking",
             "darkModeSupport": true,
             "extendInfo": {
@@ -180,12 +160,6 @@
         },
         "win": {
             "icon": "build/icon.ico",
-            "extraResources": [
-                {
-                    "from": "resources/bun/win32-x64",
-                    "to": "bun/win32-x64"
-                }
-            ],
             "target": [
                 {
                     "target": "nsis",
