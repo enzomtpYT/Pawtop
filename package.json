@@ -141,6 +141,7 @@
                     "to": "bun/darwin-arm64"
                 }
             ],
+            "x64ArchFiles": "Contents/Resources/bun/darwin-x64/**/*",
             "category": "public.app-category.social-networking",
             "darkModeSupport": true,
             "extendInfo": {
