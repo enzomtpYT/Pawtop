@@ -12,19 +12,30 @@ import { join, resolve } from "path";
 import { Settings } from "../settings";
 
 function getBundledBunPath(): string {
-    const resourcesPath = process.resourcesPath || join(app.getAppPath(), "..");
     const { platform } = process;
     const { arch } = process;
 
     let bunBinary = "bun";
     if (platform === "win32") bunBinary = "bun.exe";
 
-    const bunPath = join(resourcesPath, "bun", `${platform}-${arch}`, `bun-${platform}-${arch}`, bunBinary);
+    const bunPlatform = platform === "win32" ? "windows" : platform;
 
-    if (existsSync(bunPath)) {
-        return bunPath;
+    const possiblePaths = [
+        // packaged app with resourcesPath
+        process.resourcesPath ? join(process.resourcesPath, "bun", `${platform}-${arch}`, `bun-${bunPlatform}-${arch}`, bunBinary) : null,
+        // system Electron (AUR, etc) - app.asar is in the resources directory
+        join(app.getAppPath(), "..", "bun", `${platform}-${arch}`, `bun-${bunPlatform}-${arch}`, bunBinary),
+        // development or alternative structure
+        join(app.getAppPath(), "bun", `${platform}-${arch}`, `bun-${bunPlatform}-${arch}`, bunBinary)
+    ].filter(Boolean);
+
+    for (const bunPath of possiblePaths) {
+        if (bunPath && existsSync(bunPath)) {
+            return bunPath;
+        }
     }
 
+    // fallback to system bun
     return "bun";
 }
 
@@ -54,9 +65,7 @@ export async function initArRPC() {
     try {
         // check for unpacked version first (for production builds)
         const workerPath = resolve(__dirname, "./arrpc/bunWorker.js").replace("app.asar", "app.asar.unpacked");
-
         const bunPath = getBundledBunPath();
-        console.log("[arRPC] Using Bun at:", bunPath);
 
         bunProcess = spawn(bunPath, [workerPath], {
             stdio: ["ignore", "pipe", "pipe"],
