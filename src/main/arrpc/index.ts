@@ -22,7 +22,9 @@ function getBundledBunPath(): string {
 
     const possiblePaths = [
         // packaged app with resourcesPath
-        process.resourcesPath ? join(process.resourcesPath, "bun", `${platform}-${arch}`, `bun-${bunPlatform}-${arch}`, bunBinary) : null,
+        process.resourcesPath
+            ? join(process.resourcesPath, "bun", `${platform}-${arch}`, `bun-${bunPlatform}-${arch}`, bunBinary)
+            : null,
         // system Electron (AUR, etc) - app.asar is in the resources directory
         join(app.getAppPath(), "..", "bun", `${platform}-${arch}`, `bun-${bunPlatform}-${arch}`, bunBinary),
         // development or alternative structure
