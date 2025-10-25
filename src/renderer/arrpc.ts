@@ -34,7 +34,7 @@ if (Settings.store.arRPC) {
     });
 }
 
-Settings.addChangeListener("arRPC", (enabled: boolean) => {
+Settings.addChangeListener("arRPC", (enabled: boolean | undefined) => {
     onceReady.then(() => {
         const plugin = getArRPCPlugin();
         if (!plugin) {
