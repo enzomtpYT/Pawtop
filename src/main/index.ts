@@ -23,8 +23,7 @@ import { isDeckGameMode } from "./utils/steamOS";
 
 console.log("Equibop v" + app.getVersion());
 
-// Make the Vencord files use our DATA_DIR
-process.env.VENCORD_USER_DATA_DIR = DATA_DIR;
+process.env.EQUICORD_USER_DATA_DIR = DATA_DIR;
 
 const isLinux = process.platform === "linux";
 
