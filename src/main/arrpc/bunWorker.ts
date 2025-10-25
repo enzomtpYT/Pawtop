@@ -14,6 +14,11 @@ Bridge.init();
     const server = await new Server();
 
     server.on("activity", (data: any) => {
+        // dont send STREAMERMODE activities to the bridge
+        if (data.activity?.application_id === "STREAMERMODE") {
+            return;
+        }
+
         Bridge.send(data);
     });
 
