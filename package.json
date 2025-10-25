@@ -93,34 +93,10 @@
             "category": "Network",
             "maintainer": "contact@equicord.org",
             "target": [
-                {
-                    "target": "deb",
-                    "arch": [
-                        "x64",
-                        "arm64"
-                    ]
-                },
-                {
-                    "target": "tar.gz",
-                    "arch": [
-                        "x64",
-                        "arm64"
-                    ]
-                },
-                {
-                    "target": "rpm",
-                    "arch": [
-                        "x64",
-                        "arm64"
-                    ]
-                },
-                {
-                    "target": "AppImage",
-                    "arch": [
-                        "x64",
-                        "arm64"
-                    ]
-                }
+                "deb",
+                "tar.gz",
+                "rpm",
+                "AppImage"
             ],
             "desktop": {
                 "entry": {
@@ -133,6 +109,11 @@
                     "StartupWMClass": "equibop"
                 }
             }
+        },
+        "deb": {
+            "depends": [
+                "bun"
+            ]
         },
         "mac": {
             "target": [
@@ -202,6 +183,9 @@
             "provider": "github"
         },
         "rpm": {
+            "depends": [
+                "bun"
+            ],
             "fpm": [
                 "--rpm-rpmbuild-define=_build_id_links none"
             ]
