@@ -19,6 +19,6 @@ jobs:
                   git commit -m "Update Equibop version to ${{ github.event.release.tag_name }}"
                   git push https://$USERNAME:$API_TOKEN@github.com/$GH_REPO.git
               env:
-                  API_TOKEN: ${{ secrets.EQUICORD_ORG_GITHUB_TOKEN }}
+                  API_TOKEN: ${{ secrets.ETOKEN }}
                   GH_REPO: Equicord/Equibite
                   USERNAME: GitHub-Actions
