@@ -37,8 +37,8 @@ export async function initArRPC() {
         const workerPath = resolve(__dirname, "./arrpc/bunWorker.js").replace("app.asar", "app.asar.unpacked");
 
         bunProcess = spawn("bun", [workerPath], {
-	        stdio: "inherit",
-	        env: process.env,
+            stdio: "inherit",
+            env: process.env,
             windowsHide: true
         });
 
