@@ -12,7 +12,6 @@ Equibop is a custom Discord desktop app
 
 Check the [Releases](https://github.com/Equicord/Equibop/releases) page
 
-> **Note:** arRPC requires [Bun](https://bun.sh). The AppImage includes it, but system packages (RPM, deb, pacman, etc.) do not - you'll need to install Bun separately.
 
 ## Building from Source
 
