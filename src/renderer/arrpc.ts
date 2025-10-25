@@ -15,9 +15,42 @@ import { Settings } from "./settings";
 const logger = new Logger("EquibopRPC", "#5865f2");
 const StreamerModeStore = findStoreLazy("StreamerModeStore");
 
-const arRPC = Vencord.Plugins.plugins["WebRichPresence (arRPC)"] as any as {
-    handleEvent(e: MessageEvent): void;
-};
+const ARRPC_PLUGIN_NAME = "WebRichPresence";
+
+function getArRPCPlugin() {
+    return Vencord.Plugins.plugins[ARRPC_PLUGIN_NAME] as any;
+}
+
+logger.info(`arRPC setting is: ${Settings.store.arRPC}`);
+if (Settings.store.arRPC) {
+    onceReady.then(() => {
+        const plugin = getArRPCPlugin();
+
+        if (plugin && !Vencord.Plugins.isPluginEnabled(ARRPC_PLUGIN_NAME)) {
+            logger.info(`Auto-starting ${ARRPC_PLUGIN_NAME} plugin for arRPC...`);
+            const result = Vencord.Plugins.startPlugin(plugin);
+            logger.info(`Plugin start result: ${result}`);
+        }
+    });
+}
+
+Settings.addChangeListener("arRPC", (enabled: boolean) => {
+    onceReady.then(() => {
+        const plugin = getArRPCPlugin();
+        if (!plugin) {
+            logger.error(`${ARRPC_PLUGIN_NAME} plugin not found!`);
+            return;
+        }
+
+        if (enabled && !Vencord.Plugins.isPluginEnabled(ARRPC_PLUGIN_NAME)) {
+            logger.info(`Starting ${ARRPC_PLUGIN_NAME} plugin...`);
+            Vencord.Plugins.startPlugin(plugin);
+        } else if (!enabled && Vencord.Plugins.isPluginEnabled(ARRPC_PLUGIN_NAME)) {
+            logger.info(`Stopping ${ARRPC_PLUGIN_NAME} plugin...`);
+            Vencord.Plugins.stopPlugin(plugin);
+        }
+    });
+});
 
 onIpcCommand(IpcCommands.RPC_ACTIVITY, async jsonData => {
     if (!Settings.store.arRPC) return;
@@ -35,7 +68,10 @@ onIpcCommand(IpcCommands.RPC_ACTIVITY, async jsonData => {
         return;
     }
 
-    arRPC.handleEvent(new MessageEvent("message", { data: jsonData }));
+    const plugin = getArRPCPlugin();
+    if (plugin?.handleEvent) {
+        plugin.handleEvent(new MessageEvent("message", { data: jsonData }));
+    }
 });
 
 onIpcCommand(IpcCommands.RPC_INVITE, async code => {
