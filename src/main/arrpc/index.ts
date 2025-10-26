@@ -76,7 +76,7 @@ export async function initArRPC() {
         });
 
         bunProcess.stdout?.on("data", data => {
-            console.log("[arRPC >]", data.toString().trim());
+            console.log(data.toString().trim());
         });
 
         bunProcess.stderr?.on("data", data => {
