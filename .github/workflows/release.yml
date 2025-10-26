@@ -47,3 +47,16 @@ jobs:
                   bun run electron-builder --${{ matrix.platform }} --publish always
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Create node_modules tarball
+              if: ${{ matrix.platform == 'linux' }}
+              run: |
+                  tar -czf node_modules.tar.gz node_modules/
+
+            - name: Upload node_modules tarball to release
+              if: ${{ matrix.platform == 'linux' }}
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: node_modules.tar.gz
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
