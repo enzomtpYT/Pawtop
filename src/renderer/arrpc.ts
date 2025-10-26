@@ -52,21 +52,28 @@ Settings.addChangeListener("arRPC", (enabled: boolean | undefined) => {
     });
 });
 
+// handle STREAMERMODE separately from regular RPC activities
+VesktopNative.arrpc.onStreamerModeDetected(jsonData => {
+    if (!Settings.store.arRPC) return;
+
+    try {
+        const data = JSON.parse(jsonData);
+        if (data.socketId === "STREAMERMODE" && StreamerModeStore.autoToggle) {
+            FluxDispatcher.dispatch({
+                type: "STREAMER_MODE_UPDATE",
+                key: "enabled",
+                value: data.activity?.application_id === "STREAMERMODE"
+            });
+        }
+    } catch (e) {
+        logger.error("Failed to handle STREAMERMODE:", e);
+    }
+});
+
 onIpcCommand(IpcCommands.RPC_ACTIVITY, async jsonData => {
     if (!Settings.store.arRPC) return;
 
     await onceReady;
-
-    const data = JSON.parse(jsonData);
-
-    if (data.socketId === "STREAMERMODE" && StreamerModeStore.autoToggle) {
-        FluxDispatcher.dispatch({
-            type: "STREAMER_MODE_UPDATE",
-            key: "enabled",
-            value: data.activity?.application_id === "STREAMERMODE"
-        });
-        return;
-    }
 
     const plugin = getArRPCPlugin();
     if (plugin?.handleEvent) {

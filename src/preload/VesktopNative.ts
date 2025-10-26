@@ -20,6 +20,13 @@ ipcRenderer.on(IpcEvents.SPELLCHECK_RESULT, (_, w: string, s: string[]) => {
     spellCheckCallbacks.forEach(cb => cb(w, s));
 });
 
+type StreamerModeCallback = (data: string) => void;
+const streamerModeCallbacks = new Set<StreamerModeCallback>();
+
+ipcRenderer.on(IpcEvents.STREAMER_MODE_DETECTED, (_, data: string) => {
+    streamerModeCallbacks.forEach(cb => cb(data));
+});
+
 let onDevtoolsOpen = () => {};
 let onDevtoolsClose = () => {};
 
@@ -63,6 +70,14 @@ export const VesktopNative = {
         },
         replaceMisspelling: (word: string) => invoke<void>(IpcEvents.SPELLCHECK_REPLACE_MISSPELLING, word),
         addToDictionary: (word: string) => invoke<void>(IpcEvents.SPELLCHECK_ADD_TO_DICTIONARY, word)
+    },
+    arrpc: {
+        onStreamerModeDetected(cb: StreamerModeCallback) {
+            streamerModeCallbacks.add(cb);
+        },
+        offStreamerModeDetected(cb: StreamerModeCallback) {
+            streamerModeCallbacks.delete(cb);
+        }
     },
     win: {
         focus: () => invoke<void>(IpcEvents.FOCUS),

@@ -8,8 +8,26 @@ import { ChildProcess, spawn } from "child_process";
 import { app } from "electron";
 import { existsSync } from "fs";
 import { join, resolve } from "path";
+import { IpcEvents } from "shared/IpcEvents";
 
+import { mainWin } from "../mainWindow";
 import { Settings } from "../settings";
+
+interface ArRPCMessage {
+    type: "STREAMERMODE";
+    data: string;
+}
+
+function isArRPCMessage(message: unknown): message is ArRPCMessage {
+    return (
+        typeof message === "object" &&
+        message !== null &&
+        "type" in message &&
+        message.type === "STREAMERMODE" &&
+        "data" in message &&
+        typeof message.data === "string"
+    );
+}
 
 function getBundledBunPath(): string {
     const { platform } = process;
@@ -70,9 +88,15 @@ export async function initArRPC() {
         const bunPath = getBundledBunPath();
 
         bunProcess = spawn(bunPath, [workerPath], {
-            stdio: ["ignore", "pipe", "pipe"],
+            stdio: ["ignore", "pipe", "pipe", "ipc"],
             env: process.env,
             windowsHide: true
+        });
+
+        bunProcess.on("message", message => {
+            if (isArRPCMessage(message)) {
+                mainWin?.webContents.send(IpcEvents.STREAMER_MODE_DETECTED, message.data);
+            }
         });
 
         bunProcess.stdout?.on("data", data => {
