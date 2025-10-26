@@ -48,17 +48,3 @@ jobs:
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Create node_modules tarball
-              if: ${{ matrix.platform == 'linux' && startsWith(github.ref, 'refs/tags/') }}
-              run: |
-                  tar -czf node_modules.tar.gz node_modules/
-
-            - name: Upload node_modules tarball to release
-              if: ${{ matrix.platform == 'linux' && startsWith(github.ref, 'refs/tags/') }}
-              uses: softprops/action-gh-release@v1
-              with:
-                  files: node_modules.tar.gz
-                  append_body: true
-                  fail_on_unmatched_files: false
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
