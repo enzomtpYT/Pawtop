@@ -29,7 +29,7 @@
     },
     "dependencies": {
         "arrpc-bun": "latest",
-        "electron-updater": "^6.6.2"
+        "electron-updater": "^6.7.0"
     },
     "optionalDependencies": {
         "@vencord/venmic": "^6.1.0"
