@@ -11,22 +11,40 @@ permissions:
 
 jobs:
     upload:
-        runs-on: ${{ matrix.os }}
+        runs-on: ubuntu-latest
 
         strategy:
             matrix:
                 include:
-                    - os: ubuntu-latest
-                      arch: x64
-                    - os: ubuntu-24.04-arm64
-                      arch: arm64
+                    - arch: x64
+                      platform: linux/amd64
+                    - arch: arm64
+                      platform: linux/arm64
 
         steps:
             - uses: actions/checkout@v4
-            - uses: oven-sh/setup-bun@v2
 
-            - name: Install dependencies
+            - name: Set up QEMU
+              if: matrix.arch == 'arm64'
+              uses: docker/setup-qemu-action@v3
+              with:
+                  platforms: linux/arm64
+
+            - name: Install dependencies (native x64)
+              if: matrix.arch == 'x64'
+              uses: oven-sh/setup-bun@v2
+
+            - name: Install dependencies (native x64)
+              if: matrix.arch == 'x64'
               run: bun install
+
+            - name: Install dependencies (Docker ARM64)
+              if: matrix.arch == 'arm64'
+              run: |
+                  docker run --rm --platform ${{ matrix.platform }} \
+                    -v "$(pwd):/work" -w /work \
+                    oven/bun:1 \
+                    bun install
 
             - name: Create node_modules tarball
               run: tar -czf node_modules-${{ matrix.arch }}.tar.gz node_modules/

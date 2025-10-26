@@ -41,7 +41,6 @@
     "electron",
     "esbuild",
     "electron-winstaller",
-    "libvesktop",
     "@vencord/venmic",
   ],
   "packages": {
