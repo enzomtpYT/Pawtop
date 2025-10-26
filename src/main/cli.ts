@@ -6,6 +6,7 @@
 
 import { app } from "electron";
 import { basename } from "path";
+import { IpcEvents } from "shared/IpcEvents";
 import { stripIndent } from "shared/utils/text";
 import { parseArgs, ParseArgsOptionDescriptor } from "util";
 
@@ -42,6 +43,16 @@ const options = {
         type: "string",
         description: "Set User-Agent to a specific operating system. May trigger anti-spam or break voice chat",
         options: ["windows", "linux", "darwin"]
+    },
+    "toggle-mic": {
+        type: "boolean",
+        hidden: process.platform !== "linux",
+        description: "Toggle your microphone status"
+    },
+    "toggle-deafen": {
+        type: "boolean",
+        hidden: process.platform !== "linux",
+        description: "Toggle your deafen status"
     }
 } satisfies Record<string, Option>;
 
@@ -140,4 +151,63 @@ export function checkCommandLineForHelpOrVersion() {
     }
 }
 
+function checkCommandLineForToggleCommands() {
+    const { "toggle-mic": toggleMic, "toggle-deafen": toggleDeafen } = CommandLine.values;
+
+    if (!toggleMic && !toggleDeafen) return false;
+    if (!app.requestSingleInstanceLock({ IS_DEV })) {
+        app.exit(0);
+    }
+
+    console.error("Equibop is not running. Toggle commands require a running instance.");
+    app.exit(1);
+}
+
+function setupSecondInstanceHandler() {
+    app.on("second-instance", (_event, commandLine, _cwd, data: any) => {
+        if (data.IS_DEV) {
+            app.quit();
+            return;
+        }
+
+        const isToggleCommand = commandLine.some(arg => arg === "--toggle-mic" || arg === "--toggle-deafen");
+        if (isToggleCommand) {
+            const command = commandLine.includes("--toggle-mic")
+                ? IpcEvents.TOGGLE_SELF_MUTE
+                : IpcEvents.TOGGLE_SELF_DEAF;
+
+            import("./mainWindow").then(({ mainWin }) => {
+                if (mainWin) {
+                    mainWin.webContents.send(command);
+                }
+            });
+        } else {
+            import("./mainWindow").then(({ mainWin }) => {
+                if (mainWin) {
+                    if (mainWin.isMinimized()) mainWin.restore();
+                    if (!mainWin.isVisible()) mainWin.show();
+                    mainWin.focus();
+                }
+            });
+        }
+    });
+}
+
+function checkForSecondInstance() {
+    if (checkCommandLineForToggleCommands()) return;
+
+    if (!app.requestSingleInstanceLock({ IS_DEV })) {
+        if (IS_DEV) {
+            console.log("Equibop is already running. Quitting previous instance...");
+            return;
+        } else {
+            console.log("Equibop is already running. Quitting...");
+            app.exit(0);
+        }
+    }
+
+    setupSecondInstanceHandler();
+}
+
 checkCommandLineForHelpOrVersion();
+checkForSecondInstance();

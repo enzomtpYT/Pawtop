@@ -14,7 +14,7 @@ import { app, BrowserWindow, nativeTheme } from "electron";
 
 import { DATA_DIR } from "./constants";
 import { createFirstLaunchTour } from "./firstLaunch";
-import { createWindows, mainWin } from "./mainWindow";
+import { createWindows } from "./mainWindow";
 import { registerMediaPermissionsHandler } from "./mediaPermissions";
 import { registerScreenShareHandler } from "./screenShare";
 import { Settings, State } from "./settings";
@@ -105,15 +105,6 @@ function init() {
     // In the Flatpak on SteamOS the theme is detected as light, but SteamOS only has a dark mode, so we just override it
     if (isDeckGameMode) nativeTheme.themeSource = "dark";
 
-    app.on("second-instance", (_event, _cmdLine, _cwd, data: any) => {
-        if (data.IS_DEV) app.quit();
-        else if (mainWin) {
-            if (mainWin.isMinimized()) mainWin.restore();
-            if (!mainWin.isVisible()) mainWin.show();
-            mainWin.focus();
-        }
-    });
-
     app.whenReady().then(async () => {
         if (process.platform === "win32") app.setAppUserModelId("org.equicord.equibop");
 
@@ -128,17 +119,7 @@ function init() {
     });
 }
 
-if (!app.requestSingleInstanceLock({ IS_DEV })) {
-    if (IS_DEV) {
-        console.log("Equibop is already running. Quitting previous instance...");
-        init();
-    } else {
-        console.log("Equibop is already running. Quitting...");
-        app.quit();
-    }
-} else {
-    init();
-}
+init();
 
 async function bootstrap() {
     if (!Object.hasOwn(State.store, "firstLaunch")) {
