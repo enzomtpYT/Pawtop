@@ -7,9 +7,9 @@
 import * as Bridge from "arrpc-bun/src/bridge";
 import Server from "arrpc-bun/src/server";
 
-Bridge.init();
-
 (async () => {
+    await Bridge.init();
+
     // @ts-ignore
     const server = await new Server();
 
