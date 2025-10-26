@@ -53,10 +53,12 @@ Settings.addChangeListener("arRPC", (enabled: boolean | undefined) => {
 });
 
 // handle STREAMERMODE separately from regular RPC activities
-VesktopNative.arrpc.onStreamerModeDetected(jsonData => {
+VesktopNative.arrpc.onStreamerModeDetected(async jsonData => {
     if (!Settings.store.arRPC) return;
 
     try {
+        await onceReady;
+
         const data = JSON.parse(jsonData);
         if (data.socketId === "STREAMERMODE" && StreamerModeStore.autoToggle) {
             FluxDispatcher.dispatch({
