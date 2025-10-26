@@ -213,6 +213,8 @@
     "trustedDependencies": [
         "@vencord/venmic",
         "electron",
-        "esbuild"
+        "electron-winstaller",
+        "esbuild",
+        "libvesktop"
     ]
 }
