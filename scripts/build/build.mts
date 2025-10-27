@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { execSync } from "child_process";
 import { BuildContext, BuildOptions, context } from "esbuild";
 import { copyFile } from "fs/promises";
 
@@ -11,6 +12,7 @@ import vencordDep from "./vencordDep.mjs";
 import { includeDirPlugin } from "./includeDirPlugin.mts";
 
 const isDev = process.argv.includes("--dev");
+const gitHash = execSync("git rev-parse HEAD", { encoding: "utf-8" }).trim();
 
 const CommonOpts: BuildOptions = {
     minify: !isDev,
@@ -29,7 +31,8 @@ const NodeCommonOpts: BuildOptions = {
         ".node": "file"
     },
     define: {
-        IS_DEV: JSON.stringify(isDev)
+        IS_DEV: JSON.stringify(isDev),
+        EQUIBOP_GIT_HASH: JSON.stringify(gitHash)
     }
 };
 
