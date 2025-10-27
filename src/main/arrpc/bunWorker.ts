@@ -10,8 +10,7 @@ import Server from "arrpc-bun/src/server";
 (async () => {
     await Bridge.init();
 
-    // @ts-ignore
-    const server = await new Server();
+    const server = await Server.create();
 
     // get actual bridge port - may be 1337-1347
     const bridgePort = Bridge.getPort() || 1337;
