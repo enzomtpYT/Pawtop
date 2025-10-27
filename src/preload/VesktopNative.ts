@@ -38,6 +38,7 @@ export const VesktopNative = {
         relaunch: () => invoke<void>(IpcEvents.RELAUNCH),
         getVersion: () => sendSync<void>(IpcEvents.GET_VERSION),
         getGitHash: () => sendSync<string>(IpcEvents.GET_GIT_HASH),
+        isDevBuild: () => IS_DEV,
         setBadgeCount: (count: number) => invoke<void>(IpcEvents.SET_BADGE_COUNT, count),
         supportsWindowsTransparency: () => sendSync<boolean>(IpcEvents.SUPPORTS_WINDOWS_TRANSPARENCY),
         getEnableHardwareAcceleration: () => sendSync<boolean>(IpcEvents.GET_ENABLE_HARDWARE_ACCELERATION),
@@ -82,11 +83,16 @@ export const VesktopNative = {
         getStatus: () =>
             sendSync<{
                 running: boolean;
+                pid: number | null;
                 port: number | null;
                 host: string | null;
                 enabled: boolean;
                 lastError: string | null;
                 lastExitCode: number | null;
+                uptime: number | null;
+                restartCount: number;
+                bunPath: string | null;
+                warnings: string[];
             }>(IpcEvents.ARRPC_GET_STATUS)
     },
     win: {

@@ -84,15 +84,24 @@ let lastError: string | null = null;
 let lastExitCode: number | null = null;
 let serverPort: number | null = null;
 let serverHost: string | null = null;
+let startTime: number | null = null;
+let restartCount: number = 0;
+let bunPath: string | null = null;
+let warnings: string[] = [];
 
 export function getArRPCStatus() {
     return {
         running: bunProcess?.pid != null,
+        pid: bunProcess?.pid ?? null,
         port: serverPort,
         host: serverHost,
         enabled: Settings.store.arRPC ?? false,
         lastError,
-        lastExitCode
+        lastExitCode,
+        uptime: startTime ? Date.now() - startTime : null,
+        restartCount,
+        bunPath,
+        warnings: [...warnings]
     };
 }
 
@@ -104,10 +113,12 @@ export function destroyArRPC() {
     bunProcess = null as any;
     serverPort = null;
     serverHost = null;
+    startTime = null;
 }
 
 export async function restartArRPC() {
     debugLog("Restarting arRPC");
+    restartCount++;
     destroyArRPC();
     await new Promise(resolve => setTimeout(resolve, 500));
     await initArRPC();
@@ -125,17 +136,25 @@ export async function initArRPC() {
         return;
     }
 
+    warnings = [];
+    lastError = null;
+    lastExitCode = null;
+
     try {
         // check for unpacked version first (for production builds)
         const workerPath = resolve(__dirname, "./arrpc/bunWorker.js").replace("app.asar", "app.asar.unpacked");
-        const bunPath = getBundledBunPath();
+        const resolvedBunPath = getBundledBunPath();
 
         debugLog("Initializing arRPC");
         debugLog(`Worker path: ${workerPath}`);
-        debugLog(`Bun path: ${bunPath}`);
+        debugLog(`Bun path: ${resolvedBunPath}`);
         debugLog(`Spawn args: [${workerPath}]`);
 
-        bunProcess = spawn(bunPath, [workerPath], {
+        if (resolvedBunPath === "bun") {
+            warnings.push("Using system bun (bundled bun not found)");
+        }
+
+        bunProcess = spawn(resolvedBunPath, [workerPath], {
             stdio: ["ignore", "pipe", "pipe", "ipc"],
             env: process.env,
             windowsHide: true
@@ -143,8 +162,8 @@ export async function initArRPC() {
 
         debugLog(`arRPC process spawned with PID: ${bunProcess.pid}`);
 
-        lastError = null;
-        lastExitCode = null;
+        bunPath = resolvedBunPath;
+        startTime = Date.now();
 
         bunProcess.on("message", message => {
             debugLog("Received IPC message from bunWorker:", message);
@@ -182,6 +201,7 @@ export async function initArRPC() {
             }
             debugLog(`arRPC process exited with code ${code}`);
             bunProcess = null as any;
+            startTime = null;
         });
     } catch (e) {
         console.error("Failed to start arRPC server", e);
