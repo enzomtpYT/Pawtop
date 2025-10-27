@@ -72,6 +72,18 @@ function getBundledBunPath(): string {
 }
 
 let bunProcess: ChildProcess;
+let lastError: string | null = null;
+let lastExitCode: number | null = null;
+
+export function getArRPCStatus() {
+    return {
+        running: bunProcess?.pid != null,
+        pid: bunProcess?.pid ?? null,
+        enabled: Settings.store.arRPC ?? false,
+        lastError,
+        lastExitCode
+    };
+}
 
 export function destroyArRPC() {
     if (!bunProcess) return;
@@ -118,6 +130,9 @@ export async function initArRPC() {
 
         debugLog(`arRPC process spawned with PID: ${bunProcess.pid}`);
 
+        lastError = null;
+        lastExitCode = null;
+
         bunProcess.on("message", message => {
             debugLog("Received IPC message from bunWorker:", message);
             if (isArRPCMessage(message)) {
@@ -131,14 +146,18 @@ export async function initArRPC() {
         });
 
         bunProcess.stderr?.on("data", data => {
-            console.error("[arRPC ! stderr]", data.toString().trim());
+            const errorMsg = data.toString().trim();
+            console.error("[arRPC ! stderr]", errorMsg);
+            lastError = errorMsg;
         });
 
         bunProcess.on("error", err => {
             console.error("[arRPC] Failed to start:", err);
+            lastError = err.message;
         });
 
         bunProcess.on("exit", code => {
+            lastExitCode = code;
             if (code !== 0 && code !== null) {
                 console.error(`[arRPC] Process exited with code ${code}`);
             }
@@ -147,6 +166,7 @@ export async function initArRPC() {
         });
     } catch (e) {
         console.error("Failed to start arRPC server", e);
+        lastError = e instanceof Error ? e.message : String(e);
     }
 }
 

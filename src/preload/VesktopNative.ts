@@ -78,7 +78,15 @@ export const VesktopNative = {
         },
         offStreamerModeDetected(cb: StreamerModeCallback) {
             streamerModeCallbacks.delete(cb);
-        }
+        },
+        getStatus: () =>
+            sendSync<{
+                running: boolean;
+                pid: number | null;
+                enabled: boolean;
+                lastError: string | null;
+                lastExitCode: number | null;
+            }>(IpcEvents.ARRPC_GET_STATUS)
     },
     win: {
         focus: () => invoke<void>(IpcEvents.FOCUS),
