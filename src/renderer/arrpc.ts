@@ -60,7 +60,15 @@ VesktopNative.arrpc.onStreamerModeDetected(async jsonData => {
         await onceReady;
 
         const data = JSON.parse(jsonData);
+        if (Settings.store.arRPCDebug) {
+            logger.info("STREAMERMODE detected:", data);
+            logger.info("StreamerModeStore.autoToggle:", StreamerModeStore.autoToggle);
+        }
+
         if (data.socketId === "STREAMERMODE" && StreamerModeStore.autoToggle) {
+            if (Settings.store.arRPCDebug) {
+                logger.info("Toggling streamer mode to:", data.activity?.application_id === "STREAMERMODE");
+            }
             FluxDispatcher.dispatch({
                 type: "STREAMER_MODE_UPDATE",
                 key: "enabled",

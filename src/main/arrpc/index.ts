@@ -29,6 +29,12 @@ function isArRPCMessage(message: unknown): message is ArRPCMessage {
     );
 }
 
+function debugLog(...args: any[]) {
+    if (Settings.store.arRPCDebug) {
+        console.log("[arRPC > debug]", ...args);
+    }
+}
+
 function getBundledBunPath(): string {
     const { platform } = process;
     const { arch } = process;
@@ -37,6 +43,8 @@ function getBundledBunPath(): string {
     if (platform === "win32") bunBinary = "bun.exe";
 
     const bunPlatform = platform === "win32" ? "windows" : platform;
+
+    debugLog(`Looking for bun binary for platform=${platform}, arch=${arch}`);
 
     const possiblePaths = [
         // packaged app with resourcesPath
@@ -49,12 +57,16 @@ function getBundledBunPath(): string {
         join(app.getAppPath(), "bun", `${platform}-${arch}`, `bun-${bunPlatform}-${arch}`, bunBinary)
     ].filter(Boolean);
 
+    debugLog("Checking possible bun paths:", possiblePaths);
+
     for (const bunPath of possiblePaths) {
         if (bunPath && existsSync(bunPath)) {
+            debugLog(`Found bun binary at: ${bunPath}`);
             return bunPath;
         }
     }
 
+    debugLog("No bundled bun found, falling back to system bun");
     // fallback to system bun
     return "bun";
 }
@@ -64,11 +76,13 @@ let bunProcess: ChildProcess;
 export function destroyArRPC() {
     if (!bunProcess) return;
 
+    debugLog("Destroying arRPC process");
     bunProcess.kill();
     bunProcess = null as any;
 }
 
 export async function restartArRPC() {
+    debugLog("Restarting arRPC");
     destroyArRPC();
     await new Promise(resolve => setTimeout(resolve, 500));
     await initArRPC();
@@ -76,16 +90,25 @@ export async function restartArRPC() {
 
 export async function initArRPC() {
     if (!Settings.store.arRPC) {
+        debugLog("arRPC is disabled in settings, destroying if running");
         destroyArRPC();
         return;
     }
 
-    if (bunProcess) return;
+    if (bunProcess) {
+        debugLog("arRPC process already running");
+        return;
+    }
 
     try {
         // check for unpacked version first (for production builds)
         const workerPath = resolve(__dirname, "./arrpc/bunWorker.js").replace("app.asar", "app.asar.unpacked");
         const bunPath = getBundledBunPath();
+
+        debugLog("Initializing arRPC");
+        debugLog(`Worker path: ${workerPath}`);
+        debugLog(`Bun path: ${bunPath}`);
+        debugLog(`Spawn args: [${workerPath}]`);
 
         bunProcess = spawn(bunPath, [workerPath], {
             stdio: ["ignore", "pipe", "pipe", "ipc"],
@@ -93,8 +116,12 @@ export async function initArRPC() {
             windowsHide: true
         });
 
+        debugLog(`arRPC process spawned with PID: ${bunProcess.pid}`);
+
         bunProcess.on("message", message => {
+            debugLog("Received IPC message from bunWorker:", message);
             if (isArRPCMessage(message)) {
+                debugLog("Message is STREAMERMODE, sending to renderer");
                 mainWin?.webContents.send(IpcEvents.STREAMER_MODE_DETECTED, message.data);
             }
         });
@@ -115,6 +142,7 @@ export async function initArRPC() {
             if (code !== 0 && code !== null) {
                 console.error(`[arRPC] Process exited with code ${code}`);
             }
+            debugLog(`arRPC process exited with code ${code}`);
             bunProcess = null as any;
         });
     } catch (e) {

@@ -20,6 +20,7 @@ export interface Settings {
     hardwareAcceleration?: boolean;
     hardwareVideoAcceleration?: boolean;
     arRPC?: boolean;
+    arRPCDebug?: boolean;
     appBadge?: boolean;
     badgeOnlyForMentions?: boolean;
     disableMinSize?: boolean;
