@@ -13,19 +13,27 @@ import { IpcEvents } from "shared/IpcEvents";
 import { mainWin } from "../mainWindow";
 import { Settings } from "../settings";
 
-interface ArRPCMessage {
+interface ArRPCStreamerModeMessage {
     type: "STREAMERMODE";
     data: string;
 }
+
+interface ArRPCServerInfoMessage {
+    type: "SERVER_INFO";
+    data: {
+        port: number;
+        host: string;
+    };
+}
+
+type ArRPCMessage = ArRPCStreamerModeMessage | ArRPCServerInfoMessage;
 
 function isArRPCMessage(message: unknown): message is ArRPCMessage {
     return (
         typeof message === "object" &&
         message !== null &&
         "type" in message &&
-        message.type === "STREAMERMODE" &&
-        "data" in message &&
-        typeof message.data === "string"
+        (message.type === "STREAMERMODE" || message.type === "SERVER_INFO")
     );
 }
 
@@ -74,11 +82,14 @@ function getBundledBunPath(): string {
 let bunProcess: ChildProcess;
 let lastError: string | null = null;
 let lastExitCode: number | null = null;
+let serverPort: number | null = null;
+let serverHost: string | null = null;
 
 export function getArRPCStatus() {
     return {
         running: bunProcess?.pid != null,
-        pid: bunProcess?.pid ?? null,
+        port: serverPort,
+        host: serverHost,
         enabled: Settings.store.arRPC ?? false,
         lastError,
         lastExitCode
@@ -91,6 +102,8 @@ export function destroyArRPC() {
     debugLog("Destroying arRPC process");
     bunProcess.kill();
     bunProcess = null as any;
+    serverPort = null;
+    serverHost = null;
 }
 
 export async function restartArRPC() {
@@ -136,8 +149,14 @@ export async function initArRPC() {
         bunProcess.on("message", message => {
             debugLog("Received IPC message from bunWorker:", message);
             if (isArRPCMessage(message)) {
-                debugLog("Message is STREAMERMODE, sending to renderer");
-                mainWin?.webContents.send(IpcEvents.STREAMER_MODE_DETECTED, message.data);
+                if (message.type === "SERVER_INFO") {
+                    serverPort = message.data.port;
+                    serverHost = message.data.host;
+                    debugLog(`arRPC server listening on ${serverHost}:${serverPort}`);
+                } else if (message.type === "STREAMERMODE") {
+                    debugLog("Message is STREAMERMODE, sending to renderer");
+                    mainWin?.webContents.send(IpcEvents.STREAMER_MODE_DETECTED, message.data);
+                }
             }
         });
 

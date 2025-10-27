@@ -13,6 +13,18 @@ import Server from "arrpc-bun/src/server";
     // @ts-ignore
     const server = await new Server();
 
+    // get actual bridge port - may be 1337-1347
+    const bridgePort = Bridge.getPort() || 1337;
+    const bridgeHost = "127.0.0.1";
+
+    process.send?.({
+        type: "SERVER_INFO",
+        data: {
+            port: bridgePort,
+            host: bridgeHost
+        }
+    });
+
     server.on("activity", (data: any) => {
         if (data.activity?.application_id === "STREAMERMODE") {
             process.send?.({

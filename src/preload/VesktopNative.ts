@@ -82,7 +82,8 @@ export const VesktopNative = {
         getStatus: () =>
             sendSync<{
                 running: boolean;
-                pid: number | null;
+                port: number | null;
+                host: string | null;
                 enabled: boolean;
                 lastError: string | null;
                 lastExitCode: number | null;
