@@ -11,5 +11,5 @@ import { State } from "./settings";
 
 // this is in a separate file to avoid circular dependencies
 export const VENCORD_DIR = State.store.equicordDir
-    ? join(State.store.equicordDir, "equibop")
+    ? join(State.store.equicordDir, "pawtop")
     : join(SESSION_DATA_DIR, "equicord.asar");

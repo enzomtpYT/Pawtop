@@ -87,7 +87,7 @@ function Asset({ asset }: { asset: UserAssetType }) {
             <div className="vcd-user-assets-asset">
                 <img
                     className="vcd-user-assets-image"
-                    src={`equibop://assets/${asset}?v=${version}`}
+                    src={`pawtop://assets/${asset}?v=${version}`}
                     alt=""
                     style={{ imageRendering }}
                 />

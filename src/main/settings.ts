@@ -34,6 +34,6 @@ function loadSettings<T extends object = any>(file: string, name: string) {
     return store;
 }
 
-export const Settings = loadSettings<TSettings>(SETTINGS_FILE, "Equibop settings");
+export const Settings = loadSettings<TSettings>(SETTINGS_FILE, "Pawtop settings");
 export const VencordSettings = loadSettings<any>(VENCORD_SETTINGS_FILE, "Vencord settings");
-export const State = loadSettings<TState>(STATE_FILE, "Equibop state");
+export const State = loadSettings<TState>(STATE_FILE, "Pawtop state");

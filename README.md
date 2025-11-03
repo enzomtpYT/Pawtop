@@ -1,15 +1,15 @@
-# Equibop [<img src="/static/icon.png" width="225" align="right" alt="Equibop">](https://github.com/Equicord/Equibop)
+# Pawtop [<img src="/static/icon.png" width="225" align="right" alt="Pawtop">](https://github.com/enzomtpYT/Pawtop)
 
-[![Equicord](https://img.shields.io/badge/Equicord-grey?style=flat)](https://github.com/Equicord/Equicord)
-[![Tests](https://github.com/Equicord/Equibop/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/Equicord/Equibop/actions/workflows/test.yml)
-[![Discord](https://img.shields.io/discord/1173279886065029291.svg?color=768AD4&label=Discord&logo=discord&logoColor=white)](https://equicord.org/discord)
+[![PawsomeVencord](https://img.shields.io/badge/PawsomeVencord-grey?style=flat)](https://github.com/enzomtpYT/PawsomeVencord)
+[![Tests](https://github.com/enzomtpYT/Pawtop/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/enzomtpYT/Pawtop/actions/workflows/test.yml)
+[![Discord](https://img.shields.io/discord/1173279886065029291.svg?color=768AD4&label=Discord&logo=discord&logoColor=white)](https://discord.gg/w9jVtzNx4c)
 
-Equibop is a fork of [Vesktop](https://github.com/Vencord/Vesktop).
+Pawtop is a fork of [Equibop](https://github.com/Equicord/Equibop).
 
-You can join our [discord server](https://equicord.org/discord) for commits, changes, chat or even support.<br></br>
+You can join our [discord server](https://discord.gg/w9jVtzNx4c) for commits, changes, chat or even support.<br></br>
 
 **Main features**:
-- Equicord preinstalled
+- PawsomeVencord preinstalled
 - Much more lightweight and faster than the official Discord app
 - Linux Screenshare with sound & wayland
 - Much better privacy, since Discord has no access to your system
@@ -29,26 +29,7 @@ You can join our [discord server](https://equicord.org/discord) for commits, cha
 - Global Keybinds (Windows/macOS - use command-line flags on Linux instead)
 
 ## Installing
-Check the [Releases](https://github.com/Equicord/Equibop/releases) page
-
-OR
-
-Check The Downloads from the [website](https://equicord.org/downloads)
-
-### Linux
-
-[![Equibop](https://img.shields.io/badge/AVAILABLE_ON_THE_AUR-333232?style=for-the-badge&logo=arch-linux&logoColor=0F94D2&labelColor=%23171717)](https://aur.archlinux.org/packages?O=0&K=equibop)
-<br>
-<!-- <a href="https://flathub.org/apps/io.github.equicord.equibop">
-  <img src="https://flathub.org/api/badge?svg" alt="Download on Flathub" style="width:220px; height:auto;">
-</a> -->
-
-#### Community packages
-
-Below you can find unofficial packages created by the community. They are not officially supported by us, so before reporting issues, please first confirm the issue also happens on official builds. When in doubt, consult with their packager first. The AppImage should work on any distro that supports them, so I recommend you just use that instead!
-
-- Arch Linux: [Equibop on the Arch user repository](https://aur.archlinux.org/packages?K=equibop)
-- NixOS: `nix-shell -p equibop`
+Check the [Releases](https://github.com/enzomtpYT/Pawtop/releases) page
 
 ## Building from Source
 
@@ -59,8 +40,8 @@ You need to have the following dependencies installed:
 Packaging will create builds in the dist/ folder
 
 ```sh
-git clone https://github.com/Equicord/Equibop
-cd Equibop
+git clone https://github.com/enzomtpYT/Pawtop
+cd Pawtop
 
 # Install Dependencies
 bun install
@@ -80,11 +61,11 @@ bun package:dir
 
 ## Building LibVesktop from Source
 
-This is a small C++ helper library Equibop uses on Linux to emit D-Bus events. By default, prebuilt binaries for x64 and arm64 are used.
+This is a small C++ helper library Pawtop uses on Linux to emit D-Bus events. By default, prebuilt binaries for x64 and arm64 are used.
 
 If you want to build it from source:
 1. Install build dependencies:
     - Debian/Ubuntu: `apt install build-essential python3 curl pkg-config libglib2.0-dev`
     - Fedora: `dnf install @c-development @development-tools python3 curl pkgconf-pkg-config glib2-devel`
 2. Run `bun buildLibVesktop`
-3. From now on, building Equibop will use your own build
+3. From now on, building Pawtop will use your own build

@@ -28,14 +28,14 @@ function openDeveloperOptionsModal(settings: Settings) {
         <ModalRoot {...props} size={ModalSize.MEDIUM}>
             <ModalHeader>
                 <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }}>
-                    Equibop Developer Options
+                    Pawtop Developer Options
                 </Text>
                 <ModalCloseButton onClick={props.onClose} />
             </ModalHeader>
 
             <ModalContent>
                 <div style={{ padding: "1em 0" }}>
-                    <Forms.FormTitle tag="h5">Equicord Location</Forms.FormTitle>
+                    <Forms.FormTitle tag="h5">PawsomeVencord Location</Forms.FormTitle>
                     <VencordLocationPicker settings={settings} />
 
                     <Forms.FormTitle tag="h5" className={Margins.top16}>
@@ -55,12 +55,12 @@ function openDeveloperOptionsModal(settings: Settings) {
 
 const VencordLocationPicker: SettingsComponent = ({ settings }) => {
     const forceUpdate = useForceUpdater();
-    const equicordDir = VesktopNative.fileManager.getEquicordDir();
+    const equicordDir = VesktopNative.fileManager.getPawsomeVencordDir();
 
     return (
         <>
             <Forms.FormText>
-                Equicord files are loaded from{" "}
+                PawsomeVencord files are loaded from{" "}
                 {equicordDir ? (
                     <a
                         href="about:blank"
@@ -79,13 +79,13 @@ const VencordLocationPicker: SettingsComponent = ({ settings }) => {
                 <Button
                     size={Button.Sizes.SMALL}
                     onClick={async () => {
-                        const choice = await VesktopNative.fileManager.selectEquicordDir();
+                        const choice = await VesktopNative.fileManager.selectPawsomeVencordDir();
                         switch (choice) {
                             case "cancelled":
                                 break;
                             case "ok":
                                 Toasts.show({
-                                    message: "Equicord install changed. Fully restart Equibop to apply.",
+                                    message: "PawsomeVencord install changed. Fully restart Pawtop to apply.",
                                     id: Toasts.genId(),
                                     type: Toasts.Type.SUCCESS
                                 });
@@ -93,7 +93,7 @@ const VencordLocationPicker: SettingsComponent = ({ settings }) => {
                             case "invalid":
                                 Toasts.show({
                                     message:
-                                        "You did not choose a valid Equicord install. Make sure you're selecting the dist dir!",
+                                        "You did not choose a valid PawsomeVencord install. Make sure you're selecting the dist dir!",
                                     id: Toasts.genId(),
                                     type: Toasts.Type.FAILURE
                                 });
@@ -108,7 +108,7 @@ const VencordLocationPicker: SettingsComponent = ({ settings }) => {
                     size={Button.Sizes.SMALL}
                     color={Button.Colors.RED}
                     onClick={async () => {
-                        await VesktopNative.fileManager.selectEquicordDir(null);
+                        await VesktopNative.fileManager.selectPawsomeVencordDir(null);
                         forceUpdate();
                     }}
                 >

@@ -12,7 +12,7 @@ import { IpcCommands } from "shared/IpcEvents";
 import { onIpcCommand } from "./ipcCommands";
 import { Settings } from "./settings";
 
-const logger = new Logger("EquibopRPC", "#5865f2");
+const logger = new Logger("PawtopRPC", "#5865f2");
 const StreamerModeStore = findStoreLazy("StreamerModeStore");
 
 // handle STREAMERMODE separately from regular RPC activities

@@ -52,8 +52,8 @@ export const VesktopNative = {
     },
     fileManager: {
         showItemInFolder: (path: string) => invoke<void>(IpcEvents.SHOW_ITEM_IN_FOLDER, path),
-        getEquicordDir: () => sendSync<string | undefined>(IpcEvents.GET_VENCORD_DIR),
-        selectEquicordDir: (value?: null) =>
+        getPawsomeVencordDir: () => sendSync<string | undefined>(IpcEvents.GET_VENCORD_DIR),
+        selectPawsomeVencordDir: (value?: null) =>
             invoke<"cancelled" | "invalid" | "ok">(IpcEvents.SELECT_VENCORD_DIR, value),
         chooseUserAsset: (asset: string, value?: null) =>
             invoke<"cancelled" | "invalid" | "ok" | "failed">(IpcEvents.CHOOSE_USER_ASSET, asset, value)

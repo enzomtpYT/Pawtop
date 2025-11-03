@@ -82,7 +82,7 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
             click: createAboutWindow
         },
         {
-            label: "Repair Equicord",
+            label: "Repair PawsomeVencord",
             async click() {
                 await downloadVencordAsar();
                 app.relaunch();
@@ -90,7 +90,7 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
             }
         },
         {
-            label: "Reset Equibop",
+            label: "Reset Pawtop",
             async click() {
                 await clearData(win);
             }
@@ -123,7 +123,7 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
 
     const initialImage = await getCachedTrayImage(trayVariant);
     tray = new Tray(initialImage);
-    tray.setToolTip("Equibop");
+    tray.setToolTip("Pawtop");
     tray.setContextMenu(trayMenu);
     tray.on("click", onTrayClick);
 }
