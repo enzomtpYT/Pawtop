@@ -30,6 +30,17 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="3.1.1" date="2025-11-03" type="stable">
+      <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v3.1.1</url>
+      <description>
+        <p>What's Changed</p>
+        <ul>
+          <li>Renamed Equibop to Pawtop</li>
+          <li>Changed update repo from Equicord to PawsomeVencord</li>
+          <li>Edited some assets</li>
+        </ul>
+      </description>
+    </release>
     <release version="3.1.0" date="2025-11-01" type="stable">
       <url>https://github.com/enzomtpYT/Pawtop/releases/tag/v3.1.0</url>
       <description>
