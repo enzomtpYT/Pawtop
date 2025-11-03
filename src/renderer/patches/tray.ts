@@ -16,6 +16,8 @@ type TrayVariant = "tray" | "trayUnread" | "traySpeaking" | "trayIdle" | "trayMu
 let isInCall = false;
 let currentVariant: TrayVariant | null = null;
 
+const subscriptions: Array<{ event: string; callback: (data: any) => void }> = [];
+
 function getTrayVariantForVoiceState(): TrayVariant | null {
     if (!isInCall) return null;
 
@@ -36,10 +38,17 @@ function updateTrayIcon() {
     }
 }
 
+export function cleanupTraySubscriptions() {
+    subscriptions.forEach(({ event, callback }) => {
+        FluxDispatcher.unsubscribe(event, callback);
+    });
+    subscriptions.length = 0;
+}
+
 onceReady.then(() => {
     const userID = UserStore.getCurrentUser().id;
 
-    FluxDispatcher.subscribe("SPEAKING", params => {
+    const speakingCallback = (params: any) => {
         if (params.userId === userID && params.context === "default") {
             if (params.speakingFlags) {
                 if (currentVariant !== "traySpeaking") {
@@ -50,17 +59,23 @@ onceReady.then(() => {
                 updateTrayIcon();
             }
         }
-    });
+    };
+    FluxDispatcher.subscribe("SPEAKING", speakingCallback);
+    subscriptions.push({ event: "SPEAKING", callback: speakingCallback });
 
-    FluxDispatcher.subscribe("AUDIO_TOGGLE_SELF_DEAF", () => {
+    const deafCallback = () => {
         if (isInCall) updateTrayIcon();
-    });
+    };
+    FluxDispatcher.subscribe("AUDIO_TOGGLE_SELF_DEAF", deafCallback);
+    subscriptions.push({ event: "AUDIO_TOGGLE_SELF_DEAF", callback: deafCallback });
 
-    FluxDispatcher.subscribe("AUDIO_TOGGLE_SELF_MUTE", () => {
+    const muteCallback = () => {
         if (isInCall) updateTrayIcon();
-    });
+    };
+    FluxDispatcher.subscribe("AUDIO_TOGGLE_SELF_MUTE", muteCallback);
+    subscriptions.push({ event: "AUDIO_TOGGLE_SELF_MUTE", callback: muteCallback });
 
-    FluxDispatcher.subscribe("RTC_CONNECTION_STATE", params => {
+    const rtcCallback = (params: any) => {
         if (params.context === "default") {
             if (params.state === "RTC_CONNECTED") {
                 isInCall = true;
@@ -73,5 +88,7 @@ onceReady.then(() => {
                 setBadge();
             }
         }
-    });
+    };
+    FluxDispatcher.subscribe("RTC_CONNECTION_STATE", rtcCallback);
+    subscriptions.push({ event: "RTC_CONNECTION_STATE", callback: rtcCallback });
 });

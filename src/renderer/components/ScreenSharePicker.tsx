@@ -97,9 +97,11 @@ addPatch({
     }
 });
 
+let streamCloseCallback: ((data: any) => void) | null = null;
+
 if (isLinux) {
     onceReady.then(() => {
-        FluxDispatcher.subscribe("STREAM_CLOSE", ({ streamKey }: { streamKey: string }) => {
+        streamCloseCallback = ({ streamKey }: { streamKey: string }) => {
             const owner = streamKey.split(":").at(-1);
 
             if (owner !== UserStore.getCurrentUser().id) {
@@ -107,8 +109,16 @@ if (isLinux) {
             }
 
             VesktopNative.virtmic.stop();
-        });
+        };
+        FluxDispatcher.subscribe("STREAM_CLOSE", streamCloseCallback);
     });
+}
+
+export function cleanupScreenShareSubscriptions() {
+    if (streamCloseCallback) {
+        FluxDispatcher.unsubscribe("STREAM_CLOSE", streamCloseCallback);
+        streamCloseCallback = null;
+    }
 }
 
 export function openScreenSharePicker(screens: Source[], skipPicker: boolean) {
