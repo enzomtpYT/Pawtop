@@ -11,9 +11,10 @@ import { Divider, ErrorBoundary } from "@equicord/types/components";
 import { Text } from "@equicord/types/webpack/common";
 import { ComponentType } from "react";
 import { Settings, useSettings } from "renderer/settings";
-import { isLinux, isMac, isWindows } from "renderer/utils";
+import { isMac, isWindows } from "renderer/utils";
 
 import { Arguments } from "./Arguments";
+import { ArRPCWebSocketSettings } from "./ArRPCWebSocketSettings";
 import { AutoStartToggle } from "./AutoStartToggle";
 import { DeveloperOptionsButton } from "./DeveloperOptions";
 import { DiscordBranchPicker } from "./DiscordBranchPicker";
@@ -134,29 +135,50 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
         }
     ],
     Notifications: [NotificationBadgeToggle],
+    "Rich Presence (arRPC)": [
+        {
+            key: "arRPC",
+            title: "Enable Integrated arRPC",
+            description:
+                "Enable the integrated arRPC server (process scanning and IPC). Disable this if using only external arRPC.",
+            defaultValue: false
+        },
+        {
+            key: "arRPCProcessScanning",
+            title: "Process Scanning",
+            description: "Enables automatic game/application detection for Rich Presence",
+            defaultValue: true,
+            disabled: () => Settings.store.arRPC === false
+        },
+        {
+            key: "arRPCBridge",
+            title: "Bridge Server",
+            description: "Enables the WebSocket bridge server for web clients",
+            defaultValue: true,
+            disabled: () => Settings.store.arRPC === false
+        },
+        {
+            key: "arRPCDebug",
+            title: "Debug Logging",
+            description: "Enables detailed debug logging (bun path detection, process spawning, IPC messages, etc.)",
+            defaultValue: false,
+            disabled: () => Settings.store.arRPC === false
+        },
+        ArRPCWebSocketSettings,
+        {
+            key: "arRPCWebSocketAutoReconnect",
+            title: "Auto Reconnect",
+            description: "Automatically reconnect to arRPC WebSocket when connection is lost",
+            defaultValue: true
+        }
+    ],
     Miscellaneous: [
         {
             key: "middleClickAutoscroll",
             title: "Middle Click Autoscroll",
             description: "Enables middle-click scrolling (Requires a full restart)",
-            defaultValue: false,
-            invisible: () => isLinux
-        },
-        {
-            key: "arRPC",
-            title: "Rich Presence",
-            description: "Enables Rich Presence via arRPC-bun",
             defaultValue: false
         },
-        {
-            key: "arRPCDebug",
-            title: "Rich Presence Debug Logging",
-            description:
-                "Enables detailed debug logging for arRPC (bun path detection, process spawning, IPC messages, etc.)",
-            defaultValue: false,
-            disabled: () => Settings.store.arRPC === false
-        },
-
         {
             key: "openLinksWithElectron",
             title: "Open Links in app (experimental)",

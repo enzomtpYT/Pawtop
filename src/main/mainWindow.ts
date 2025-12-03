@@ -24,6 +24,7 @@ import { once } from "shared/utils/once";
 import type { SettingsStore } from "shared/utils/SettingsStore";
 
 import { createAboutWindow } from "./about";
+import { destroyAppBadge } from "./appBadge";
 import { cleanupArRPC, initArRPC, setupArRPC } from "./arrpc";
 import { CommandLine } from "./cli";
 import { BrowserUserAgent, DEFAULT_HEIGHT, DEFAULT_WIDTH, isLinux, MIN_HEIGHT, MIN_WIDTH } from "./constants";
@@ -46,6 +47,8 @@ applyDeckKeyboardFix();
 
 app.on("before-quit", async () => {
     isQuitting = true;
+    destroyTray();
+    destroyAppBadge();
     await cleanupArRPC();
 });
 
@@ -327,7 +330,7 @@ function buildBrowserWindowOptions(): BrowserWindowConstructorOptions {
         splashTheming !== false ? splashBackground : nativeTheme.shouldUseDarkColors ? "#313338" : "#ffffff";
 
     const options: BrowserWindowConstructorOptions = {
-        show: Settings.store.enableSplashScreen === false,
+        show: Settings.store.enableSplashScreen === false && !CommandLine.values["start-minimized"],
         backgroundColor,
         ...(process.platform === "win32" && { icon: join(STATIC_DIR, "icon.ico") }),
         webPreferences: {
@@ -386,6 +389,7 @@ function createMainWindow() {
 
     const win = (mainWin = new BrowserWindow(buildBrowserWindowOptions()));
 
+    win.webContents.setMaxListeners(15);
     win.setMenuBarVisibility(false);
 
     addSplashLog();

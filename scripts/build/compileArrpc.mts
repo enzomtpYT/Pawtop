@@ -1,9 +1,9 @@
 import { execSync } from "child_process";
-import { existsSync, mkdirSync, cpSync, readFileSync, writeFileSync, unlinkSync } from "fs";
+import { existsSync, mkdirSync } from "fs";
 import { join } from "path";
 
-const OUTPUT_DIR = join(import.meta.dir, "../../resources/arrpc");
-const ARRPC_DIR = join(import.meta.dir, "../../node_modules/arrpc-bun");
+const OUTPUT_DIR = join(import.meta.dir, "..", "..", "static/dist");
+const ARRPC_DIR = join(import.meta.dir, "..", "..", "node_modules/arrpc-bun");
 const ARRPC_ENTRY = join(ARRPC_DIR, "src/index.ts");
 
 interface CompileTarget {
@@ -61,13 +61,18 @@ mkdirSync(OUTPUT_DIR, { recursive: true });
 
 const isCI = process.env.CI === "true" || process.env.GITHUB_ACTIONS === "true";
 const currentPlatform = process.platform === "win32" ? "windows" : process.platform;
+const currentArch = process.arch === "x64" ? "x64" : process.arch === "arm64" ? "arm64" : process.arch;
 
 let targetsToCompile = TARGETS;
 if (isCI) {
 	targetsToCompile = TARGETS.filter(t => t.platform === currentPlatform);
 	console.log(`Running in CI on ${currentPlatform}, compiling only for current platform...`);
+} else if (currentPlatform === "darwin") {
+	targetsToCompile = TARGETS.filter(t => t.platform === currentPlatform);
+	console.log(`Compiling arRPC binaries for macOS universal build: x64 and arm64`);
 } else {
-	console.log("Compiling arRPC binaries for all platforms...");
+	targetsToCompile = TARGETS.filter(t => t.platform === currentPlatform && t.arch === currentArch);
+	console.log(`Compiling arRPC binary for current machine: ${currentPlatform}-${currentArch}`);
 }
 
 console.log(`Source: ${ARRPC_ENTRY}`);
@@ -115,33 +120,6 @@ if (failedTargets.length > 0 && !isCI) {
 	console.warn(`\nWarning: ${failedTargets.length} target(s) failed to compile:`);
 	failedTargets.forEach(t => console.warn(`  - ${t}`));
 	console.warn("Continuing with successfully compiled binaries...\n");
-}
-
-console.log("Copying detectable database files...");
-const detectableJson = join(ARRPC_DIR, "detectable.json");
-const detectableFixesJson = join(ARRPC_DIR, "detectable_fixes.json");
-
-const detectableJsonDest = join(OUTPUT_DIR, "detectable.json");
-const detectableFixesJsonDest = join(OUTPUT_DIR, "detectable_fixes.json");
-
-if (existsSync(detectableJsonDest)) {
-	unlinkSync(detectableJsonDest);
-}
-
-if (existsSync(detectableFixesJsonDest)) {
-	unlinkSync(detectableFixesJsonDest);
-}
-
-if (existsSync(detectableJson)) {
-	const content = readFileSync(detectableJson);
-	writeFileSync(detectableJsonDest, content);
-	console.log("Copied detectable.json");
-}
-
-if (existsSync(detectableFixesJson)) {
-	const content = readFileSync(detectableFixesJson);
-	writeFileSync(detectableFixesJsonDest, content);
-	console.log("Copied detectable_fixes.json");
 }
 
 console.log(`\n Successfully compiled ${compiledTargets.length} arRPC ${compiledTargets.length === 1 ? "binary" : "binaries"}!`);

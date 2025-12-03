@@ -32,7 +32,7 @@ const NodeCommonOpts: BuildOptions = {
     },
     define: {
         IS_DEV: JSON.stringify(isDev),
-        EQUIBOP_GIT_HASH: JSON.stringify(gitHash)
+        PAWTOP_GIT_HASH: JSON.stringify(gitHash)
     }
 };
 
