@@ -31,6 +31,10 @@ You can join our [discord server](https://discord.gg/w9jVtzNx4c) for commits, ch
 ## Installing
 Check the [Releases](https://github.com/enzomtpYT/Pawtop/releases) page
 
+### Linux
+
+[![Pawtop](https://img.shields.io/badge/AVAILABLE_ON_THE_AUR-333232?style=for-the-badge&logo=arch-linux&logoColor=0F94D2&labelColor=%23171717)](https://aur.archlinux.org/packages?O=0&K=pawtop)
+
 ## Building from Source
 
 You need to have the following dependencies installed:
