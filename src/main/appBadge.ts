@@ -26,9 +26,18 @@ function loadBadge(index: number) {
 let lastIndex: null | number = -1;
 let isInVoiceCall = false;
 
-AppEvents.on("voiceCallStateChanged", (inCall: boolean) => {
+const voiceStateListener = (inCall: boolean) => {
     isInVoiceCall = inCall;
-});
+};
+
+if (!AppEvents.listeners("voiceCallStateChanged").includes(voiceStateListener)) {
+    AppEvents.on("voiceCallStateChanged", voiceStateListener);
+}
+
+export function destroyAppBadge() {
+    AppEvents.off("voiceCallStateChanged", voiceStateListener);
+    imgCache.clear();
+}
 
 /**
  * -1 = show unread indicator

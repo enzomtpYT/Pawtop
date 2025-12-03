@@ -21,6 +21,15 @@ export interface Settings {
     hardwareVideoAcceleration?: boolean;
     arRPC?: boolean;
     arRPCDebug?: boolean;
+    arRPCProcessScanning?: boolean;
+    arRPCBridge?: boolean;
+    arRPCBridgePort?: number;
+    arRPCBridgeHost?: string;
+    arRPCWebSocketHost?: string;
+    arRPCWebSocketAutoReconnect?: boolean;
+    arRPCWebSocketReconnectInterval?: number;
+    arRPCWebSocketCustomHost?: string;
+    arRPCWebSocketCustomPort?: number;
     appBadge?: boolean;
     badgeOnlyForMentions?: boolean;
     disableMinSize?: boolean;
