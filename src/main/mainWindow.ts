@@ -29,6 +29,7 @@ import { cleanupArRPC, initArRPC, setupArRPC } from "./arrpc";
 import { CommandLine } from "./cli";
 import { BrowserUserAgent, DEFAULT_HEIGHT, DEFAULT_WIDTH, isLinux, MIN_HEIGHT, MIN_WIDTH } from "./constants";
 import { AppEvents } from "./events";
+import { spoofGnu } from "./gnuSpoofing";
 import { darwinURL } from "./index";
 import { sendRendererCommand } from "./ipcCommands";
 import { initKeybinds } from "./keybinds";
@@ -323,7 +324,7 @@ function buildBrowserWindowOptions(): BrowserWindowConstructorOptions {
     const { staticTitle, transparencyOption, enableMenu, customTitleBar, splashTheming, splashBackground } =
         Settings.store;
 
-    const { frameless, transparent, macosTranslucency } = VencordSettings.store;
+    const { frameless, transparent, macosVibrancyStyle } = VencordSettings.store;
 
     const noFrame = frameless === true || customTitleBar === true;
     const backgroundColor =
@@ -332,10 +333,14 @@ function buildBrowserWindowOptions(): BrowserWindowConstructorOptions {
     const options: BrowserWindowConstructorOptions = {
         show: Settings.store.enableSplashScreen === false && !CommandLine.values["start-minimized"],
         backgroundColor,
-        ...(process.platform === "win32" && { icon: join(STATIC_DIR, "icon.ico") }),
+        ...(process.platform === "win32"
+            ? { icon: join(STATIC_DIR, "icon.ico") }
+            : process.platform === "linux"
+              ? { icon: join(STATIC_DIR, "icon.png") }
+              : {}),
         webPreferences: {
             nodeIntegration: false,
-            sandbox: false, // TODO
+            sandbox: true,
             contextIsolation: true,
             devTools: true,
             preload: join(__dirname, "preload.js"),
@@ -373,9 +378,9 @@ function buildBrowserWindowOptions(): BrowserWindowConstructorOptions {
         options.titleBarStyle = "hidden";
         options.trafficLightPosition = { x: 10, y: 10 };
 
-        if (macosTranslucency) {
-            options.vibrancy = "sidebar";
-            options.backgroundColor = "#ffffff00";
+        if (macosVibrancyStyle) {
+            options.vibrancy = macosVibrancyStyle;
+            options.backgroundColor = "#00000000";
         }
     }
 
@@ -395,6 +400,9 @@ function createMainWindow() {
     addSplashLog();
 
     if (process.platform === "darwin" && Settings.store.customTitleBar) win.setWindowButtonVisibility(false);
+    if (process.platform !== "win32" && CommandLine.values["windows-spoof"]) {
+        spoofGnu(win);
+    }
 
     win.on("close", e => {
         const useTray = !isDeckGameMode && Settings.store.minimizeToTray !== false && Settings.store.tray !== false;
@@ -406,6 +414,10 @@ function createMainWindow() {
         else win.hide();
 
         return false;
+    });
+
+    win.on("focus", () => {
+        win.flashFrame(false);
     });
 
     initWindowBoundsListeners(win);

@@ -7,18 +7,17 @@
 import "./settings.css";
 
 import { classNameFactory } from "@equicord/types/api/Styles";
-import { Divider, ErrorBoundary } from "@equicord/types/components";
-import { Text } from "@equicord/types/webpack/common";
+import { BaseText, Divider, ErrorBoundary } from "@equicord/types/components";
 import { ComponentType } from "react";
 import { Settings, useSettings } from "renderer/settings";
 import { isMac, isWindows } from "renderer/utils";
 
-import { Arguments } from "./Arguments";
-import { ArRPCWebSocketSettings } from "./ArRPCWebSocketSettings";
+import { ArRPCSettingsButton } from "./ArRPCSettings";
 import { AutoStartToggle } from "./AutoStartToggle";
 import { DeveloperOptionsButton } from "./DeveloperOptions";
 import { DiscordBranchPicker } from "./DiscordBranchPicker";
 import { NotificationBadgeToggle } from "./NotificationBadgeToggle";
+import { OutdatedVesktopWarning } from "./OutdatedVesktopWarning";
 import { Updater } from "./Updater";
 import { UserAssetsButton } from "./UserAssets";
 import { VesktopSettingsSwitch } from "./VesktopSettingsSwitch";
@@ -99,7 +98,6 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
         UserAssetsButton
     ],
     Behaviour: [
-        Arguments,
         {
             key: "tray",
             title: "Tray Icon",
@@ -118,7 +116,7 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
         {
             key: "clickTrayToShowHide",
             title: "Hide/Show on tray click",
-            description: "Left clicking tray icon will toggle the pawtop window visibility.",
+            description: "Left clicking tray icon will toggle the Pawtop window visibility.",
             defaultValue: false
         },
         {
@@ -134,44 +132,16 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
             defaultValue: false
         }
     ],
-    Notifications: [NotificationBadgeToggle],
-    "Rich Presence (arRPC)": [
+    Notifications: [
+        NotificationBadgeToggle,
         {
-            key: "arRPC",
-            title: "Enable Integrated arRPC",
-            description:
-                "Enable the integrated arRPC server (process scanning and IPC). Disable this if using only external arRPC.",
+            key: "enableTaskbarFlashing",
+            title: "Enable Taskbar Flashing",
+            description: "Flashes the app in your taskbar when you have new notifications.",
             defaultValue: false
-        },
-        {
-            key: "arRPCProcessScanning",
-            title: "Process Scanning",
-            description: "Enables automatic game/application detection for Rich Presence",
-            defaultValue: true,
-            disabled: () => Settings.store.arRPC === false
-        },
-        {
-            key: "arRPCBridge",
-            title: "Bridge Server",
-            description: "Enables the WebSocket bridge server for web clients",
-            defaultValue: true,
-            disabled: () => Settings.store.arRPC === false
-        },
-        {
-            key: "arRPCDebug",
-            title: "Debug Logging",
-            description: "Enables detailed debug logging (bun path detection, process spawning, IPC messages, etc.)",
-            defaultValue: false,
-            disabled: () => Settings.store.arRPC === false
-        },
-        ArRPCWebSocketSettings,
-        {
-            key: "arRPCWebSocketAutoReconnect",
-            title: "Auto Reconnect",
-            description: "Automatically reconnect to arRPC WebSocket when connection is lost",
-            defaultValue: true
         }
     ],
+    "Rich Presence": [ArRPCSettingsButton],
     Miscellaneous: [
         {
             key: "middleClickAutoscroll",
@@ -182,7 +152,7 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
         {
             key: "openLinksWithElectron",
             title: "Open Links in app (experimental)",
-            description: "Opens links in a new pawtop window instead of your web browser",
+            description: "Opens links in a new Pawtop window instead of your web browser",
             defaultValue: false
         }
     ],
@@ -194,9 +164,9 @@ function SettingsSections() {
 
     const sections = Object.entries(SettingsOptions).map(([title, settings], i, arr) => (
         <div key={title} className={cl("category")}>
-            <Text variant="heading-lg/semibold" color="header-primary" className={cl("category-title")}>
+            <BaseText size="lg" weight="semibold" tag="h3" className={cl("category-title")}>
                 {title}
-            </Text>
+            </BaseText>
 
             <div className={cl("category-content")}>
                 {settings.map((Setting, i) => {
@@ -229,10 +199,8 @@ export default ErrorBoundary.wrap(
     function SettingsUI() {
         return (
             <section>
-                <Text variant="heading-xl/semibold" color="header-primary" className={cl("title")}>
-                    Vesktop Settings
-                </Text>
                 <Updater />
+                <OutdatedVesktopWarning />
                 <SettingsSections />
             </section>
         );

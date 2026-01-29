@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { BaseText, Button, Heading, Paragraph, TextButton } from "@equicord/types/components";
 import {
     Margins,
     ModalCloseButton,
@@ -14,7 +15,7 @@ import {
     openModal,
     useForceUpdater
 } from "@equicord/types/utils";
-import { Button, Forms, Text, Toasts } from "@equicord/types/webpack/common";
+import { Toasts } from "@equicord/types/webpack/common";
 import { Settings } from "shared/settings";
 
 import { cl, SettingsComponent } from "./Settings";
@@ -27,20 +28,20 @@ function openDeveloperOptionsModal(settings: Settings) {
     openModal(props => (
         <ModalRoot {...props} size={ModalSize.MEDIUM}>
             <ModalHeader>
-                <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }}>
+                <BaseText size="lg" weight="semibold" tag="h3" style={{ flexGrow: 1 }}>
                     Pawtop Developer Options
-                </Text>
+                </BaseText>
                 <ModalCloseButton onClick={props.onClose} />
             </ModalHeader>
 
             <ModalContent>
                 <div style={{ padding: "1em 0" }}>
-                    <Forms.FormTitle tag="h5">PawsomeVencord Location</Forms.FormTitle>
-                    <VencordLocationPicker settings={settings} />
+                    <Heading tag="h5">PawsomeVencord Location</Heading>
+                    <EquicordLocationPicker settings={settings} />
 
-                    <Forms.FormTitle tag="h5" className={Margins.top16}>
+                    <Heading tag="h5" className={Margins.top16}>
                         Debugging
-                    </Forms.FormTitle>
+                    </Heading>
                     <div className={cl("button-grid")}>
                         <Button onClick={() => VesktopNative.debug.launchGpu()}>Open chrome://gpu</Button>
                         <Button onClick={() => VesktopNative.debug.launchWebrtcInternals()}>
@@ -53,31 +54,31 @@ function openDeveloperOptionsModal(settings: Settings) {
     ));
 }
 
-const VencordLocationPicker: SettingsComponent = ({ settings }) => {
+const EquicordLocationPicker: SettingsComponent = ({ settings }) => {
     const forceUpdate = useForceUpdater();
-    const equicordDir = VesktopNative.fileManager.getPawsomeVencordDir();
+    const usingCustomEquicordDir = VesktopNative.fileManager.isUsingCustomVencordDir();
 
     return (
         <>
-            <Forms.FormText>
+            <Paragraph>
                 PawsomeVencord files are loaded from{" "}
-                {equicordDir ? (
-                    <a
-                        href="about:blank"
+                {usingCustomEquicordDir ? (
+                    <TextButton
+                        variant="link"
                         onClick={e => {
                             e.preventDefault();
-                            VesktopNative.fileManager.showItemInFolder(equicordDir!);
+                            VesktopNative.fileManager.showCustomVencordDir();
                         }}
                     >
-                        {equicordDir}
-                    </a>
+                        a custom location
+                    </TextButton>
                 ) : (
                     "the default location"
                 )}
-            </Forms.FormText>
+            </Paragraph>
             <div className={cl("button-grid")}>
                 <Button
-                    size={Button.Sizes.SMALL}
+                    size={"small"}
                     onClick={async () => {
                         const choice = await VesktopNative.fileManager.selectPawsomeVencordDir();
                         switch (choice) {
@@ -105,8 +106,8 @@ const VencordLocationPicker: SettingsComponent = ({ settings }) => {
                     Change
                 </Button>
                 <Button
-                    size={Button.Sizes.SMALL}
-                    color={Button.Colors.RED}
+                    size={"small"}
+                    variant="dangerPrimary"
                     onClick={async () => {
                         await VesktopNative.fileManager.selectPawsomeVencordDir(null);
                         forceUpdate();

@@ -16,169 +16,116 @@ import {
 import { IpcCommands } from "shared/IpcEvents";
 
 import { onIpcCommand } from "./ipcCommands";
-import { Settings } from "./settings";
 
 const logger = new Logger("PawtopRPC", "#5865f2");
 
-async function lookupAsset(applicationId: string, key: string): Promise<string> {
-    return (await ApplicationAssetUtils.fetchAssetIds(applicationId, [key]))[0];
+interface RPCApplication {
+    id: string;
+    name: string;
+    icon: string | null;
+    description: string;
 }
 
-const apps: any = {};
-async function lookupApp(applicationId: string): Promise<string> {
-    const socket: any = {};
-    await fetchApplicationsRPC(socket, applicationId);
-    return socket.application;
+interface ActivityAssets {
+    large_image?: string;
+    large_text?: string;
+    small_image?: string;
+    small_text?: string;
 }
 
-let ws: WebSocket | null = null;
-let reconnectTimer: NodeJS.Timeout | null = null;
+interface Activity {
+    application_id: string;
+    name?: string;
+    details?: string;
+    state?: string;
+    assets?: ActivityAssets;
+    timestamps?: {
+        start?: number;
+        end?: number;
+    };
+    buttons?: string[];
+}
 
-async function handleActivityEvent(e: MessageEvent<any>) {
-    const data = JSON.parse(e.data);
+interface ActivityEvent {
+    socketId?: string;
+    activity: Activity | null;
+}
 
+async function lookupAsset(applicationId: string, key: string): Promise<string | undefined> {
+    try {
+        const assets = await ApplicationAssetUtils.fetchAssetIds(applicationId, [key]);
+        return assets?.[0];
+    } catch (e) {
+        logger.warn(`Failed to lookup asset ${key} for ${applicationId}:`, e);
+        return undefined;
+    }
+}
+
+const APP_CACHE_MAX = 50;
+const appCache = new Map<string, RPCApplication>();
+
+async function lookupApp(applicationId: string): Promise<RPCApplication | undefined> {
+    const cached = appCache.get(applicationId);
+    if (cached) {
+        appCache.delete(applicationId);
+        appCache.set(applicationId, cached);
+        return cached;
+    }
+
+    try {
+        const socket: { application?: RPCApplication } = {};
+        await fetchApplicationsRPC(socket, applicationId);
+
+        if (socket.application) {
+            if (appCache.size >= APP_CACHE_MAX) {
+                const oldest = appCache.keys().next().value;
+                if (oldest) appCache.delete(oldest);
+            }
+            appCache.set(applicationId, socket.application);
+            return socket.application;
+        }
+    } catch (e) {
+        logger.warn(`Failed to lookup app ${applicationId}:`, e);
+    }
+
+    return undefined;
+}
+
+async function handleActivityEvent(data: ActivityEvent) {
     const { activity } = data;
-    const assets = activity?.assets;
 
-    if (assets?.large_image) assets.large_image = await lookupAsset(activity.application_id, assets.large_image);
-    if (assets?.small_image) assets.small_image = await lookupAsset(activity.application_id, assets.small_image);
+    if (data.socketId === "STREAMERMODE" || activity?.application_id === "STREAMERMODE") {
+        if (StreamerModeStore.autoToggle) {
+            const shouldEnable = activity != null;
+            logger.info(`Toggling streamer mode: ${shouldEnable ? "ON" : "OFF"}`);
+            FluxDispatcher.dispatch({
+                type: "STREAMER_MODE_UPDATE",
+                key: "enabled",
+                value: shouldEnable
+            });
+        }
+        return;
+    }
 
     if (activity) {
-        const appId = activity.application_id;
-        apps[appId] ||= await lookupApp(appId);
+        const { assets } = activity;
+        if (assets?.large_image) assets.large_image = await lookupAsset(activity.application_id, assets.large_image);
+        if (assets?.small_image) assets.small_image = await lookupAsset(activity.application_id, assets.small_image);
 
-        const app = apps[appId];
-        activity.name ||= app.name;
+        const app = await lookupApp(activity.application_id);
+        if (app) activity.name ||= app.name;
     }
 
     FluxDispatcher.dispatch({ type: "LOCAL_ACTIVITY_UPDATE", ...data });
 }
 
-function connectWebSocket() {
-    const arrpcStatus = VesktopNative.arrpc?.getStatus?.();
-    const customHost = Settings.store.arRPCWebSocketCustomHost;
-    const customPort = Settings.store.arRPCWebSocketCustomPort;
-
-    const host = customHost || arrpcStatus?.host || "127.0.0.1";
-    const port = customPort || arrpcStatus?.port || 1337;
-
-    const wsUrl = `ws://${host}:${port}`;
-    const isCustom = customHost || customPort;
-    logger.info(`Connecting to arRPCBun at ${wsUrl}${isCustom ? " (custom)" : ""}`);
-
-    if (ws) ws.close();
-    ws = new WebSocket(wsUrl);
-
-    ws.onmessage = handleActivityEvent;
-
-    ws.onerror = error => {
-        logger.error("WebSocket error:", error);
-    };
-
-    ws.onclose = () => {
-        const autoReconnect = Settings.store.arRPCWebSocketAutoReconnect ?? true;
-        const reconnectInterval = Settings.store.arRPCWebSocketReconnectInterval || 5000;
-
-        logger.info(`WebSocket closed${autoReconnect ? `, will attempt reconnect in ${reconnectInterval}ms` : ""}`);
-        FluxDispatcher.dispatch({ type: "LOCAL_ACTIVITY_UPDATE", activity: null });
-
-        if (reconnectTimer) clearTimeout(reconnectTimer);
-
-        if (autoReconnect) {
-            reconnectTimer = setTimeout(() => {
-                logger.info("Attempting to reconnect...");
-                connectWebSocket();
-            }, reconnectInterval);
-        }
-    };
-
-    ws.onopen = () => {
-        logger.info("Successfully connected to arRPCBun");
-        if (reconnectTimer) {
-            clearTimeout(reconnectTimer);
-            reconnectTimer = null;
-        }
-    };
-}
-
-function stopWebSocket() {
-    if (reconnectTimer) {
-        clearTimeout(reconnectTimer);
-        reconnectTimer = null;
-    }
-    FluxDispatcher.dispatch({ type: "LOCAL_ACTIVITY_UPDATE", activity: null });
-    ws?.close();
-    ws = null;
-    logger.info("Stopped arRPCBun connection");
-}
-
-async function initArRPCBridge() {
+// Listen for activity events from main process
+VesktopNative.arrpc.onActivity(async (data: ActivityEvent) => {
     await onceReady;
-
-    const customHost = Settings.store.arRPCWebSocketCustomHost;
-    const customPort = Settings.store.arRPCWebSocketCustomPort;
-    const hasCustomSettings = !!(customHost || customPort);
-
-    if (hasCustomSettings) {
-        connectWebSocket();
-        return;
-    }
-
-    if (!Settings.store.arRPC) {
-        stopWebSocket();
-        return;
-    }
-
-    const arrpcStatus = VesktopNative.arrpc?.getStatus?.();
-
-    if (!arrpcStatus?.enabled && !arrpcStatus?.running) {
-        logger.warn("Pawtop's built-in arRPC is disabled and not running");
-        stopWebSocket();
-        return;
-    }
-
-    connectWebSocket();
-}
-
-Settings.addChangeListener("arRPC", initArRPCBridge);
-Settings.addChangeListener("arRPCWebSocketCustomHost", initArRPCBridge);
-Settings.addChangeListener("arRPCWebSocketCustomPort", initArRPCBridge);
-Settings.addChangeListener("arRPCWebSocketAutoReconnect", () => {
-    if (!Settings.store.arRPCWebSocketAutoReconnect && reconnectTimer) {
-        clearTimeout(reconnectTimer);
-        reconnectTimer = null;
-    }
+    handleActivityEvent(data);
 });
 
-initArRPCBridge();
-
-// handle STREAMERMODE separately from regular RPC activities
-VesktopNative.arrpc.onStreamerModeDetected(async jsonData => {
-    if (!Settings.store.arRPC) return;
-
-    try {
-        await onceReady;
-
-        const data = JSON.parse(jsonData);
-        if (Settings.store.arRPCDebug) {
-            logger.info("STREAMERMODE detected:", data);
-            logger.info("StreamerModeStore.autoToggle:", StreamerModeStore.autoToggle);
-        }
-
-        if (data.socketId === "STREAMERMODE" && StreamerModeStore.autoToggle) {
-            if (Settings.store.arRPCDebug) {
-                logger.info("Toggling streamer mode to:", data.activity?.application_id === "STREAMERMODE");
-            }
-            FluxDispatcher.dispatch({
-                type: "STREAMER_MODE_UPDATE",
-                key: "enabled",
-                value: data.activity?.application_id === "STREAMERMODE"
-            });
-        }
-    } catch (e) {
-        logger.error("Failed to handle STREAMERMODE:", e);
-    }
-});
+logger.info("arRPC bridge initialized (main process handles connection)");
 
 onIpcCommand(IpcCommands.RPC_INVITE, async code => {
     const { invite } = await InviteActions.resolveInvite(code, "Desktop Modal");

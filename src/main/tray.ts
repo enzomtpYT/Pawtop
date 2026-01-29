@@ -9,6 +9,7 @@ import { join } from "path";
 import { STATIC_DIR } from "shared/paths";
 
 import { createAboutWindow } from "./about";
+import { createArgumentsWindow } from "./arguments";
 import { restartArRPC } from "./arrpc";
 import { AppEvents } from "./events";
 import { Settings } from "./settings";
@@ -95,15 +96,19 @@ function nativeImageToPixmap(image: NativeImage): Promise<Buffer> {
 const userAssetChangedListener = async (asset: string) => {
     if (!asset.startsWith("tray")) return;
 
-    if (useNativeTray && nativeSNI) {
-        trayImageCache.clear();
-        const image = await getCachedTrayImage(trayVariant);
-        const pixmap = await nativeImageToPixmap(image);
-        nativeSNI.setStatusNotifierIcon(pixmap);
-    } else if (tray) {
-        trayImageCache.clear();
-        const image = await getCachedTrayImage(trayVariant);
-        tray.setImage(image);
+    try {
+        if (useNativeTray && nativeSNI) {
+            trayImageCache.clear();
+            const image = await getCachedTrayImage(trayVariant);
+            const pixmap = await nativeImageToPixmap(image);
+            nativeSNI.setStatusNotifierIcon(pixmap);
+        } else if (tray) {
+            trayImageCache.clear();
+            const image = await getCachedTrayImage(trayVariant);
+            tray.setImage(image);
+        }
+    } catch (e) {
+        console.error("[Tray] Failed to update tray icon on asset change:", e);
     }
 };
 
@@ -112,10 +117,14 @@ async function updateTrayIconNative(variant: TrayVariant) {
 
     trayVariant = variant;
 
-    if (useNativeTray && nativeSNI) {
-        const image = await getCachedTrayImage(variant);
-        const pixmap = await nativeImageToPixmap(image);
-        nativeSNI.setStatusNotifierIcon(pixmap);
+    try {
+        if (useNativeTray && nativeSNI) {
+            const image = await getCachedTrayImage(variant);
+            const pixmap = await nativeImageToPixmap(image);
+            nativeSNI.setStatusNotifierIcon(pixmap);
+        }
+    } catch (e) {
+        console.error("[Tray] Failed to update native tray icon:", e);
     }
 }
 
@@ -123,8 +132,12 @@ async function updateTrayIconElectron(variant: TrayVariant) {
     if (!tray || trayVariant === variant) return;
 
     trayVariant = variant;
-    const image = await getCachedTrayImage(trayVariant);
-    tray.setImage(image);
+    try {
+        const image = await getCachedTrayImage(trayVariant);
+        tray.setImage(image);
+    } catch (e) {
+        console.error("[Tray] Failed to update Electron tray icon:", e);
+    }
 }
 
 const setTrayVariantListener = (variant: TrayVariant) => {
@@ -182,11 +195,15 @@ export function destroyTray() {
     }
 
     if (tray) {
-        if (onTrayClick) {
-            tray.removeListener("click", onTrayClick);
-            onTrayClick = null;
+        try {
+            if (onTrayClick) {
+                tray.removeListener("click", onTrayClick);
+                onTrayClick = null;
+            }
+            tray.destroy();
+        } catch (e) {
+            console.error("[Tray] Failed to destroy Electron tray:", e);
         }
-        tray.destroy();
         tray = null;
     }
 
@@ -196,7 +213,11 @@ export function destroyTray() {
 
 export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean) => void) {
     if (tray || nativeTrayInitialized) {
-        destroyTray();
+        try {
+            destroyTray();
+        } catch (e) {
+            console.error("[Tray] Failed to destroy existing tray during init:", e);
+        }
     }
 
     if (isLinux && nativeSNI) {
@@ -216,22 +237,27 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
                     { id: 2, label: "About", enabled: true, visible: true },
                     { id: 3, label: "Repair Pawtop", enabled: true, visible: true },
                     { id: 4, label: "Reset Pawtop", enabled: true, visible: true },
+                    { id: 5, label: "Launch Arguments", enabled: true, visible: true },
                     {
-                        id: 5,
+                        id: 6,
                         label: "Restart arRPC",
                         enabled: true,
                         visible: Settings.store.arRPC === true
                     },
-                    { id: 6, type: "separator" as const, enabled: true, visible: true },
-                    { id: 7, label: "Restart", enabled: true, visible: true },
-                    { id: 8, label: "Quit", enabled: true, visible: true }
+                    { id: 7, type: "separator" as const, enabled: true, visible: true },
+                    { id: 8, label: "Restart", enabled: true, visible: true },
+                    { id: 9, label: "Quit", enabled: true, visible: true }
                 ];
 
                 const menuResult = nativeSNI.setStatusNotifierMenu(menuItems);
 
                 nativeTrayWindow = win;
                 nativeTrayUpdateCallback = () => {
-                    nativeSNI.updateStatusNotifierMenuItem(1, win.isVisible() ? "Hide" : "Open");
+                    try {
+                        nativeSNI.updateStatusNotifierMenuItem(1, win.isVisible() ? "Hide" : "Open");
+                    } catch (e) {
+                        console.error("[Tray] Failed to update native menu item:", e);
+                    }
                 };
 
                 win.on("show", nativeTrayUpdateCallback);
@@ -255,14 +281,17 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
                         case 4: // reset Pawtop
                             clearData(win);
                             break;
-                        case 5: // restart arRPC-bun
+                        case 5: // launch arguments
+                            createArgumentsWindow();
+                            break;
+                        case 6: // restart arRPC-bun
                             restartArRPC();
                             break;
-                        case 7: // restart
+                        case 8: // restart
                             app.relaunch();
                             app.quit();
                             break;
-                        case 8: // quit
+                        case 9: // quit
                             setIsQuitting(true);
                             app.quit();
                             break;
@@ -276,7 +305,9 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
 
                 return;
             }
-        } catch (e) {}
+        } catch (e) {
+            console.warn("[Tray] Failed to initialize native StatusNotifierItem, falling back to Electron Tray:", e);
+        }
     }
 
     useNativeTray = false;
@@ -312,6 +343,10 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
             }
         },
         {
+            label: "Launch Arguments",
+            click: createArgumentsWindow
+        },
+        {
             label: "Restart arRPC",
             visible: Settings.store.arRPC === true,
             async click() {
@@ -337,17 +372,22 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
         }
     ]);
 
-    const initialImage = await getCachedTrayImage(trayVariant);
-    tray = new Tray(initialImage);
-    tray.setToolTip("Pawtop");
+    try {
+        const initialImage = await getCachedTrayImage(trayVariant);
+        tray = new Tray(initialImage);
+        tray.setToolTip("Pawtop");
 
-    if (isLinux) {
-        tray.on("click", onTrayClick);
-        tray.on("right-click", () => {
-            tray!.popUpContextMenu(trayMenu);
-        });
-    } else {
-        tray.setContextMenu(trayMenu);
-        tray.on("click", onTrayClick);
+        if (isLinux) {
+            tray.on("click", onTrayClick);
+            tray.on("right-click", () => {
+                tray!.popUpContextMenu(trayMenu);
+            });
+        } else {
+            tray.setContextMenu(trayMenu);
+            tray.on("click", onTrayClick);
+        }
+    } catch (e) {
+        console.error("[Tray] Failed to initialize Electron tray:", e);
+        tray = null;
     }
 }
