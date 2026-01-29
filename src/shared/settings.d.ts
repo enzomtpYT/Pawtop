@@ -20,6 +20,7 @@ export interface Settings {
     hardwareAcceleration?: boolean;
     hardwareVideoAcceleration?: boolean;
     arRPC?: boolean;
+    arRPCDisabled?: boolean;
     arRPCDebug?: boolean;
     arRPCProcessScanning?: boolean;
     arRPCBridge?: boolean;
@@ -32,10 +33,10 @@ export interface Settings {
     arRPCWebSocketCustomPort?: number;
     appBadge?: boolean;
     badgeOnlyForMentions?: boolean;
+    enableTaskbarFlashing?: boolean;
     disableMinSize?: boolean;
     clickTrayToShowHide?: boolean;
     customTitleBar?: boolean;
-    arguments?: string;
 
     enableSplashScreen?: boolean;
     splashTheming?: boolean;
@@ -72,6 +73,8 @@ export interface State {
     linuxAutoStartEnabled?: boolean;
 
     equicordDir?: string;
+
+    launchArguments?: string;
 
     updater?: {
         ignoredVersion?: string;

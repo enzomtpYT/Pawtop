@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { Node } from "@vencord/venmic";
-import { ipcRenderer } from "electron";
-import { IpcMessage, IpcResponse } from "main/ipcCommands";
+import type { Node } from "@vencord/venmic";
+import { ipcRenderer } from "electron/renderer";
+import type { IpcMessage, IpcResponse } from "main/ipcCommands";
 import type { Settings } from "shared/settings";
 
 import { IpcEvents } from "../shared/IpcEvents";
@@ -20,11 +20,11 @@ ipcRenderer.on(IpcEvents.SPELLCHECK_RESULT, (_, w: string, s: string[]) => {
     spellCheckCallbacks.forEach(cb => cb(w, s));
 });
 
-type StreamerModeCallback = (data: string) => void;
-const streamerModeCallbacks = new Set<StreamerModeCallback>();
+type ArRPCActivityCallback = (data: any) => void;
+const arrpcActivityCallbacks = new Set<ArRPCActivityCallback>();
 
-ipcRenderer.on(IpcEvents.STREAMER_MODE_DETECTED, (_, data: string) => {
-    streamerModeCallbacks.forEach(cb => cb(data));
+ipcRenderer.on(IpcEvents.ARRPC_ACTIVITY, (_, data: any) => {
+    arrpcActivityCallbacks.forEach(cb => cb(data));
 });
 
 let onDevtoolsOpen = () => {};
@@ -43,7 +43,19 @@ export const VesktopNative = {
         supportsWindowsTransparency: () => sendSync<boolean>(IpcEvents.SUPPORTS_WINDOWS_TRANSPARENCY),
         getEnableHardwareAcceleration: () => sendSync<boolean>(IpcEvents.GET_ENABLE_HARDWARE_ACCELERATION),
         isOutdated: () => invoke<boolean>(IpcEvents.UPDATER_IS_OUTDATED),
-        openUpdater: () => invoke<void>(IpcEvents.UPDATER_OPEN)
+        openUpdater: () => invoke<void>(IpcEvents.UPDATER_OPEN),
+        getPlatformSpoofInfo: () =>
+            sendSync<{
+                spoofed: boolean;
+                originalPlatform: string;
+                spoofedPlatform: string | null;
+            }>(IpcEvents.GET_PLATFORM_SPOOF_INFO),
+        getRendererCss: () => invoke<string>(IpcEvents.GET_VESKTOP_RENDERER_CSS),
+        onRendererCssUpdate: (cb: (newCss: string) => void) => {
+            if (!IS_DEV) return;
+
+            ipcRenderer.on(IpcEvents.VESKTOP_RENDERER_CSS_UPDATE, (_e, newCss: string) => cb(newCss));
+        }
     },
     autostart: {
         isEnabled: () => sendSync<boolean>(IpcEvents.AUTOSTART_ENABLED),
@@ -51,8 +63,8 @@ export const VesktopNative = {
         disable: () => invoke<void>(IpcEvents.DISABLE_AUTOSTART)
     },
     fileManager: {
-        showItemInFolder: (path: string) => invoke<void>(IpcEvents.SHOW_ITEM_IN_FOLDER, path),
-        getPawsomeVencordDir: () => sendSync<string | undefined>(IpcEvents.GET_VENCORD_DIR),
+        isUsingCustomVencordDir: () => sendSync<boolean>(IpcEvents.IS_USING_CUSTOM_VENCORD_DIR),
+        showCustomVencordDir: () => invoke<void>(IpcEvents.SHOW_CUSTOM_VENCORD_DIR),
         selectPawsomeVencordDir: (value?: null) =>
             invoke<"cancelled" | "invalid" | "ok">(IpcEvents.SELECT_VENCORD_DIR, value),
         chooseUserAsset: (asset: string, value?: null) =>
@@ -74,34 +86,20 @@ export const VesktopNative = {
         addToDictionary: (word: string) => invoke<void>(IpcEvents.SPELLCHECK_ADD_TO_DICTIONARY, word)
     },
     arrpc: {
-        onStreamerModeDetected(cb: StreamerModeCallback) {
-            streamerModeCallbacks.add(cb);
+        onActivity(cb: ArRPCActivityCallback) {
+            arrpcActivityCallbacks.add(cb);
         },
-        offStreamerModeDetected(cb: StreamerModeCallback) {
-            streamerModeCallbacks.delete(cb);
+        offActivity(cb: ArRPCActivityCallback) {
+            arrpcActivityCallbacks.delete(cb);
         },
-        getStatus: () =>
-            sendSync<{
-                running: boolean;
-                pid: number | null;
-                port: number | null;
-                host: string | null;
-                enabled: boolean;
-                lastError: string | null;
-                lastExitCode: number | null;
-                uptime: number | null;
-                readyTime: number | null;
-                restartCount: number;
-                binaryPath: string | null;
-                isReady: boolean;
-                lastHeartbeat: number | null;
-            }>(IpcEvents.ARRPC_GET_STATUS)
+        openSettings: () => invoke<void>(IpcEvents.ARRPC_OPEN_SETTINGS)
     },
     win: {
         focus: () => invoke<void>(IpcEvents.FOCUS),
         close: (key?: string) => invoke<void>(IpcEvents.CLOSE, key),
         minimize: (key?: string) => invoke<void>(IpcEvents.MINIMIZE, key),
         maximize: (key?: string) => invoke<void>(IpcEvents.MAXIMIZE, key),
+        flashFrame: (flag: boolean) => invoke<void>(IpcEvents.FLASH_FRAME, flag),
         setDevtoolsCallbacks: (onOpen: () => void, onClose: () => void) => {
             onDevtoolsOpen = onOpen;
             onDevtoolsClose = onClose;

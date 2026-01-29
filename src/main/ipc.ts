@@ -8,7 +8,7 @@ if (process.platform === "linux") import("./venmic");
 
 import { execFile } from "node:child_process";
 import { type FSWatcher, mkdirSync, readFileSync, watch } from "node:fs";
-import { open, readFile } from "node:fs/promises";
+import { open, readFile, stat } from "node:fs/promises";
 import { release } from "node:os";
 import { join } from "node:path";
 
@@ -29,10 +29,11 @@ import { debounce } from "shared/utils/debounce";
 
 import { IpcEvents } from "../shared/IpcEvents";
 import { setBadgeCount } from "./appBadge";
-import { getArRPCStatus } from "./arrpc";
+import { createArRPCWindow } from "./arrpcWindow";
 import { autoStart } from "./autoStart";
 import { VENCORD_QUICKCSS_FILE, VENCORD_THEMES_DIR } from "./constants";
 import { AppEvents } from "./events";
+import { getPlatformSpoofInfo } from "./gnuSpoofing";
 import { mainWin } from "./mainWindow";
 import { Settings, State } from "./settings";
 import { handle, handleSync } from "./utils/ipcWrappers";
@@ -41,11 +42,23 @@ import { isDeckGameMode, showGamePage } from "./utils/steamOS";
 import { isValidVencordInstall } from "./utils/vencordLoader";
 import { VENCORD_DIR } from "./vencordDir";
 
-handleSync(IpcEvents.GET_VENCORD_PRELOAD_FILE, () => join(VENCORD_DIR, "preload.js"));
+handleSync(IpcEvents.DEPRECATED_GET_VENCORD_PRELOAD_SCRIPT_PATH, () => join(VENCORD_DIR, "preload.js"));
+handleSync(IpcEvents.GET_VENCORD_PRELOAD_SCRIPT, () => readFileSync(join(VENCORD_DIR, "preload.js"), "utf-8"));
 handleSync(IpcEvents.GET_VENCORD_RENDERER_SCRIPT, () => readFileSync(join(VENCORD_DIR, "renderer.js"), "utf-8"));
 
-handleSync(IpcEvents.GET_RENDERER_SCRIPT, () => readFileSync(join(__dirname, "renderer.js"), "utf-8"));
-handleSync(IpcEvents.GET_RENDERER_CSS_FILE, () => join(__dirname, "renderer.css"));
+const VESKTOP_RENDERER_JS_PATH = join(__dirname, "renderer.js");
+const VESKTOP_RENDERER_CSS_PATH = join(__dirname, "renderer.css");
+handleSync(IpcEvents.GET_VESKTOP_RENDERER_SCRIPT, () => readFileSync(VESKTOP_RENDERER_JS_PATH, "utf-8"));
+handle(IpcEvents.GET_VESKTOP_RENDERER_CSS, () => readFile(VESKTOP_RENDERER_CSS_PATH, "utf-8"));
+
+if (IS_DEV) {
+    watch(VESKTOP_RENDERER_CSS_PATH, { persistent: false }, async () => {
+        mainWin?.webContents.postMessage(
+            IpcEvents.VESKTOP_RENDERER_CSS_UPDATE,
+            await readFile(VESKTOP_RENDERER_CSS_PATH, "utf-8")
+        );
+    });
+}
 
 handleSync(IpcEvents.GET_SETTINGS, () => Settings.plain);
 handleSync(IpcEvents.GET_VERSION, () => app.getVersion());
@@ -61,7 +74,11 @@ handleSync(IpcEvents.AUTOSTART_ENABLED, () => autoStart.isEnabled());
 handle(IpcEvents.ENABLE_AUTOSTART, autoStart.enable);
 handle(IpcEvents.DISABLE_AUTOSTART, autoStart.disable);
 
-handleSync(IpcEvents.ARRPC_GET_STATUS, () => getArRPCStatus());
+handle(IpcEvents.ARRPC_OPEN_SETTINGS, () => {
+    createArRPCWindow();
+});
+
+handleSync(IpcEvents.GET_PLATFORM_SPOOF_INFO, () => getPlatformSpoofInfo());
 
 handle(IpcEvents.SET_SETTINGS, (_, settings: typeof Settings.store, path?: string) => {
     Settings.setData(settings, path);
@@ -82,8 +99,15 @@ handle(IpcEvents.RELAUNCH, async () => {
     app.exit();
 });
 
-handle(IpcEvents.SHOW_ITEM_IN_FOLDER, (_, path) => {
-    shell.showItemInFolder(path);
+handleSync(IpcEvents.IS_USING_CUSTOM_VENCORD_DIR, () => !!State.store.equicordDir);
+handle(IpcEvents.SHOW_CUSTOM_VENCORD_DIR, async () => {
+    const { equicordDir } = State.store;
+    if (!equicordDir) return;
+
+    const stats = await stat(equicordDir);
+    if (!stats.isDirectory()) return;
+
+    shell.openPath(equicordDir);
 });
 
 function getWindow(e: IpcMainInvokeEvent, key?: string) {
@@ -124,8 +148,6 @@ handle(IpcEvents.SPELLCHECK_ADD_TO_DICTIONARY, (e, word: string) => {
     e.sender.session.addWordToSpellCheckerDictionary(word);
 });
 
-handleSync(IpcEvents.GET_VENCORD_DIR, e => (e.returnValue = State.store.equicordDir));
-
 handle(IpcEvents.SELECT_VENCORD_DIR, async (_e, value?: null) => {
     if (value === null) {
         delete State.store.equicordDir;
@@ -147,6 +169,11 @@ handle(IpcEvents.SELECT_VENCORD_DIR, async (_e, value?: null) => {
 
 handle(IpcEvents.SET_BADGE_COUNT, (_, count: number) => setBadgeCount(count));
 
+handle(IpcEvents.FLASH_FRAME, (_, flag: boolean) => {
+    if (!mainWin || mainWin.isDestroyed() || (flag && mainWin.isFocused())) return;
+    mainWin.flashFrame(flag);
+});
+
 handle(IpcEvents.CLIPBOARD_COPY_IMAGE, async (_, buf: ArrayBuffer, src: string) => {
     clipboard.write({
         html: `<img src="${src.replaceAll('"', '\\"')}">`,
@@ -157,7 +184,11 @@ handle(IpcEvents.CLIPBOARD_COPY_IMAGE, async (_, buf: ArrayBuffer, src: string) 
 function openDebugPage(page: string) {
     const win = new BrowserWindow({
         autoHideMenuBar: true,
-        ...(process.platform === "win32" && { icon: join(STATIC_DIR, "icon.ico") })
+        ...(process.platform === "win32"
+            ? { icon: join(STATIC_DIR, "icon.ico") }
+            : process.platform === "linux"
+              ? { icon: join(STATIC_DIR, "icon.png") }
+              : {})
     });
 
     win.loadURL(page);
