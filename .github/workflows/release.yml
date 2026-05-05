@@ -48,13 +48,28 @@ jobs:
             - name: Run Electron Builder
               if: ${{ matrix.platform == 'mac' }}
               run: |
-                  echo "$API_KEY" > apple.p8
+                  if [ -n "$API_KEY" ]; then
+                      echo "$API_KEY" > apple.p8
+                      export APPLE_API_KEY=apple.p8
+                  fi
+                  # Only export CSC_LINK if it is not empty
+                  if [ -n "$CERT_LINK" ]; then
+                      export CSC_LINK="$CERT_LINK"
+                  fi
+                  if [ -n "$CERT_PASS" ]; then
+                      export CSC_KEY_PASSWORD="$CERT_PASS"
+                  fi
+                  if [ -n "$KEY_ID" ]; then
+                      export APPLE_API_KEY_ID="$KEY_ID"
+                  fi
+                  if [ -n "$ISSUER" ]; then
+                      export APPLE_API_ISSUER="$ISSUER"
+                  fi
                   bun run electron-builder --${{ matrix.platform }} --publish always
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  CSC_LINK: ${{ secrets.APPLE_SIGNING_CERT }}
-                  CSC_KEY_PASSWORD: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
+                  CERT_LINK: ${{ secrets.APPLE_SIGNING_CERT }}
+                  CERT_PASS: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
                   API_KEY: ${{ secrets.APPLE_API_KEY }}
-                  APPLE_API_KEY: apple.p8
-                  APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
-                  APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+                  KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+                  ISSUER: ${{ secrets.APPLE_API_ISSUER }}
