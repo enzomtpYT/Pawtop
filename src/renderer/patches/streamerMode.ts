@@ -12,8 +12,8 @@ addPatch({
             find: ".STREAMING_AUTO_STREAMER_MODE,",
             replacement: {
                 // remove if (platformEmbedded) check from streamer mode toggle
-                match: /(?<=usePredicate.{0,20}?return )\i\.\i/g,
-                replace: "true"
+                match: /(usePredicate.{0,20}?return\s+)[^;}]+(?=;|\})/g,
+                replace: "$1true"
             }
         }
     ]
