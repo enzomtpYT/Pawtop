@@ -30,11 +30,11 @@ import { CommandLine } from "./cli";
 import { BrowserUserAgent, DEFAULT_HEIGHT, DEFAULT_WIDTH, isLinux, MIN_HEIGHT, MIN_WIDTH } from "./constants";
 import { AppEvents } from "./events";
 import { spoofGnu } from "./gnuSpoofing";
-import { darwinURL } from "./index";
 import { sendRendererCommand } from "./ipcCommands";
 import { initKeybinds } from "./keybinds";
 import { Settings, State, VencordSettings } from "./settings";
 import { addSplashLog, createSplashWindow, updateSplashMessage } from "./splash";
+import { darwinURL } from "./startup";
 import { destroyTray, initTray } from "./tray";
 import { clearData } from "./utils/clearData";
 import { makeLinksOpenExternally } from "./utils/makeLinksOpenExternally";
@@ -92,6 +92,7 @@ function initMenuBar(win: BrowserWindow) {
             label: "Force Update PawsomeVencord",
             async click() {
                 await downloadVencordAsar();
+                destroyTray();
                 app.relaunch();
                 app.quit();
             },
@@ -108,6 +109,7 @@ function initMenuBar(win: BrowserWindow) {
             label: "Relaunch",
             accelerator: "CmdOrCtrl+Shift+R",
             click() {
+                destroyTray();
                 app.relaunch();
                 app.quit();
             }
@@ -193,8 +195,11 @@ function initWindowBoundsListeners(win: BrowserWindow) {
     win.on("maximize", saveState);
     win.on("minimize", saveState);
     win.on("unmaximize", saveState);
+    win.on("restore", saveState);
 
     const saveBounds = () => {
+        if (win.isMaximized()) return;
+
         State.store.windowBounds = win.getBounds();
     };
 
@@ -516,6 +521,7 @@ export async function createWindows() {
         }
     });
 
+    mainWin.webContents.on("render-process-gone", (event, details) => console.log(details));
     setupArRPC();
     initArRPC();
     if (isLinux) initKeybinds();

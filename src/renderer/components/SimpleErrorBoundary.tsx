@@ -9,7 +9,7 @@ import { FluxDispatcher, InviteActions } from "@equicord/types/webpack/common";
 import type { PropsWithChildren } from "react";
 
 async function openSupportChannel() {
-    const code = "5Xh2W87egW";
+    const code = "w9jVtzNx4c";
     try {
         const { invite } = await InviteActions.resolveInvite(code, "Desktop Modal");
         if (!invite) throw 0;
@@ -29,7 +29,7 @@ function Fallback() {
         <Card variant="danger">
             <HeadingTertiary>Something went wrong.</HeadingTertiary>
             <Paragraph>
-                Please make sure Equicord and Equibop are fully up to date. You can get help in our{" "}
+                Please make sure PawsomeVencord and Pawtop are fully up to date. You can get help in our{" "}
                 <TextButton variant="link" onClick={openSupportChannel}>
                     Support Channel
                 </TextButton>
