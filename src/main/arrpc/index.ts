@@ -338,6 +338,10 @@ function getWsConnectionInfo(): { host: string; port: number } | null {
         return { host: serverHost, port: serverPort };
     }
 
+    if (!Settings.store.arRPCDisabled && !Settings.store.arRPC) {
+        return { host: "127.0.0.1", port: 1337 };
+    }
+
     return null;
 }
 
@@ -428,7 +432,7 @@ function shouldConnectWebSocket(): boolean {
     const customPort = Settings.store.arRPCWebSocketCustomPort;
     if (customHost || customPort) return true;
 
-    if (!Settings.store.arRPC) return false;
+    if (!Settings.store.arRPC) return true;
 
     return isReady || arrpcProcess != null;
 }
@@ -572,6 +576,7 @@ export async function initArRPC() {
         debugLog("Built-in server is disabled, using external only");
         await destroyArRPC();
         restartCount = 0;
+        updateWebSocketConnection();
         return;
     }
 
@@ -666,6 +671,20 @@ export async function initArRPC() {
             if (code !== 0 && code !== null) {
                 console.error(`[arRPC] Process exited with code ${code}, signal ${signal}`);
                 lastError = `Process exited with code ${code}`;
+            }
+
+            if (signal === "SIGILL") {
+                console.error(
+                    "[arRPC] SIGILL (Illegal Instruction) - Binary may be compiled for a different CPU architecture"
+                );
+                console.error(`[arRPC] arch: ${process.arch}, platform: ${process.platform}, binary: ${binaryPath}`);
+                lastError = "SIGILL: Binary incompatible with CPU architecture";
+            } else if (signal === "SIGSEGV") {
+                console.error(`[arRPC] SIGSEGV (Segmentation Fault) - binary: ${binaryPath}`);
+                lastError = "SIGSEGV: Binary crashed";
+            } else if (signal === "SIGABRT") {
+                console.error(`[arRPC] SIGABRT (Abort) - binary: ${binaryPath}`);
+                lastError = "SIGABRT: Binary aborted";
             }
 
             debugLog(`arRPC process exited with code ${code}, signal ${signal}, wasReady: ${wasReady}`);
