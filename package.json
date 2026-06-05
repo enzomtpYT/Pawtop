@@ -6,6 +6,7 @@
     "description": "Pawtop is a custom Discord desktop app",
     "keywords": [],
     "homepage": "https://discord.gg/w9jVtzNx4c",
+    "repository": "enzomtpYT/Pawtop",
     "license": "GPL-3.0-or-later",
     "author": "enzomtp",
     "main": "dist/js/main.js",

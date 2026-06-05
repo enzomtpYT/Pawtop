@@ -22,7 +22,7 @@ jobs:
                     - os: ubuntu-latest
                       platform: linux
                     - os: windows-latest
-                      platform: windows
+                      platform: win
 
         steps:
             - uses: actions/checkout@v4
@@ -41,7 +41,7 @@ jobs:
             - name: Run Electron Builder
               if: ${{ matrix.platform != 'mac' }}
               run: |
-                  bun run electron-builder --${{ matrix.platform }} --publish always
+                  bunx electron-builder --${{ matrix.platform }} --publish always
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -65,7 +65,7 @@ jobs:
                   if [ -n "$ISSUER" ]; then
                       export APPLE_API_ISSUER="$ISSUER"
                   fi
-                  bun run electron-builder --${{ matrix.platform }} --publish always
+                  bunx electron-builder --${{ matrix.platform }} --publish always
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   CERT_LINK: ${{ secrets.APPLE_SIGNING_CERT }}
