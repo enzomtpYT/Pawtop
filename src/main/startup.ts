@@ -1,7 +1,11 @@
 /*
+
  * Vesktop, a desktop app aiming to give you a snappier Discord Experience
- * Copyright (c) 2023 Vendicated and Vencord contributors
+
+ * Copyright (c) 2026 Vendicated and Vesktop contributors
+
  * SPDX-License-Identifier: GPL-3.0-or-later
+
  */
 
 import "./updater";
@@ -20,7 +24,7 @@ import { Settings, State } from "./settings";
 import { setAsDefaultProtocolClient } from "./utils/setAsDefaultProtocolClient";
 import { isDeckGameMode } from "./utils/steamOS";
 
-console.log("Equibop v" + app.getVersion());
+console.log("PawsomeVencord v" + app.getVersion());
 
 process.env.EQUICORD_USER_DATA_DIR = DATA_DIR;
 

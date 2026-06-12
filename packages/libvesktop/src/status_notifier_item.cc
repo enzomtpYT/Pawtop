@@ -919,7 +919,7 @@ void StatusNotifierItem::on_name_lost(
     self->name_owned = false;
     self->registered_with_watcher = false;
     std::cerr << "[libvesktop] Lost ownership of bus name '" << (name ? name : "")
-              << "' (likely another Equibop instance took over). Tray events will stop reaching this process."
+              << "' (likely another PawsomeVencord instance took over). Tray events will stop reaching this process."
               << std::endl;
 }
 

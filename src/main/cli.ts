@@ -1,7 +1,11 @@
 /*
+
  * Vesktop, a desktop app aiming to give you a snappier Discord Experience
- * Copyright (c) 2025 Vendicated and Vesktop contributors
+
+ * Copyright (c) 2026 Vendicated and Vesktop contributors
+
  * SPDX-License-Identifier: GPL-3.0-or-later
+
  */
 
 import { app } from "electron";
@@ -259,7 +263,7 @@ function checkCommandLineForQueryCommands() {
         return true;
     }
 
-    console.error("Equibop is not running. Query commands require a running instance.");
+    console.error("PawsomeVencord is not running. Query commands require a running instance.");
     app.exit(1);
 }
 
