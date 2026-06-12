@@ -23,8 +23,6 @@ let currentVariant: TrayVariant | null = null;
 let lastSentVariant: TrayVariant | null = null;
 let trayStateUpdateTimeout: ReturnType<typeof setTimeout> | null = null;
 
-const subscriptions: Array<{ event: string; callback: (data: any) => void }> = [];
-
 function getTrayVariantForVoiceState(): TrayVariant | null {
     if (!isInCall) return null;
 
@@ -75,19 +73,10 @@ function setTrayVariantImmediately(variant: TrayVariant) {
     }
 }
 
-export function cleanupTraySubscriptions() {
-    clearTrayStateDebounce();
-    subscriptions.forEach(({ event, callback }) => {
-        FluxDispatcher.unsubscribe(event, callback);
-    });
-    subscriptions.length = 0;
-}
-
 onceReady.then(() => {
-    const userID = UserStore.getCurrentUser().id;
-
     const speakingCallback = (params: any) => {
-        if (params.userId === userID && params.context === "default") {
+        const userID = UserStore.getCurrentUser()?.id;
+        if (userID && params.userId === userID && params.context === "default") {
             if (params.speakingFlags) {
                 setTrayVariantImmediately("traySpeaking");
             } else {
@@ -96,19 +85,16 @@ onceReady.then(() => {
         }
     };
     FluxDispatcher.subscribe("SPEAKING", speakingCallback);
-    subscriptions.push({ event: "SPEAKING", callback: speakingCallback });
 
     const deafCallback = () => {
         if (isInCall) updateTrayIcon();
     };
     FluxDispatcher.subscribe("AUDIO_TOGGLE_SELF_DEAF", deafCallback);
-    subscriptions.push({ event: "AUDIO_TOGGLE_SELF_DEAF", callback: deafCallback });
 
     const muteCallback = () => {
         if (isInCall) updateTrayIcon();
     };
     FluxDispatcher.subscribe("AUDIO_TOGGLE_SELF_MUTE", muteCallback);
-    subscriptions.push({ event: "AUDIO_TOGGLE_SELF_MUTE", callback: muteCallback });
 
     const rtcCallback = (params: any) => {
         if (params.context === "default") {
@@ -128,5 +114,4 @@ onceReady.then(() => {
         }
     };
     FluxDispatcher.subscribe("RTC_CONNECTION_STATE", rtcCallback);
-    subscriptions.push({ event: "RTC_CONNECTION_STATE", callback: rtcCallback });
 });
