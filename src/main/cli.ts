@@ -5,9 +5,9 @@
  */
 
 import { app } from "electron";
-import { readFileSync, unlinkSync, writeFileSync } from "fs";
+import { closeSync, constants as fsConstants, openSync, readFileSync, unlinkSync, writeSync } from "fs";
 import { tmpdir } from "os";
-import { basename, join, resolve } from "path";
+import { basename, join, resolve, sep } from "path";
 import { IpcCommands, IpcEvents } from "shared/IpcEvents";
 import { stripIndent } from "shared/utils/text";
 import { parseArgs, ParseArgsOptionDescriptor } from "util";
@@ -264,6 +264,19 @@ function checkCommandLineForQueryCommands() {
 }
 
 function setupSecondInstanceHandler() {
+    function writeResponseFile(path: string, contents: string) {
+        const flags = fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL | fsConstants.O_NOFOLLOW;
+        let fd: number | null = null;
+        try {
+            fd = openSync(path, flags, 0o600);
+            writeSync(fd, contents);
+        } catch (err) {
+            console.error("Failed to write query response file:", err);
+        } finally {
+            if (fd != null) closeSync(fd);
+        }
+    }
+
     app.on("second-instance", (_event, commandLine, _cwd, data: any) => {
         if (data.query && data.responseFile) {
             const allowedQueries: string[] = [
@@ -276,15 +289,15 @@ function setupSecondInstanceHandler() {
 
             const tempDir = tmpdir();
             const resolvedPath = resolve(data.responseFile);
-            if (!resolvedPath.startsWith(tempDir)) return;
+            if (!resolvedPath.startsWith(tempDir + sep)) return;
 
             import("./ipcCommands")
                 .then(({ sendRendererCommand }) => sendRendererCommand<string>(data.query))
                 .then(result => {
-                    writeFileSync(resolvedPath, String(result));
+                    writeResponseFile(resolvedPath, String(result));
                 })
                 .catch(err => {
-                    writeFileSync(resolvedPath, `Error: ${err}`);
+                    writeResponseFile(resolvedPath, `Error: ${err}`);
                 });
             return;
         }

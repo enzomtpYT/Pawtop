@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { app, type BrowserWindow, Menu, type NativeImage, nativeImage, Tray } from "electron";
+import { app, type BrowserWindow, dialog, Menu, type NativeImage, nativeImage, Tray } from "electron";
 import { join } from "path";
 import { STATIC_DIR } from "shared/paths";
 
 import { createAboutWindow } from "./about";
 import { createArgumentsWindow } from "./arguments";
-import { restartArRPC } from "./arrpc";
+import { createArRPCWindow } from "./arrpcWindow";
 import { AppEvents } from "./events";
 import { Settings } from "./settings";
 import { resolveAssetPath } from "./userAssets";
@@ -69,20 +69,16 @@ function nativeImageToPixmap(image: NativeImage): Promise<Buffer> {
             pixmap.writeUInt32LE(height, 4);
 
             for (let i = 0; i < bitmap.length; i += 4) {
-                const r = bitmap[i];
+                const b = bitmap[i];
                 const g = bitmap[i + 1];
-                const b = bitmap[i + 2];
+                const r = bitmap[i + 2];
                 const a = bitmap[i + 3];
 
-                const alpha = a / 255;
-                const premultR = Math.round(r * alpha);
-                const premultG = Math.round(g * alpha);
-                const premultB = Math.round(b * alpha);
-
-                pixmap[8 + i] = a;
-                pixmap[8 + i + 1] = premultB;
-                pixmap[8 + i + 2] = premultG;
-                pixmap[8 + i + 3] = premultR;
+                const o = 8 + i;
+                pixmap[o] = a;
+                pixmap[o + 1] = ((r * a + 127) * 257) >>> 16;
+                pixmap[o + 2] = ((g * a + 127) * 257) >>> 16;
+                pixmap[o + 3] = ((b * a + 127) * 257) >>> 16;
             }
 
             resolve(pixmap);
@@ -225,15 +221,12 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
                 const menuItems = [
                     { id: 1, label: win.isVisible() ? "Hide" : "Open", enabled: true, visible: true },
                     { id: 2, label: "About", enabled: true, visible: true },
+                    { id: 11, type: "separator" as const, enabled: true, visible: true },
+                    { id: 5, label: "Launch Arguments", enabled: true, visible: true },
+                    { id: 10, label: "Configure Rich Presence", enabled: true, visible: true },
+                    { id: 12, type: "separator" as const, enabled: true, visible: true },
                     { id: 3, label: "Repair Pawtop", enabled: true, visible: true },
                     { id: 4, label: "Reset Pawtop", enabled: true, visible: true },
-                    { id: 5, label: "Launch Arguments", enabled: true, visible: true },
-                    {
-                        id: 6,
-                        label: "Restart arRPC",
-                        enabled: true,
-                        visible: Settings.store.arRPC === true
-                    },
                     { id: 7, type: "separator" as const, enabled: true, visible: true },
                     { id: 8, label: "Restart", enabled: true, visible: true },
                     { id: 9, label: "Quit", enabled: true, visible: true }
@@ -263,13 +256,21 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
                             createAboutWindow();
                             break;
                         case 3: // repair PawsomeVencord
-                            downloadVencordAsar().then(() => {
-                                setTimeout(() => {
-                                    destroyTray();
-                                    app.relaunch();
-                                    app.quit();
-                                }, 0);
-                            });
+                            downloadVencordAsar()
+                                .then(() => {
+                                    setTimeout(() => {
+                                        destroyTray();
+                                        app.relaunch();
+                                        app.quit();
+                                    }, 0);
+                                })
+                                .catch(err => {
+                                    console.error("[Tray] Repair PawsomeVencord failed:", err);
+                                    dialog.showErrorBox(
+                                        "Repair PawsomeVencord failed",
+                                        `Could not download PawsomeVencord:\n\n${err instanceof Error ? err.message : String(err)}`
+                                    );
+                                });
                             break;
                         case 4: // reset Pawtop
                             clearData(win);
@@ -277,8 +278,8 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
                         case 5: // launch arguments
                             createArgumentsWindow();
                             break;
-                        case 6: // restart arRPC-bun
-                            restartArRPC();
+                        case 10: // configure rich presence
+                            createArRPCWindow();
                             break;
                         case 8: // restart
                             setTimeout(() => {
@@ -324,10 +325,29 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
             label: "About",
             click: createAboutWindow
         },
+        { type: "separator" },
+        {
+            label: "Launch Arguments",
+            click: createArgumentsWindow
+        },
+        {
+            label: "Configure Rich Presence",
+            click: createArRPCWindow
+        },
+        { type: "separator" },
         {
             label: "Repair PawsomeVencord",
             async click() {
-                await downloadVencordAsar();
+                try {
+                    await downloadVencordAsar();
+                } catch (err) {
+                    console.error("[Tray] Repair Equicord failed:", err);
+                    dialog.showErrorBox(
+                        "Repair Equicord failed",
+                        `Could not download Equicord:\n\n${err instanceof Error ? err.message : String(err)}`
+                    );
+                    return;
+                }
                 destroyTray();
                 app.relaunch();
                 app.quit();
@@ -339,20 +359,7 @@ export async function initTray(win: BrowserWindow, setIsQuitting: (val: boolean)
                 await clearData(win);
             }
         },
-        {
-            label: "Launch Arguments",
-            click: createArgumentsWindow
-        },
-        {
-            label: "Restart arRPC",
-            visible: Settings.store.arRPC === true,
-            async click() {
-                await restartArRPC();
-            }
-        },
-        {
-            type: "separator"
-        },
+        { type: "separator" },
         {
             label: "Restart",
             click() {
