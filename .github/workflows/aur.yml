@@ -92,11 +92,12 @@ jobs:
             - name: Clone AUR package
               env:
                   GIT_SSH_COMMAND: ssh -i ${{ env.AUR_SSH_DIR }}/aur -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=${{ env.AUR_SSH_DIR }}/known_hosts
-              run: git clone ssh://aur@aur.archlinux.org/pawtop.git aur-pkg
+              run: git clone ssh://aur@aur.archlinux.org/pawtop.git "${GITHUB_WORKSPACE}/aur-pkg"
 
             - name: Update PKGBUILD
-              working-directory: aur-pkg
               run: |
+                  cd "${GITHUB_WORKSPACE}/aur-pkg"
+                  test -d .git
                   VER="${{ needs.resolve.outputs.ver }}"
                   TAR_SHA="${{ steps.tar.outputs.sha }}"
                   ELECTRON_PKG="${{ steps.electron.outputs.pkg }}"
@@ -131,17 +132,19 @@ jobs:
                   bash -n pawtop.sh
 
             - name: Regenerate .SRCINFO
-              working-directory: aur-pkg
               run: |
+                  cd "${GITHUB_WORKSPACE}/aur-pkg"
                   useradd -m builder
                   chown -R builder:builder .
                   su builder -s /bin/bash -c 'makepkg --printsrcinfo > .SRCINFO'
+                  chown -R root:root .
 
             - name: Push to AUR
-              working-directory: aur-pkg
               env:
                   GIT_SSH_COMMAND: ssh -i ${{ env.AUR_SSH_DIR }}/aur -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=${{ env.AUR_SSH_DIR }}/known_hosts
               run: |
+                  cd "${GITHUB_WORKSPACE}/aur-pkg"
+                  test -d .git
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
                   if [ -z "$(git status --porcelain)" ]; then
