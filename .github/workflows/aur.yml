@@ -1,0 +1,125 @@
+name: Update AUR
+
+# Keeps https://aur.archlinux.org/packages/pawtop in sync with releases.
+# Triggers on version tags (v*) or manually via workflow_dispatch.
+
+on:
+    push:
+        tags:
+            - v*
+    workflow_dispatch:
+        inputs:
+            version:
+                description: "Version without the leading v (e.g. 3.3.1). Leave empty to use the tag."
+                required: false
+                default: ""
+
+permissions:
+    contents: read
+
+jobs:
+    aur:
+        runs-on: ubuntu-latest
+        container: archlinux:latest
+        steps:
+            - name: Install dependencies
+              run: pacman -Syu --noconfirm --needed base-devel git openssh curl
+
+            - name: Resolve version
+              id: ver
+              run: |
+                  if [ -n "${{ inputs.version }}" ]; then
+                      VER="${{ inputs.version }}"
+                  else
+                      VER="${GITHUB_REF_NAME#v}"
+                  fi
+                  if [ -z "$VER" ]; then
+                      echo "Could not resolve version" >&2
+                      exit 1
+                  fi
+                  echo "ver=$VER" >> "$GITHUB_OUTPUT"
+                  echo "Updating AUR package to $VER"
+
+            - name: Fetch release tarball checksum
+              id: tar
+              run: |
+                  curl -sSL --retry 5 --retry-all-errors -o release.tar.gz "https://github.com/enzomtpYT/Pawtop/archive/refs/tags/v${{ steps.ver.outputs.ver }}.tar.gz"
+                  echo "sha=$(sha256sum release.tar.gz | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+            - name: Determine required Electron package
+              id: electron
+              run: |
+                  MAJOR=$(curl -sSL "https://raw.githubusercontent.com/enzomtpYT/Pawtop/v${{ steps.ver.outputs.ver }}/package.json" | grep -m1 '"electron":' | grep -o '[0-9]\+' | head -1)
+                  if [ -z "$MAJOR" ]; then
+                      echo "Could not determine electron version from package.json" >&2
+                      exit 1
+                  fi
+                  echo "pkg=electron$MAJOR" >> "$GITHUB_OUTPUT"
+
+            - name: Set up SSH for AUR
+              run: |
+                  mkdir -p ~/.ssh
+                  chmod 700 ~/.ssh
+                  printf '%s\n' "${{ secrets.AUR_SSH_KEY }}" > ~/.ssh/aur
+                  chmod 600 ~/.ssh/aur
+                  ssh-keyscan -t ed25519 aur.archlinux.org >> ~/.ssh/known_hosts
+                  printf 'Host aur.archlinux.org\n\tIdentityFile ~/.ssh/aur\n\tIdentitiesOnly yes\n' >> ~/.ssh/config
+
+            - name: Clone AUR package
+              run: git clone ssh://aur@aur.archlinux.org/pawtop.git aur-pkg
+
+            - name: Update PKGBUILD
+              working-directory: aur-pkg
+              run: |
+                  VER="${{ steps.ver.outputs.ver }}"
+                  TAR_SHA="${{ steps.tar.outputs.sha }}"
+                  ELECTRON_PKG="${{ steps.electron.outputs.pkg }}"
+
+                  CUR_VER=$(grep -m1 '^pkgver=' PKGBUILD | cut -d= -f2)
+                  CUR_REL=$(grep -m1 '^pkgrel=' PKGBUILD | cut -d= -f2)
+                  if [ "$CUR_VER" = "$VER" ]; then
+                      REL=$((CUR_REL + 1))
+                  else
+                      REL=1
+                  fi
+
+                  sed -i "s/^pkgver=.*/pkgver=$VER/" PKGBUILD
+                  sed -i "s/^pkgrel=.*/pkgrel=$REL/" PKGBUILD
+
+                  # First sha256sum corresponds to the release tarball
+                  OLD_TAR_SHA=$(grep -o "'[0-9a-f]\{64\}'" PKGBUILD | sed -n '1p')
+                  sed -i "s/$OLD_TAR_SHA/'$TAR_SHA'/" PKGBUILD
+
+                  # Keep the system electron pin in sync with package.json (e.g. electron43).
+                  # pawtop.sh is the 3rd entry in source()/sha256sums().
+                  CUR_ELECTRON=$(grep -m1 '^electron=' PKGBUILD | cut -d= -f2)
+                  if [ "$CUR_ELECTRON" != "$ELECTRON_PKG" ]; then
+                      sed -i "s/^electron=.*/electron=$ELECTRON_PKG/" PKGBUILD
+                      sed -i "s|^exec electron[0-9]* |exec $ELECTRON_PKG |" pawtop.sh
+                      SH_SHA=$(sha256sum pawtop.sh | cut -d' ' -f1)
+                      OLD_SH_SHA=$(grep -o "'[0-9a-f]\{64\}'" PKGBUILD | sed -n '3p')
+                      sed -i "s/$OLD_SH_SHA/'$SH_SHA'/" PKGBUILD
+                  fi
+
+                  bash -n PKGBUILD
+                  bash -n pawtop.sh
+
+            - name: Regenerate .SRCINFO
+              working-directory: aur-pkg
+              run: |
+                  chown -R nobody:nobody .
+                  su nobody -s /bin/bash -c 'makepkg --printsrcinfo > .SRCINFO'
+                  chown -R root:root .
+
+            - name: Push to AUR
+              working-directory: aur-pkg
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  if [ -z "$(git status --porcelain)" ]; then
+                      echo "Nothing to update"
+                      exit 0
+                  fi
+                  git add PKGBUILD .SRCINFO pawtop.sh
+                  git commit -m "Update to v${{ steps.ver.outputs.ver }}"
+                  git push origin master
