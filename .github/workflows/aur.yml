@@ -58,14 +58,21 @@ jobs:
 
             - name: Set up SSH for AUR
               run: |
-                  mkdir -p ~/.ssh
-                  chmod 700 ~/.ssh
-                  printf '%s\n' "${{ secrets.AUR_SSH_KEY }}" > ~/.ssh/aur
-                  chmod 600 ~/.ssh/aur
-                  ssh-keyscan -t ed25519 aur.archlinux.org >> ~/.ssh/known_hosts
-                  printf 'Host aur.archlinux.org\n\tIdentityFile ~/.ssh/aur\n\tIdentitiesOnly yes\n' >> ~/.ssh/config
+                  SSH_DIR="$HOME/.ssh"
+                  mkdir -p "$SSH_DIR"
+                  chmod 700 "$SSH_DIR"
+                  printf '%s\n' "${{ secrets.AUR_SSH_KEY }}" > "$SSH_DIR/aur"
+                  chmod 600 "$SSH_DIR/aur"
+                  # Scan all host key types and fail fast if we got nothing
+                  ssh-keyscan aur.archlinux.org > "$SSH_DIR/known_hosts" 2>/dev/null
+                  test -s "$SSH_DIR/known_hosts"
+                  ssh-keygen -l -f "$SSH_DIR/known_hosts"
+                  printf 'Host aur.archlinux.org\n\tIdentityFile %s/aur\n\tIdentitiesOnly yes\n\tUserKnownHostsFile %s/known_hosts\n' "$SSH_DIR" "$SSH_DIR" > "$SSH_DIR/config"
+                  echo "AUR_SSH_DIR=$SSH_DIR" >> "$GITHUB_ENV"
 
             - name: Clone AUR package
+              env:
+                  GIT_SSH_COMMAND: ssh -i ${{ env.AUR_SSH_DIR }}/aur -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=${{ env.AUR_SSH_DIR }}/known_hosts
               run: git clone ssh://aur@aur.archlinux.org/pawtop.git aur-pkg
 
             - name: Update PKGBUILD
@@ -113,6 +120,8 @@ jobs:
 
             - name: Push to AUR
               working-directory: aur-pkg
+              env:
+                  GIT_SSH_COMMAND: ssh -i ${{ env.AUR_SSH_DIR }}/aur -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=${{ env.AUR_SSH_DIR }}/known_hosts
               run: |
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
