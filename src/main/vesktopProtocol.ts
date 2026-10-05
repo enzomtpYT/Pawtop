@@ -9,8 +9,21 @@ import { app, protocol } from "electron";
 import { handleVesktopAssetsProtocol } from "./userAssets";
 import { handleVesktopStaticProtocol } from "./vesktopStatic";
 
+protocol.registerSchemesAsPrivileged(
+    (["equibop", "pawtop"] as const).map(scheme => ({
+        scheme,
+        privileges: {
+            standard: true,
+            secure: true,
+            supportFetchAPI: true,
+            corsEnabled: true,
+            stream: true
+        }
+    }))
+);
+
 app.whenReady().then(() => {
-    protocol.handle("pawtop", async req => {
+    const handler = async (req: Request) => {
         const url = new URL(req.url);
 
         switch (url.hostname) {
@@ -21,5 +34,8 @@ app.whenReady().then(() => {
             default:
                 return new Response(null, { status: 404 });
         }
-    });
+    };
+
+    protocol.handle("equibop", handler);
+    protocol.handle("pawtop", handler);
 });
