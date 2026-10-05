@@ -1,37 +1,47 @@
 name: Update AUR
 
 # Keeps https://aur.archlinux.org/packages/pawtop in sync with releases.
-# Triggers on version tags (v*) or manually via workflow_dispatch.
+# Runs after the Release workflow finishes a version tag build,
+# or manually via workflow_dispatch.
+#
+# Required secret (Settings > Secrets and variables > Actions):
+#   AUR_SSH_KEY - private SSH key linked to an AUR account with push access to the pawtop package.
 
 on:
-    push:
-        tags:
-            - v*
+    workflow_run:
+        workflows: ["Release"]
+        types: [completed]
     workflow_dispatch:
         inputs:
             version:
-                description: "Version without the leading v (e.g. 3.3.1). Leave empty to use the tag."
-                required: false
-                default: ""
+                description: "Version without the leading v (e.g. 3.3.1)."
+                required: true
 
 permissions:
     contents: read
 
 jobs:
-    aur:
+    resolve:
         runs-on: ubuntu-latest
-        container: archlinux:latest
+        outputs:
+            ver: ${{ steps.ver.outputs.ver }}
+            skip: ${{ steps.ver.outputs.skip }}
         steps:
-            - name: Install dependencies
-              run: pacman -Syu --noconfirm --needed base-devel git openssh curl
-
             - name: Resolve version
               id: ver
               run: |
-                  if [ -n "${{ inputs.version }}" ]; then
+                  if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
                       VER="${{ inputs.version }}"
                   else
-                      VER="${GITHUB_REF_NAME#v}"
+                      TAG="${{ github.event.workflow_run.head_branch }}"
+                      case "$TAG" in
+                          v*) VER="${TAG#v}" ;;
+                          *)
+                              echo "Release run was for '$TAG', not a version tag. Nothing to do."
+                              echo "skip=true" >> "$GITHUB_OUTPUT"
+                              exit 0
+                              ;;
+                      esac
                   fi
                   if [ -z "$VER" ]; then
                       echo "Could not resolve version" >&2
@@ -40,16 +50,25 @@ jobs:
                   echo "ver=$VER" >> "$GITHUB_OUTPUT"
                   echo "Updating AUR package to $VER"
 
+    aur:
+        needs: resolve
+        if: ${{ (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success') && needs.resolve.outputs.skip != 'true' }}
+        runs-on: ubuntu-latest
+        container: archlinux:latest
+        steps:
+            - name: Install dependencies
+              run: pacman -Syu --noconfirm --needed base-devel git openssh curl
+
             - name: Fetch release tarball checksum
               id: tar
               run: |
-                  curl -sSL --retry 5 --retry-all-errors -o release.tar.gz "https://github.com/enzomtpYT/Pawtop/archive/refs/tags/v${{ steps.ver.outputs.ver }}.tar.gz"
+                  curl -sSL --retry 5 --retry-all-errors -o release.tar.gz "https://github.com/enzomtpYT/Pawtop/archive/refs/tags/v${{ needs.resolve.outputs.ver }}.tar.gz"
                   echo "sha=$(sha256sum release.tar.gz | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
             - name: Determine required Electron package
               id: electron
               run: |
-                  MAJOR=$(curl -sSL "https://raw.githubusercontent.com/enzomtpYT/Pawtop/v${{ steps.ver.outputs.ver }}/package.json" | grep -m1 '"electron":' | grep -o '[0-9]\+' | head -1)
+                  MAJOR=$(curl -sSL "https://raw.githubusercontent.com/enzomtpYT/Pawtop/v${{ needs.resolve.outputs.ver }}/package.json" | grep -m1 '"electron":' | grep -o '[0-9]\+' | head -1)
                   if [ -z "$MAJOR" ]; then
                       echo "Could not determine electron version from package.json" >&2
                       exit 1
@@ -78,7 +97,7 @@ jobs:
             - name: Update PKGBUILD
               working-directory: aur-pkg
               run: |
-                  VER="${{ steps.ver.outputs.ver }}"
+                  VER="${{ needs.resolve.outputs.ver }}"
                   TAR_SHA="${{ steps.tar.outputs.sha }}"
                   ELECTRON_PKG="${{ steps.electron.outputs.pkg }}"
 
@@ -114,9 +133,9 @@ jobs:
             - name: Regenerate .SRCINFO
               working-directory: aur-pkg
               run: |
-                  chown -R nobody:nobody .
-                  su nobody -s /bin/bash -c 'makepkg --printsrcinfo > .SRCINFO'
-                  chown -R root:root .
+                  useradd -m builder
+                  chown -R builder:builder .
+                  su builder -s /bin/bash -c 'makepkg --printsrcinfo > .SRCINFO'
 
             - name: Push to AUR
               working-directory: aur-pkg
@@ -130,5 +149,5 @@ jobs:
                       exit 0
                   fi
                   git add PKGBUILD .SRCINFO pawtop.sh
-                  git commit -m "Update to v${{ steps.ver.outputs.ver }}"
+                  git commit -m "Update to v${{ needs.resolve.outputs.ver }}"
                   git push origin master
