@@ -13,63 +13,64 @@ jobs:
   release:
     runs-on: ${{ matrix.os }}
 
-        strategy:
-            matrix:
-                os: [macos-latest, ubuntu-latest, windows-latest]
-                include:
-                    - os: macos-latest
-                      platform: mac
-                    - os: ubuntu-latest
-                      platform: linux
-                    - os: windows-latest
-                      platform: win
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - os: macos-latest
+            platform: mac
+          - os: ubuntu-latest
+            platform: linux
+          - os: windows-latest
+            platform: win
 
-        steps:
-            - uses: actions/checkout@v4
-            - uses: oven-sh/setup-bun@v2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
 
-            - name: Install system dependencies
-              if: ${{ matrix.platform == 'linux' }}
-              run: sudo apt-get update && sudo apt-get install -y libglib2.0-dev
+      - name: Install system dependencies
+        if: ${{ matrix.platform == 'linux' }}
+        run: sudo apt-get update && sudo apt-get install -y libglib2.0-dev
 
-            - name: Install dependencies
-              run: bun install
+      - name: Install dependencies
+        run: bun install
 
-            - name: Build
-              run: bun run build
+      - name: Build
+        run: bun run build
 
-            - name: Run Electron Builder
-              if: ${{ matrix.platform != 'mac' }}
-              run: |
-                  bunx electron-builder --${{ matrix.platform }} --publish always
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Electron Builder
+        if: ${{ matrix.platform != 'mac' }}
+        run: |
+          bunx electron-builder --${{ matrix.platform }} --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Run Electron Builder
-              if: ${{ matrix.platform == 'mac' }}
-              run: |
-                  if [ -n "$API_KEY" ]; then
-                      echo "$API_KEY" > apple.p8
-                      export APPLE_API_KEY=apple.p8
-                  fi
-                  # Only export CSC_LINK if it is not empty
-                  if [ -n "$CERT_LINK" ]; then
-                      export CSC_LINK="$CERT_LINK"
-                  fi
-                  if [ -n "$CERT_PASS" ]; then
-                      export CSC_KEY_PASSWORD="$CERT_PASS"
-                  fi
-                  if [ -n "$KEY_ID" ]; then
-                      export APPLE_API_KEY_ID="$KEY_ID"
-                  fi
-                  if [ -n "$ISSUER" ]; then
-                      export APPLE_API_ISSUER="$ISSUER"
-                  fi
-                  bunx electron-builder --${{ matrix.platform }} --publish always
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  CERT_LINK: ${{ secrets.APPLE_SIGNING_CERT }}
-                  CERT_PASS: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
-                  API_KEY: ${{ secrets.APPLE_API_KEY }}
-                  KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
-                  ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+      - name: Run Electron Builder
+        if: ${{ matrix.platform == 'mac' }}
+        run: |
+          if [ -n "$API_KEY" ]; then
+            echo "$API_KEY" > apple.p8
+            export APPLE_API_KEY=apple.p8
+          fi
+          # Only export CSC_LINK if it is not empty
+          if [ -n "$CERT_LINK" ]; then
+            export CSC_LINK="$CERT_LINK"
+          fi
+          if [ -n "$CERT_PASS" ]; then
+            export CSC_KEY_PASSWORD="$CERT_PASS"
+          fi
+          if [ -n "$KEY_ID" ]; then
+            export APPLE_API_KEY_ID="$KEY_ID"
+          fi
+          if [ -n "$ISSUER" ]; then
+            export APPLE_API_ISSUER="$ISSUER"
+          fi
+          bunx electron-builder --${{ matrix.platform }} --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CERT_LINK: ${{ secrets.APPLE_SIGNING_CERT }}
+          CERT_PASS: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
+          API_KEY: ${{ secrets.APPLE_API_KEY }}
+          KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+
