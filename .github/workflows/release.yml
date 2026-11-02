@@ -1,17 +1,17 @@
 name: Release
 
 on:
-    push:
-        tags:
-            - v*
-    workflow_dispatch:
+  push:
+    tags:
+      - v*
+  workflow_dispatch:
 
 permissions:
-    contents: write
+  contents: write
 
 jobs:
-    release:
-        runs-on: ${{ matrix.os }}
+  release:
+    runs-on: ${{ matrix.os }}
 
         strategy:
             matrix:
