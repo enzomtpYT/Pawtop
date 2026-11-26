@@ -65,16 +65,6 @@ jobs:
                   curl -sSL --retry 5 --retry-all-errors -o release.tar.gz "https://github.com/enzomtpYT/Pawtop/archive/refs/tags/v${{ needs.resolve.outputs.ver }}.tar.gz"
                   echo "sha=$(sha256sum release.tar.gz | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
-            - name: Determine required Electron package
-              id: electron
-              run: |
-                  MAJOR=$(curl -sSL "https://raw.githubusercontent.com/enzomtpYT/Pawtop/v${{ needs.resolve.outputs.ver }}/package.json" | grep -m1 '"electron":' | grep -o '[0-9]\+' | head -1)
-                  if [ -z "$MAJOR" ]; then
-                      echo "Could not determine electron version from package.json" >&2
-                      exit 1
-                  fi
-                  echo "pkg=electron$MAJOR" >> "$GITHUB_OUTPUT"
-
             - name: Set up SSH for AUR
               run: |
                   SSH_DIR="$HOME/.ssh"
@@ -100,7 +90,6 @@ jobs:
                   test -d .git
                   VER="${{ needs.resolve.outputs.ver }}"
                   TAR_SHA="${{ steps.tar.outputs.sha }}"
-                  ELECTRON_PKG="${{ steps.electron.outputs.pkg }}"
 
                   CUR_VER=$(grep -m1 '^pkgver=' PKGBUILD | cut -d= -f2)
                   CUR_REL=$(grep -m1 '^pkgrel=' PKGBUILD | cut -d= -f2)
@@ -117,19 +106,8 @@ jobs:
                   OLD_TAR_SHA=$(grep -o "'[0-9a-f]\{64\}'" PKGBUILD | sed -n '1p')
                   sed -i "s/$OLD_TAR_SHA/'$TAR_SHA'/" PKGBUILD
 
-                  # Keep the system electron pin in sync with package.json (e.g. electron43).
-                  # pawtop.sh is the 3rd entry in source()/sha256sums().
-                  CUR_ELECTRON=$(grep -m1 '^electron=' PKGBUILD | cut -d= -f2)
-                  if [ "$CUR_ELECTRON" != "$ELECTRON_PKG" ]; then
-                      sed -i "s/^electron=.*/electron=$ELECTRON_PKG/" PKGBUILD
-                      sed -i "s|^exec electron[0-9]* |exec $ELECTRON_PKG |" pawtop.sh
-                      SH_SHA=$(sha256sum pawtop.sh | cut -d' ' -f1)
-                      OLD_SH_SHA=$(grep -o "'[0-9a-f]\{64\}'" PKGBUILD | sed -n '3p')
-                      sed -i "s/$OLD_SH_SHA/'$SH_SHA'/" PKGBUILD
-                  fi
-
                   bash -n PKGBUILD
-                  bash -n pawtop.sh
+                  sh -n pawtop.sh
 
             - name: Regenerate .SRCINFO
               run: |
