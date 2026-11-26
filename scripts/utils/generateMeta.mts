@@ -10,7 +10,8 @@ import { mkdir } from "node:fs/promises";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
 import xmlFormat from "xml-formatter";
 
-function generateDescription(description: string, descriptionNode: Element) {
+function generateDescription(description: string | null | undefined, descriptionNode: Element) {
+    if (!description) return;
     const lines = description.replace(/\r/g, "").split("\n");
     let currentList: Element | null = null;
     for (let i = 0; i < lines.length; i++) {
@@ -30,7 +31,7 @@ function generateDescription(description: string, descriptionNode: Element) {
             }
             currentList.appendChild(liNode);
         }
-        if (currentList && !lines[i + 1].startsWith("* ")) {
+        if (currentList && !lines[i + 1]?.startsWith("* ")) {
             descriptionNode.appendChild(currentList);
             currentList = null;
         }
@@ -45,10 +46,17 @@ const releases = await fetch("https://api.github.com/repos/enzomtpYT/Pawtop/rele
     }
 }).then(res => res.json());
 
-const latestReleaseInformation = releases[0];
+const publishedReleases = releases.filter((r: any) => !r.draft);
+const targetTag = process.env.RELEASE_TAG;
+const latestReleaseInformation =
+    (targetTag && publishedReleases.find((r: any) => r.tag_name === targetTag)) || publishedReleases[0];
+
+if (!latestReleaseInformation) {
+    throw new Error("Could not find a published release");
+}
 
 const metaInfo = await (async () => {
-    for (const release of releases) {
+    for (const release of publishedReleases) {
         const metaAsset = release.assets.find((a: any) => a.name === "io.github.enzomtpyt.pawtop.metainfo.xml");
         if (metaAsset) return fetch(metaAsset.browser_download_url).then(res => res.text());
     }
@@ -60,17 +68,18 @@ if (!metaInfo) {
 
 const parser = new DOMParser().parseFromString(metaInfo, "text/xml");
 const releaseList = parser.getElementsByTagName("releases")[0];
+const version = latestReleaseInformation.name || latestReleaseInformation.tag_name.replace(/^v/, "");
 
 for (let i = 0; i < releaseList.childNodes.length; i++) {
     const release = releaseList.childNodes[i] as Element;
-    if (release.nodeType === 1 && release.getAttribute("version") === latestReleaseInformation.name) {
+    if (release.nodeType === 1 && release.getAttribute("version") === version) {
         console.log("Latest release already added, nothing to be done");
         process.exit(0);
     }
 }
 
 const release = parser.createElement("release");
-release.setAttribute("version", latestReleaseInformation.name);
+release.setAttribute("version", version);
 const date =
     latestReleaseInformation.published_at || latestReleaseInformation.updated_at || latestReleaseInformation.created_at;
 release.setAttribute("date", date.split("T")[0]);

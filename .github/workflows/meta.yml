@@ -33,12 +33,15 @@ jobs:
               run: bun run generateMeta
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  RELEASE_TAG: ${{ github.event.release.tag_name || steps.latest_tag.outputs.tag }}
 
             - name: Commit and merge in changes
               run: |
                   git config user.name "github-actions[bot]"
                   git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-                  gh release upload "${{ github.event.release.tag_name || steps.latest_tag.outputs.tag }}" dist/io.github.enzomtpyt.pawtop.metainfo.xml
+                  if [ -f dist/io.github.enzomtpyt.pawtop.metainfo.xml ]; then
+                      gh release upload --clobber "${{ github.event.release.tag_name || steps.latest_tag.outputs.tag }}" dist/io.github.enzomtpyt.pawtop.metainfo.xml
+                  fi
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
